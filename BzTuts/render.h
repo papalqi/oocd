@@ -3,7 +3,13 @@
 #include <wrl.h>
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
-const int frameBufferCount = 3; 
+const int frameBufferCount = 3;
+
+// this is the structure of our constant buffer.
+struct ConstantBuffer {
+	XMFLOAT4 colorMultiplier;
+};
+
 class Render
 
 {
@@ -11,9 +17,10 @@ public:
 
 	//初始化
 	bool InitD3D(int Width, int Height, HWND& hwnd, bool FullScreen, bool Running);
-	void AddVertexs(Vertex* vList, int vBufferSize);
-	void AddIndex(DWORD *iList,int LSize);
+
+	void AddVertexsAndIndes(Vertex* vList, int vBufferSize, DWORD *iList, int LSize);
 public:
+
 	//基础的更新，tick
 	void Update();
 	void UpdatePipeline();
@@ -100,19 +107,28 @@ private:
 	UINT64 fenceValue[frameBufferCount];
 
 	//建立Fence，设置同步
-	bool CreateFence();
+	bool CreateFenceAndRootSignature();
 
 private:
 
 	ID3D12Resource* vertexBuffer;
 	ID3D12Resource*indexBuffer;
+	ID3D12Resource* depthStencilBuffer;
+
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView;
+	void AddVertexs(Vertex* vList, int vBufferSize);
+	void AddIndex(DWORD *iList, int LSize);
+
+	void SetdepthStencil();
 
 private:
 
 	//render targets view 堆，有多少个缓存，里面就有几个这个
 	ID3D12DescriptorHeap* rtvDescriptorHeap;
+
+	//	depth
+	ID3D12DescriptorHeap* dsDescriptorHeap;
 
 	//视口数量
 	ID3D12Resource* renderTargets[frameBufferCount];
@@ -125,4 +141,12 @@ private:
 
 	//建立Descriptor
 	void CreateRtvDescriptor();
+	private:
+	//const buffer desc存储堆
+	ID3D12DescriptorHeap* mainDescriptorHeap[frameBufferCount]; // this heap will store the descripor to our constant buffer
+	//const buffer上传堆
+	ID3D12Resource* constantBufferUploadHeap[frameBufferCount]; // this is the memory on the gpu where our constant buffer will be placed.
+
+	ConstantBuffer cbColorMultiplierData; 
+	UINT8* cbColorMultiplierGPUAddress[frameBufferCount]; // this is a pointer to the memory location we get when we map our constant buffer
 };

@@ -27,26 +27,26 @@ int WINAPI WinMain(HINSTANCE hInstance,    //Main windows function
 		Running),
 		L"initialize direct3d 12 Error");
 
-
 	// 前三个是位置，后4个是颜色
+// a quad
 	Vertex vList[] = {
-	{ -0.5f,  0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f },
-	{  0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f },
-	{ -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f },
-	{  0.5f,  0.5f, 0.5f, 1.0f, 0.0f, 1.0f, 1.0f }
+		// first quad (closer to camera, blue)
+		{ -0.5f,  0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f },
+		{  0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 1.0f, 1.0f },
+		{ -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f },
+		{  0.5f,  0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f }
 	};
 
-
 	int vBufferSize = sizeof(vList);
-	mwindow.render.AddVertexs(vList, vBufferSize);
 
 	DWORD iList[] = {
 	0, 1, 2, // first triangle
 	0, 3, 1 // second triangle
 	};
-
 	int iBufferSize = sizeof(iList);
-	mwindow.render.AddIndex(iList, iBufferSize);
+
+	mwindow.render.AddVertexsAndIndes(vList, vBufferSize, iList, iBufferSize);
+
 	// start the main loop
 	mwindow.mainloop();
 
