@@ -2,13 +2,13 @@
 #include<math.h>
 #include<iostream>
 using namespace std;
+#define Point2 Vector2
+#define Normal2 Vector2
+
 namespace oocd
 {
-
-
 	//typedef Vector3<Float> Vector3f;
 	//typedef Vector3<int> Vector3i;
-
 	template <typename T>
 	class Vector2
 	{
@@ -23,6 +23,8 @@ namespace oocd
 		Vector2() { X = Y = 0; }
 		Vector2(T xx, T yy) : X(xx), Y(yy) { }
 
+		//explicit Vector2(const Vector3<T> &p) :X(p.X), Y(p.Y) {};
+		explicit Vector2(const Vector2<T> &p) :X(p.X), Y(p.Y) {};
 	public:
 		Vector2<T> operator+(const Vector2<T>& other)const;
 		Vector2<T> operator-(const Vector2<T> &v) const;
@@ -36,7 +38,6 @@ namespace oocd
 			return Vector2<T>(X / f, Y / f);
 		}
 		Vector2<T>  operator/(const Vector2<T>& V) const;
-
 
 		//dot product
 		T operator|(const Vector2& V) const;
@@ -96,19 +97,16 @@ namespace oocd
 		static float DotProduct(const Vector2<T>& A, const Vector2<T>& B);
 	};
 
-
-
 	template <typename T>
 	oocd::Vector2<T> oocd::Vector2<T>::GetAbs() const
 	{
 		return Vector2(abs(X), abs(Y));
-
 	}
 
 	template <typename T>
 	oocd::Vector2<T> oocd::Vector2<T>::GetSignVector() const
 	{
-		return Vector2<T>(Select(X,1.0f,-1.0f), Select(Y, 1.0f, -1.0f));
+		return Vector2<T>(Select(X, 1.0f, -1.0f), Select(Y, 1.0f, -1.0f));
 	}
 
 	template <typename T>
@@ -153,7 +151,7 @@ namespace oocd
 	template <typename T>
 	T oocd::Vector2<T>::GetMax() const
 	{
-		return max(X,Y);
+		return max(X, Y);
 	}
 
 	template <typename T>
@@ -167,8 +165,6 @@ namespace oocd
 	{
 		return Vector2<T>(X*V.X, Y*V.Y);
 	}
-
-
 
 	template <typename T>
 	bool Vector2<T>::operator!=(const Vector2<T> &V) const
@@ -274,10 +270,9 @@ namespace oocd
 		return Vector2<T>(X + other.X, Y + other.Y);
 	}
 
-
 	template <typename T>
 	inline std::ostream &operator<<(std::ostream &os, const Vector2<T> &v) {
-		os << "[ " << v.X<< ", " << v.Y << " ]";
+		os << "[ " << v.X << ", " << v.Y << " ]";
 		return os;
 	}
 
@@ -287,7 +282,11 @@ namespace oocd
 	//	return os;
 	//}
 
-
 	typedef Vector2<float> Vector2f;
 	typedef Vector2<int> Vector2i;
+	typedef Vector2<float> Point2f;
+	typedef Vector2<int> Point2i;
+	typedef Vector2<float> Normal2f;
+	typedef Vector2<int> Normal2i;
+	typedef Vector2<float> Vector2D;
 }

@@ -45,6 +45,15 @@
     <ClCompile Include="Vector2.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Matrix.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector4.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dx12.h">
@@ -68,10 +77,19 @@
     <ClInclude Include="Vector2.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Point.h">
+    <ClInclude Include="Vector3.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Vector3.h">
+    <ClInclude Include="Bounds.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector4.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
   </ItemGroup>

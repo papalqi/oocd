@@ -16,6 +16,7 @@ int WINAPI WinMain(HINSTANCE hInstance,    //Main windows function
 	//建立窗口
 	Pwindow mwindow;
 	Vector3<float> sss;
+
 	//初始化窗口
 	CHECK_AND_OUT(mwindow.InitializeWindow(hInstance, nShowCmd, false), L"initialize error");
 
@@ -31,6 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance,    //Main windows function
 	// 前三个是位置，后4个是颜色
 // a quad
 	Vertex vList[] = {
+
 		// first quad (closer to camera, blue)
 		{ -0.5f,  0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f },
 		{  0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 1.0f, 1.0f },

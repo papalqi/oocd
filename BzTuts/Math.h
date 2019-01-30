@@ -22,4 +22,36 @@ namespace oocd
 	{
 		return Comparand >= 0.f ? ValueGEZero : ValueLTZero;
 	}
+
+	enum Axis
+	{
+		None,
+		X,
+		Y,
+		Z
+	};
+
+	struct Math
+	{
+		template< class T >
+		static  T Max3(const T A, const T B, const T C)
+		{
+			return max(max(A, B), C);
+		}
+
+
+		template< class T >
+		static  T Min3(const T A, const T B, const T C)
+		{
+			return min(min(A, B), C);
+		}
+
+	
+		template< class T >
+		static  T Square(const T A)
+		{
+			return A * A;
+		}
+	};
 }
+
