@@ -157,6 +157,8 @@
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Pwindows.cpp" />
     <ClCompile Include="render.cpp" />
+    <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dx12.h" />
@@ -167,6 +169,7 @@
     <ClInclude Include="render.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector3.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">

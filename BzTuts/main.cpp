@@ -1,9 +1,10 @@
 ﻿#include "stdafx.h"
 #include"Pwindows.h"
 #include"render.h"
-
+#include"Vector3.h"
+#include"Vector2.h"
 using namespace DirectX; // we will be using the directxmath library
-
+using namespace oocd;
 extern bool Running;
 
 int WINAPI WinMain(HINSTANCE hInstance,    //Main windows function
@@ -14,7 +15,7 @@ int WINAPI WinMain(HINSTANCE hInstance,    //Main windows function
 {
 	//建立窗口
 	Pwindow mwindow;
-
+	Vector3<float> sss;
 	//初始化窗口
 	CHECK_AND_OUT(mwindow.InitializeWindow(hInstance, nShowCmd, false), L"initialize error");
 

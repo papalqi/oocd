@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include<math.h>
+#include<iostream>
 using namespace std;
 namespace oocd
 {
-	typedef Vector2<float> Vector2f;
-	typedef Vector2<int> Vector2i;
+
 
 	//typedef Vector3<Float> Vector3f;
 	//typedef Vector3<int> Vector3i;
@@ -13,27 +13,27 @@ namespace oocd
 	class Vector2
 	{
 	public:
-		T x, y;
+		T X, Y;
 	public:
 
-		static  const Vector2<T> ZeroVector(0.0f, 0.0f);
-		static  const Vector2<T> UnitVector(1.0f, 1.0f);
+		static  const Vector2<T> ZeroVector;
+		static  const Vector2<T> UnitVector;
 
 	public:
-		Vector2() { x = y = 0; }
-		Vector2(T xx, T yy) : x(xx), y(yy) { }
+		Vector2() { X = Y = 0; }
+		Vector2(T xx, T yy) : X(xx), Y(yy) { }
 
 	public:
 		Vector2<T> operator+(const Vector2<T>& other)const;
 		Vector2<T> operator-(const Vector2<T> &v) const;
 		template <typename U>Vector2<T> operator*(U f) const
 		{
-			return Vector2<T>(x*f, y*f);
+			return Vector2<T>(X*f, Y*f);
 		}
 		Vector2<T>  operator*(const Vector2<T>& V) const;
 		template <typename U>Vector2<T> operator/(U f) const
 		{
-			return Vector2<T>(x / f, y / f);
+			return Vector2<T>(X / f, Y / f);
 		}
 		Vector2<T>  operator/(const Vector2<T>& V) const;
 
@@ -45,26 +45,26 @@ namespace oocd
 		T operator^(const Vector2& V) const;
 
 		//所有的都小于
-		bool operator<(const Vector2& Other) const;
+		bool operator<(const Vector2<T>& Other) const;
 
 		//所有的都大于
-		bool operator>(const Vector2& Other) const;
+		bool operator>(const Vector2<T>& Other) const;
 
 		//所有的都小于等于
-		bool operator<=(const Vector2& Other) const;
+		bool operator<=(const Vector2<T>& Other) const;
 
 		//所有的都大于等于
-		bool operator>=(const Vector2& Other) const;
+		bool operator>=(const Vector2<T>& Other) const;
 
 		//+=
 		Vector2<T> &operator+=(const Vector2<T>& other)const;
 
 		//-=
-		Vector2<T> &operator-=(const Vector2<T> &v);
-		bool operator==(const Vector2<T> &v) const;
+		Vector2<T> &operator-=(const Vector2<T> &V);
+		bool operator==(const Vector2<T> &V) const;
 
 		//！=
-		bool operator!=(const Vector2<T> &v) const;
+		bool operator!=(const Vector2<T> &V) const;
 
 		//*=
 		template <typename U>Vector2<T> &operator*=(U f)
@@ -80,8 +80,6 @@ namespace oocd
 		//得到引用
 		T &operator[](int Index) { return ((Index == 0) ? X : Y); }
 
-		//得到复制
-		T operator[](int Index) { return ((Index == 0) ? X : Y); }
 	public:
 		Vector2<T> GetAbs() const;
 		Vector2<T> GetSignVector() const;
@@ -167,51 +165,51 @@ namespace oocd
 	template <typename T>
 	oocd::Vector2<T> oocd::Vector2<T>::operator*(const Vector2<T>& V) const
 	{
-		return Vector2<T>(x*V.x, y*V.x);
+		return Vector2<T>(X*V.X, Y*V.Y);
 	}
 
 
 
 	template <typename T>
-	bool Vector2<T>::operator!=(const Vector2<T> &v) const
+	bool Vector2<T>::operator!=(const Vector2<T> &V) const
 	{
 		return X != V.X || Y != V.Y;
 	}
 
 	template <typename T>
-	bool Vector2<T>::operator==(const Vector2<T> &v) const
+	bool Vector2<T>::operator==(const Vector2<T> &V) const
 	{
 		return X == V.X && Y == V.Y;
 	}
 
 	template <typename T>
-	oocd::Vector2<T> & Vector2<T>::operator-=(const Vector2<T> &v)
+	oocd::Vector2<T> & Vector2<T>::operator-=(const Vector2<T> &V)
 	{
 		X -= V.X; Y -= V.Y;
 		return *this;
 	}
 
 	template <typename T>
-	oocd::Vector2<T> & Vector2<T>::operator+=(const Vector2<T>& other) const
+	oocd::Vector2<T> & Vector2<T>::operator+=(const Vector2<T>& V) const
 	{
 		X += V.X; Y += V.Y;
 		return *this;
 	}
 
 	template <typename T>
-	bool Vector2<T>::operator>=(const Vector2& Other) const
+	bool Vector2<T>::operator>=(const Vector2<T>& Other) const
 	{
 		return X >= Other.X && Y >= Other.Y;
 	}
 
 	template <typename T>
-	bool Vector2<T>::operator<=(const Vector2& Other) const
+	bool Vector2<T>::operator<=(const Vector2<T>& Other) const
 	{
 		return X <= Other.X && Y <= Other.Y;
 	}
 
 	template <typename T>
-	bool Vector2<T>::operator>(const Vector2& Other) const
+	bool Vector2<T>::operator>(const Vector2<T>& Other) const
 	{
 		return X > Other.X && Y > Other.Y;
 	}
@@ -225,7 +223,7 @@ namespace oocd
 	template <typename T>
 	float Vector2<T>::DistSquared(const Vector2<T>& V1, const Vector2<T>& V2)
 	{
-		return pow(x - V1.x, 2) + pow(y - V1.y, 2)
+		return pow(V2.X - V1.X, 2) + pow(V2.Y - V1.Y, 2)
 	}
 
 	template <typename T>
@@ -261,19 +259,35 @@ namespace oocd
 	template <typename T>
 	oocd::Vector2<T> Vector2<T>::operator/(const Vector2<T>& V) const
 	{
-		return Vector2<T>(x / V.x, y / V.y);
+		return Vector2<T>(X / V.X, Y / V.Y);
 	}
 
 	template <typename T>
 	Vector2<T> Vector2<T>::operator-(const Vector2<T> &v) const
 	{
-		return Vector2<T>(x - other.x, y - other.y);
+		return Vector2<T>(X - v.X, Y - v.Y);
 	}
 
 	template <typename T>
 	Vector2<T> Vector2<T>::operator+(const Vector2<T>& other) const
 	{
-		return Vector2<T>(x + other.x, y + other.y);
+		return Vector2<T>(X + other.X, Y + other.Y);
 	}
-}
+
+
+	template <typename T>
+	inline std::ostream &operator<<(std::ostream &os, const Vector2<T> &v) {
+		os << "[ " << v.X<< ", " << v.Y << " ]";
+		return os;
+	}
+
+	//template <>
+	//inline std::ostream &operator<<(std::ostream &os, const Vector2<float> &v) {
+	//	os << StringPrintf("[ %f, %f ]", v.x, v.y);
+	//	return os;
+	//}
+
+
+	typedef Vector2<float> Vector2f;
+	typedef Vector2<int> Vector2i;
 }
