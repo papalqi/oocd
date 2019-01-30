@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ErrorException.cpp" />
+    <ClCompile Include="Geometry.h" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Pwindows.cpp" />
@@ -161,9 +162,11 @@
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="ErrorException.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="Point.h" />
     <ClInclude Include="Pwindows.h" />
     <ClInclude Include="render.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
