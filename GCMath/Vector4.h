@@ -31,6 +31,7 @@ namespace oocd
 	public:
 
 		 float& operator[](int ComponentIndex);
+
 		//取负
 		 Vector4 operator-() const;
 		 //+

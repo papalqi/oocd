@@ -188,4 +188,18 @@ namespace oocd
 		const float DetM = M.Determinant();
 		return this->TransformByUsingAdjointT(M, DetM, tmpTA);
 	}
+
+
+	bool MakeFrustumPlane(float A, float B, float C, float D, Plane& OutPlane)
+	{
+		const float	LengthSquared = A * A + B * B + C * C;
+		if (LengthSquared > DELTA*DELTA)
+		{
+			const float	InvLength = Math::InvSqrt(LengthSquared);
+			OutPlane = Plane(-A * InvLength, -B * InvLength, -C * InvLength, D * InvLength);
+			return 1;
+		}
+		else
+			return 0;
+	}
 }

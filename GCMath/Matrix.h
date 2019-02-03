@@ -1,7 +1,14 @@
 ﻿#pragma once
 
 #include "Vector3.h"
+#include "Vector4.h"
 #include"MathHelper.h"
+/**
+ * 4x4的矩阵
+ *矩阵是行向量赋值，所以
+ *                  
+ * 
+ */
 namespace  oocd
 {
 	class Matrix
@@ -11,16 +18,21 @@ namespace  oocd
 
 	public:
 		float M[4][4];
+
+
+
+		static const  Matrix Identity;
+
 	public:
 		// Constructors.
 		Matrix();
 		~Matrix();
-		//todo
+		//此函数实现在Plane文件中，对应的每一行的数值
 		Matrix(const Plane& InX, const Plane& InY, const Plane& InZ, const Plane& InW);
-
+		//对应的是每一行的数值，右下齐次为1
 		Matrix(const Vector& InX, const Vector& InY, const Vector& InZ, const Vector& InW);
 
-		// 初始化
+		// 初始化为标准矩阵
 		inline void SetIdentity();
 		//两个矩阵的乘法
 		Matrix operator* (const Matrix& Other) const;
@@ -43,7 +55,7 @@ namespace  oocd
 		//矩阵是否不相等
 		inline bool operator!=(const Matrix& Other) const;
 
-		// Homogeneous transform.
+		//应用于V4,V4为行向量，在左
 		Vector4 TransformVector4(const Vector4& V) const;
 
 		//进行变换
@@ -82,10 +94,10 @@ namespace  oocd
 		//得到带有缩放的vector
 		inline Vector GetScaleVector(float Tolerance = SMALL_NUMBER) const;
 
-		// 删除任何translation
+		//删除平移
 		inline Matrix RemoveTranslation() const;
 
-		//得到一个连接了其他变换的矩阵
+		//增加评议
 		inline Matrix ConcatTranslation(const Vector& Translation) const;
 
 		//是否有NAN
