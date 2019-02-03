@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include"Vector3.h"
-#include"Vector2.h"
-#include"Math.h"
+#include "Vector3.h"
+#include "Vector2.h"
+#include"MathHelper.h"
 namespace oocd
 {
 
-	struct Vector4
+	class Vector4
 	{
 	public:
 
@@ -155,4 +155,8 @@ namespace oocd
 		//寻找UV坐标
 		void FindBestAxisVectors3(Vector4& Axis1, Vector4& Axis2) const;
 	};
+	template <typename T>
+	 Vector3<T>::Vector3(const Vector4 &p) :X(p.X), Y(p.Y), Z(p.Z) {};
+
+
 }

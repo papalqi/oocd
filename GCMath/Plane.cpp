@@ -1,5 +1,5 @@
 ﻿#include "Plane.h"
-
+#include "Vector3.h"
 
 
 oocd::Plane::Plane()

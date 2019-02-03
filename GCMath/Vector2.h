@@ -1,9 +1,8 @@
 ﻿#pragma once
-#include<math.h>
+#include"MathHelper.h"
 #include<iostream>
 using namespace std;
-#define Point2 Vector2
-#define Normal2 Vector2
+
 
 namespace oocd
 {
@@ -28,7 +27,7 @@ namespace oocd
 	public:
 		Vector2<T> operator+(const Vector2<T>& other)const;
 		Vector2<T> operator-(const Vector2<T> &v) const;
-		template <typename U>Vector2<T> operator*(U f) const
+		template <typename T>Vector2<T> operator*(T f) const
 		{
 			return Vector2<T>(X*f, Y*f);
 		}
@@ -96,6 +95,14 @@ namespace oocd
 		static float DistSquared(const Vector2<T>& V1, const  Vector2<T>& V2);
 		static float DotProduct(const Vector2<T>& A, const Vector2<T>& B);
 	};
+
+
+	//Vector inline functions
+	template <typename T>
+	Vector2<T> operator*(float Scale, const Vector2<T>& V)
+	{
+		return V.operator*(Scale);
+	}
 
 	template <typename T>
 	oocd::Vector2<T> oocd::Vector2<T>::GetAbs() const
@@ -219,7 +226,7 @@ namespace oocd
 	template <typename T>
 	float Vector2<T>::DistSquared(const Vector2<T>& V1, const Vector2<T>& V2)
 	{
-		return pow(V2.X - V1.X, 2) + pow(V2.Y - V1.Y, 2)
+		return pow(V2.X - V1.X, 2) + pow(V2.Y - V1.Y, 2);
 	}
 
 	template <typename T>
@@ -276,17 +283,8 @@ namespace oocd
 		return os;
 	}
 
-	//template <>
-	//inline std::ostream &operator<<(std::ostream &os, const Vector2<float> &v) {
-	//	os << StringPrintf("[ %f, %f ]", v.x, v.y);
-	//	return os;
-	//}
-
-	typedef Vector2<float> Vector2f;
-	typedef Vector2<int> Vector2i;
-	typedef Vector2<float> Point2f;
-	typedef Vector2<int> Point2i;
-	typedef Vector2<float> Normal2f;
-	typedef Vector2<int> Normal2i;
+	
 	typedef Vector2<float> Vector2D;
+
+	
 }

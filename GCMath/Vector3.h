@@ -1,16 +1,15 @@
 ﻿#pragma once
-#include<math.h>
+#include"MathHelper.h"
 #include<iostream>
 using namespace std;
 
-#define  Point3 Vector3
-#define Normal3 Vector3
+
 
 namespace oocd
 {
 	//typedef Vector3<Float> Vector3f;
 	//typedef Vector3<int> Vector3i;
-
+	class Vector4;
 	template <typename T>
 	class Vector3
 	{
@@ -23,16 +22,15 @@ namespace oocd
 
 	public:
 		Vector3() { X = Y = Z = 0; }
-		Vector3(const Vector4& V) : X(V.X), Y(V.Y), Z(V.Z) {};
+
 		Vector3(T xx, T yy, T zz) : X(xx), Y(yy), Z(zz) { }
-		explicit Vector3(const Vector3<T> &p) :X(p.X), Y(p.Y), Z(p.Z) {};
-
-		//explicit Vector3(const Vector2<T> &p) :X(p.X), Y(p.Y), Z(0) {};
-
+		 Vector3(const Vector3<T> &p) :X(p.X), Y(p.Y), Z(p.Z) {};
+		//explicit Vector3(const Vector2D &p) :X(p.X), Y(p.Y), Z(0) {};
+		 explicit Vector3(const Vector4 &p) ;
 	public:
 		Vector3<T> operator+(const Vector3<T>& other)const;
 		Vector3<T> operator-(const Vector3<T> &v) const;
-		template <typename U>Vector3<T> operator*(U f) const
+		template <typename T>Vector3<T> operator*(T f) const
 		{
 			return Vector3<T>(X*f, Y*f, Z*f);
 		}
@@ -101,6 +99,13 @@ namespace oocd
 		static float DistSquared(const Vector3<T>& V1, const  Vector3<T>& V2);
 		static float DotProduct(const Vector3<T>& A, const Vector3<T>& B);
 	};
+	//Vector inline functions
+	template <typename T>
+	Vector3<T> operator*(float Scale, const Vector3<T>& V)
+	{
+		return V.operator*(Scale);
+	}
+
 
 	template <typename T>
 	T oocd::Vector3<T>::SizeSquared() const
@@ -188,7 +193,7 @@ namespace oocd
 	template <typename T>
 	bool Vector3<T>::operator==(const Vector3<T> &V) const
 	{
-		return X == V.X && Y == V.Y; && Z == V.Z;
+		return X == V.X && Y == V.Y && Z == V.Z;
 	}
 
 	template <typename T>
@@ -232,7 +237,7 @@ namespace oocd
 	template <typename T>
 	float Vector3<T>::DistSquared(const Vector3<T>& V1, const Vector3<T>& V2)
 	{
-		return pow(V2.X - V1.X, 2) + pow(V2.Y - V1.Y, 2) + pow(V2.Z - V1.Z, 2)
+		return pow(V2.X - V1.X, 2) + pow(V2.Y - V1.Y, 2) + pow(V2.Z - V1.Z, 2);
 	}
 
 	template <typename T>
@@ -294,17 +299,7 @@ namespace oocd
 		return os;
 	}
 
-	//template <>
-	//inline std::ostream &operator<<(std::ostream &os, const Vector3<float> &v) {
-	//	os << StringPrintf("[ %f, %f ]", v.x, v.y);
-	//	return os;
-	//}
-
-	typedef Vector3<float> Vector3f;
-	typedef Vector3<int> Vector3i;
-	typedef Vector3<float> Point3f;
-	typedef Vector3<int> Point3i;
-	typedef Vector3<float> Normal3f;
-	typedef Vector3<int> Normal3i;
 	typedef Vector3<float> Vector;
+
+
 }

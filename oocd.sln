@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2050
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BzTuts", "BzTuts\BzTuts.vcxproj", "{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1EF9B2B-330D-4270-BB85-C9A09AB80977} = {C1EF9B2B-330D-4270-BB85-C9A09AB80977}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Math", "Math", "{B1C4202E-BE9D-46EC-AFFA-A1AA3196D25F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GCMath", "GCMath\GCMath.vcxproj", "{C1EF9B2B-330D-4270-BB85-C9A09AB80977}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Debug|x64.ActiveCfg = Debug|x64
+		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Debug|x64.Build.0 = Debug|x64
+		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Debug|x86.ActiveCfg = Debug|Win32
+		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Debug|x86.Build.0 = Debug|Win32
+		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Release|x64.ActiveCfg = Release|x64
+		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Release|x64.Build.0 = Release|x64
+		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Release|x86.ActiveCfg = Release|Win32
+		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Release|x86.Build.0 = Release|Win32
+		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Debug|x64.ActiveCfg = Debug|x64
+		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Debug|x64.Build.0 = Debug|x64
+		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Debug|x86.ActiveCfg = Debug|Win32
+		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Debug|x86.Build.0 = Debug|Win32
+		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Release|x64.ActiveCfg = Release|x64
+		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Release|x64.Build.0 = Release|x64
+		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Release|x86.ActiveCfg = Release|Win32
+		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C1EF9B2B-330D-4270-BB85-C9A09AB80977} = {B1C4202E-BE9D-46EC-AFFA-A1AA3196D25F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1EC21F5D-C7DF-48C3-9CCF-68FC465C1092}
+	EndGlobalSection
+EndGlobal

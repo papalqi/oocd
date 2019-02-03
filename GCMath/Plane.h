@@ -1,13 +1,14 @@
 ﻿#pragma once
-#include"Vector3.h"
-#include"Vector4.h"
-#include"Math.h"
 
+#include"MathHelper.h"
+#include "Vector3.h"
+#include "Vector4.h"
+#include "Matrix.h"
 namespace oocd
 {
 
 	class Matrix;
-	struct Plane
+	class Plane
 		: public Vector
 	{
 	public:
@@ -85,8 +86,8 @@ namespace oocd
 		//*=
 		Plane operator*=(const Plane& V);
 
-	Plane Plane::Flip() const;
-	oocd::Plane oocd::Plane::operator/=(float V);
+	
+		Plane operator/=(float V);
 	};
 
 }
@@ -160,9 +161,9 @@ namespace oocd
 	/* Vector inline functions
 	 *****************************************************************************/
 
-	inline Vector Vector::MirrorByPlane(const Plane& plane) const
+	inline Vector MirrorByPlane(const Plane& plane ,const Vector V) 
 	{
-		return *this - plane * (2.f * plane.PlaneDot(*this));
+		return V - plane * (2.f * plane.PlaneDot(V));
 	}
 
 	inline Vector PointPlaneProject(const Vector& Point, const Plane& plane)

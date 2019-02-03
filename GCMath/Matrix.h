@@ -1,9 +1,7 @@
 ﻿#pragma once
 
-#include"Plane.h"
-#include"Vector3.h"
-#include"Vector4.h"
-#include"Math.h"
+#include "Vector3.h"
+#include"MathHelper.h"
 namespace  oocd
 {
 	class Matrix
@@ -160,12 +158,6 @@ namespace  oocd
 
 
 
-	private:
-
-		/**
-		 * Output an error message and trigger an ensure
-		 */
-		static   void ErrorEnsure(const TCHAR* Message);
 	
 };
 
