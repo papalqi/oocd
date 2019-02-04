@@ -17,13 +17,11 @@ float& oocd::Vector4::operator[](int ComponentIndex)
 Vector4 oocd::Vector4::operator-() const
 {
 	return Vector4(-X, -Y, -Z, -W);
-
 }
 
 Vector4 oocd::Vector4::operator+(const Vector4 & V) const
 {
 	return Vector4(X + V.X, Y + V.Y, Z + V.Z, W + V.W);
-
 }
 
 Vector4 oocd::Vector4::operator+=(const Vector4 & V)
@@ -35,7 +33,6 @@ Vector4 oocd::Vector4::operator+=(const Vector4 & V)
 Vector4 oocd::Vector4::operator-(const Vector4 & V) const
 {
 	return Vector4(X - V.X, Y - V.Y, Z - V.Z, W - V.W);
-
 }
 
 Vector4 oocd::Vector4::operator-=(const Vector4 & V)
@@ -47,7 +44,6 @@ Vector4 oocd::Vector4::operator-=(const Vector4 & V)
 Vector4 oocd::Vector4::operator*(float Scale) const
 {
 	return Vector4(X * Scale, Y * Scale, Z * Scale, W * Scale);
-
 }
 
 Vector4 oocd::Vector4::operator/(float Scale) const
@@ -64,7 +60,6 @@ Vector4 oocd::Vector4::operator/(const Vector4 & V) const
 Vector4 oocd::Vector4::operator*(const Vector4 & V) const
 {
 	return Vector4(X * V.X, Y * V.Y, Z * V.Z, W * V.W);
-
 }
 
 Vector4 oocd::Vector4::operator*=(const Vector4 & V)
@@ -104,13 +99,11 @@ oocd::Vector4::Vector4(float InX /*= 0.0f*/, float InY /*= 0.0f*/, float InZ /*=
 bool oocd::Vector4::operator==(const Vector4 & V) const
 {
 	return ((X == V.X) && (Y == V.Y) && (Z == V.Z) && (W == V.W));
-
 }
 
 bool oocd::Vector4::operator!=(const Vector4 & V) const
 {
 	return ((X != V.X) || (Y != V.Y) || (Z != V.Z) || (W != V.W));
-
 }
 
 Vector4 oocd::Vector4::operator^(const Vector4 & V) const
@@ -126,25 +119,21 @@ Vector4 oocd::Vector4::operator^(const Vector4 & V) const
 float & oocd::Vector4::Component(int Index)
 {
 	return (&X)[Index];
-
 }
 
 const float & oocd::Vector4::Component(int Index) const
 {
 	return (&X)[Index];
-
 }
 
 bool oocd::Vector4::Equals(const Vector4 & V, float Tolerance) const
 {
 	return abs(X - V.X) <= Tolerance && abs(Y - V.Y) <= Tolerance && abs(Z - V.Z) <= Tolerance && abs(W - V.W) <= Tolerance;
-
 }
 
 bool oocd::Vector4::IsUnit3(float LengthSquaredTolerance) const
 {
 	return abs(1.0f - SizeSquared3()) < LengthSquaredTolerance;
-
 }
 
 Vector4 oocd::Vector4::GetSafeNormal(float Tolerance) const
@@ -175,7 +164,6 @@ void oocd::Vector4::Set(float InX, float InY, float InZ, float InW)
 float oocd::Vector4::Size3() const
 {
 	return sqrt(X*X + Y * Y + Z * Z);
-
 }
 
 float oocd::Vector4::SizeSquared3() const

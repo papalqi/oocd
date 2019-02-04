@@ -4,7 +4,6 @@
 #include"MathHelper.h"
 namespace oocd
 {
-
 	class Vector4
 	{
 	public:
@@ -19,37 +18,34 @@ namespace oocd
 
 	public:
 
-		
 		Vector4(const Vector& InVector, float InW = 1.0f);
 
 		explicit Vector4(float InX = 0.0f, float InY = 0.0f, float InZ = 0.0f, float InW = 1.0f);
 
-
 		explicit Vector4(Vector2D InXY, Vector2D InZW);
-
 
 	public:
 
-		 float& operator[](int ComponentIndex);
+		float& operator[](int ComponentIndex);
 
 		//取负
-		 Vector4 operator-() const;
-		 //+
-		 Vector4 operator+(const Vector4& V) const;
+		Vector4 operator-() const;
+		//+
+		Vector4 operator+(const Vector4& V) const;
 
 		//+=
-		 Vector4 operator+=(const Vector4& V);
+		Vector4 operator+=(const Vector4& V);
 
 		//-
-		 Vector4 operator-(const Vector4& V) const;
+		Vector4 operator-(const Vector4& V) const;
 
-	//-=
-		 Vector4 operator-=(const Vector4& V);
+		//-=
+		Vector4 operator-=(const Vector4& V);
 
 		//*
-		 Vector4 operator*(float Scale) const;
+		Vector4 operator*(float Scale) const;
 
-	// /
+		// /
 		Vector4 operator/(float Scale) const;
 
 		// /
@@ -92,7 +88,7 @@ namespace oocd
 		//是否不等
 		bool operator!=(const Vector4& V) const;
 
-	// Cross product 
+		// Cross product
 		Vector4 operator^(const Vector4& V) const;
 
 	public:
@@ -109,28 +105,23 @@ namespace oocd
 		//标准化长度
 		bool IsUnit3(float LengthSquaredTolerance = KINDA_SMALL_NUMBER) const;
 
-		
 		//todo：FString ToString() const;
 
-		
 		//todo:bool InitFromString(const FString& InSourceString);
 
 		//得到安全的标准化
-		 Vector4 GetSafeNormal(float Tolerance = SMALL_NUMBER) const;
+		Vector4 GetSafeNormal(float Tolerance = SMALL_NUMBER) const;
 
 		//得到标准化
-		 Vector4 GetUnsafeNormal3() const;
+		Vector4 GetUnsafeNormal3() const;
 
 		//todo: FRotator ToOrientationRotator() const;
 
-	
 		//todo： FQuat ToOrientationQuat() const;
 
-	
 		//todo: FRotator Rotation() const;
 
-		
-		 void Set(float InX, float InY, float InZ, float InW);
+		void Set(float InX, float InY, float InZ, float InW);
 
 		//长度
 		float Size3() const;
@@ -144,7 +135,6 @@ namespace oocd
 		//有w的长度平方
 		float SizeSquared() const;
 
-		
 		bool ContainsNaN() const;
 
 		//检查是否0作用
@@ -157,7 +147,5 @@ namespace oocd
 		void FindBestAxisVectors3(Vector4& Axis1, Vector4& Axis2) const;
 	};
 	template <typename T>
-	 Vector3<T>::Vector3(const Vector4 &p) :X(p.X), Y(p.Y), Z(p.Z) {};
-
-
+	Vector3<T>::Vector3(const Vector4 &p) :X(p.X), Y(p.Y), Z(p.Z) {};
 }

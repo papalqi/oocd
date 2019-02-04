@@ -150,19 +150,26 @@
   <ItemGroup>
     <ClInclude Include="..\BzTuts\Bounds.h" />
     <ClInclude Include="Geometry.h" />
+    <ClInclude Include="MathBase.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="RotationMatrix.h" />
+    <ClInclude Include="Rotator.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Type.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector4.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MathBase.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="RotationMatrix.cpp" />
+    <ClCompile Include="Rotator.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

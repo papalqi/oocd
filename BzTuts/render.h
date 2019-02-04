@@ -141,12 +141,12 @@ private:
 
 	//建立Descriptor
 	void CreateRtvDescriptor();
-	private:
+private:
 	//const buffer desc存储堆
 	ID3D12DescriptorHeap* mainDescriptorHeap[frameBufferCount]; // this heap will store the descripor to our constant buffer
 	//const buffer上传堆
 	ID3D12Resource* constantBufferUploadHeap[frameBufferCount]; // this is the memory on the gpu where our constant buffer will be placed.
 
-	ConstantBuffer cbColorMultiplierData; 
+	ConstantBuffer cbColorMultiplierData;
 	UINT8* cbColorMultiplierGPUAddress[frameBufferCount]; // this is a pointer to the memory location we get when we map our constant buffer
 };

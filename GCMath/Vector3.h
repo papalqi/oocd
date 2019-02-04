@@ -3,8 +3,6 @@
 #include<iostream>
 using namespace std;
 
-
-
 namespace oocd
 {
 	//typedef Vector3<Float> Vector3f;
@@ -24,9 +22,10 @@ namespace oocd
 		Vector3() { X = Y = Z = 0; }
 
 		Vector3(T xx, T yy, T zz) : X(xx), Y(yy), Z(zz) { }
-		 Vector3(const Vector3<T> &p) :X(p.X), Y(p.Y), Z(p.Z) {};
+		Vector3(const Vector3<T> &p) :X(p.X), Y(p.Y), Z(p.Z) {};
 		//explicit Vector3(const Vector2D &p) :X(p.X), Y(p.Y), Z(0) {};
-		 explicit Vector3(const Vector4 &p) ;
+		 Vector3(const Vector4 &p);
+		//explicit Vector3<T>(const Vector4 &p) : X(p.X), Y(p.Y), Z(p.Z) {};
 	public:
 		Vector3<T> operator+(const Vector3<T>& other)const;
 		Vector3<T> operator-(const Vector3<T> &v) const;
@@ -105,7 +104,6 @@ namespace oocd
 	{
 		return V.operator*(Scale);
 	}
-
 
 	template <typename T>
 	T oocd::Vector3<T>::SizeSquared() const
@@ -300,6 +298,4 @@ namespace oocd
 	}
 
 	typedef Vector3<float> Vector;
-
-
 }

@@ -26,11 +26,6 @@ inline void ThrowIfFailed(HRESULT hr)
 	{
 		throw ErrorException(hr);
 	}
-	
 }
 
-
-
 #define IF_FALSE_RETURN_FALSE(input) if(!input)return false;
-
-

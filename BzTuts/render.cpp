@@ -241,7 +241,6 @@ void Render::AddVertexsAndIndes(Vertex* vList, int vBufferSize, DWORD *iList, in
 		memcpy(cbColorMultiplierGPUAddress[i], &cbColorMultiplierData, sizeof(cbColorMultiplierData));
 	}
 
-
 	// Now we execute the command list to upload the initial assets (triangle data)
 	commandList->Close();
 	ID3D12CommandList* ppCommandLists[] = { commandList };
@@ -323,7 +322,6 @@ void Render::UpdatePipeline()
 
 	// draw triangle
 	commandList->SetGraphicsRootSignature(rootSignature); // set the root signature
-
 
 		// set constant buffer descriptor heap
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mainDescriptorHeap[frameIndex] };
@@ -609,7 +607,7 @@ bool Render::CreateFenceAndRootSignature()
 	descriptorTableRanges[0].NumDescriptors = 1; //只有一个
 	descriptorTableRanges[0].BaseShaderRegister = 0; //使用的寄存器
 	descriptorTableRanges[0].RegisterSpace = 0; //通常是0
-	descriptorTableRanges[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; 
+	descriptorTableRanges[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	//建立描述表
 	D3D12_ROOT_DESCRIPTOR_TABLE descriptorTable;
@@ -620,7 +618,6 @@ bool Render::CreateFenceAndRootSignature()
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // this is a descriptor table
 	rootParameters[0].DescriptorTable = descriptorTable; // this is our descriptor table for this root parameter
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // our pixel shader will be the only shader accessing this parameter for now
-
 
 	// create root signature
 	CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;

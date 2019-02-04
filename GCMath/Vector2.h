@@ -3,7 +3,6 @@
 #include<iostream>
 using namespace std;
 
-
 namespace oocd
 {
 	//typedef Vector3<Float> Vector3f;
@@ -95,7 +94,6 @@ namespace oocd
 		static float DistSquared(const Vector2<T>& V1, const  Vector2<T>& V2);
 		static float DotProduct(const Vector2<T>& A, const Vector2<T>& B);
 	};
-
 
 	//Vector inline functions
 	template <typename T>
@@ -283,8 +281,5 @@ namespace oocd
 		return os;
 	}
 
-	
 	typedef Vector2<float> Vector2D;
-
-	
 }

@@ -4,11 +4,8 @@ using namespace oocd;
 const Matrix Matrix::Identity(Plane(1, 0, 0, 0), Plane(0, 1, 0, 0),
 	Plane(0, 0, 1, 0), Plane(0, 0, 0, 1));
 
-
-
 oocd::Matrix::Matrix()
 {
-
 }
 
 void oocd::Matrix::SetIdentity()
@@ -68,9 +65,7 @@ oocd::Vector oocd::Matrix::InverseTransformPosition(const Vector &V) const
 
 oocd::Vector4 oocd::Matrix::TransformVector(const Vector& V) const
 {
-
 	return TransformVector4(Vector4(V.X, V.Y, V.Z, 0.0f));
-
 }
 
 oocd::Matrix oocd::Matrix::GetTransposed() const
@@ -368,7 +363,6 @@ oocd::Matrix oocd::Matrix::ApplyScale(float Scale)
 oocd::Vector oocd::Matrix::GetOrigin() const
 {
 	return Vector(M[3][0], M[3][1], M[3][2]);
-
 }
 
 oocd::Vector oocd::Matrix::GetScaledAxis(Axis tAxis) const
@@ -385,7 +379,7 @@ oocd::Vector oocd::Matrix::GetScaledAxis(Axis tAxis) const
 		return Vector(M[2][0], M[2][1], M[2][2]);
 
 	default:
-	
+
 		return Vector::ZeroVector;
 	}
 }
@@ -419,7 +413,6 @@ void oocd::Matrix::SetAxis(int i, const Vector& Axis)
 
 void oocd::Matrix::SetOrigin(const Vector& NewOrigin)
 {
-
 	M[3][0] = NewOrigin.X;
 	M[3][1] = NewOrigin.Y;
 	M[3][2] = NewOrigin.Z;
@@ -456,7 +449,6 @@ void oocd::Matrix::SetAxes(Vector* Axis0 /*= NULL*/, Vector* Axis1 /*= NULL*/, V
 oocd::Vector oocd::Matrix::GetColumn(int i) const
 {
 	return Vector(M[0][i], M[1][i], M[2][i]);
-
 }
 
 bool oocd::Matrix::GetFrustumNearPlane(Plane& OutPlane) const
@@ -528,7 +520,6 @@ bool oocd::Matrix::GetFrustumBottomPlane(Plane& OutPlane) const
 bool oocd::Matrix::operator!=(const Matrix& Other) const
 {
 	return !(*this == Other);
-
 }
 
 bool oocd::Matrix::operator==(const Matrix& Other) const
@@ -548,7 +539,6 @@ bool oocd::Matrix::operator==(const Matrix& Other) const
 void oocd::Matrix::operator*=(float Other)
 {
 	*this = *this*Other;
-
 }
 
 oocd::Matrix oocd::Matrix::operator+(const Matrix& Other) const
@@ -589,7 +579,6 @@ void oocd::Matrix::operator+=(const Matrix& Other)
 void oocd::Matrix::operator*=(const Matrix& Other)
 {
 	VectorMatrixMultiply(this, this, &Other);
-
 }
 
 oocd::Matrix::Matrix(const Vector& InX, const Vector& InY, const Vector& InZ, const Vector& InW)
@@ -599,4 +588,3 @@ oocd::Matrix::Matrix(const Vector& InX, const Vector& InY, const Vector& InZ, co
 	M[2][0] = InZ.X; M[2][1] = InZ.Y;  M[2][2] = InZ.Z;  M[2][3] = 0.0f;
 	M[3][0] = InW.X; M[3][1] = InW.Y;  M[3][2] = InW.Z;  M[3][3] = 1.0f;
 }
-

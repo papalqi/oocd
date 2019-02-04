@@ -1,22 +1,18 @@
 ﻿#include "Plane.h"
 #include "Vector3.h"
 
-
 oocd::Plane::Plane()
 {
-
 }
 
 oocd::Plane::Plane(const Vector4& V) : Vector(V)
 , W(V.W)
 {
-
 }
 
 oocd::Plane::Plane(const Plane& P) : Vector(P)
 , W(P.W)
 {
-
 }
 
 oocd::Plane::Plane(Vector A, Vector B, Vector C) : Vector(((B - A) ^ (C - A)).GetSafeNormal())
@@ -27,12 +23,10 @@ oocd::Plane::Plane(Vector A, Vector B, Vector C) : Vector(((B - A) ^ (C - A)).Ge
 oocd::Plane::Plane(Vector InBase, const Vector &InNormal) : Vector(InNormal)
 , W(InBase | InNormal)
 {
-
 }
 
 oocd::Plane::Plane(Vector InNormal, float InW) : Vector(InNormal), W(InW)
 {
-
 }
 
 oocd::Plane oocd::Plane::operator/=(float V)
@@ -51,7 +45,6 @@ oocd::Plane oocd::Plane::operator*=(const Plane& V)
 oocd::Plane::Plane(float InX, float InY, float InZ, float InW) : Vector(InX, InY, InZ)
 , W(InW)
 {
-
 }
 
 oocd::Plane oocd::Plane::operator*=(float Scale)

@@ -88,7 +88,6 @@ void Pwindow::mainloop() {
 			DispatchMessage(&msg);
 		}
 		else {
-
 			// run game code
 			render.Update(); // update the game logic
 			render.run(); // execute the command queue (rendering the scene is the result of the gpu executing the command lists)

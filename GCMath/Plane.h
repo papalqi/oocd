@@ -6,7 +6,6 @@
 #include "Matrix.h"
 namespace oocd
 {
-
 	class Matrix;
 	class Plane
 		: public Vector
@@ -22,7 +21,6 @@ namespace oocd
 		//拷贝构造
 		Plane(const Plane& P);
 
-		
 		Plane(const Vector4& V);
 
 		Plane(float InX, float InY, float InZ, float InW);
@@ -86,10 +84,8 @@ namespace oocd
 		//*=
 		Plane operator*=(const Plane& V);
 
-	
 		Plane operator/=(float V);
 	};
-
 }
 
 /* FMath inline functions
@@ -161,7 +157,7 @@ namespace oocd
 	/* Vector inline functions
 	 *****************************************************************************/
 
-	inline Vector MirrorByPlane(const Plane& plane ,const Vector V) 
+	inline Vector MirrorByPlane(const Plane& plane, const Vector V)
 	{
 		return V - plane * (2.f * plane.PlaneDot(V));
 	}
@@ -188,7 +184,6 @@ namespace oocd
 		const float DetM = M.Determinant();
 		return this->TransformByUsingAdjointT(M, DetM, tmpTA);
 	}
-
 
 	bool MakeFrustumPlane(float A, float B, float C, float D, Plane& OutPlane)
 	{
