@@ -63,6 +63,9 @@
     <ClInclude Include="Quat.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
