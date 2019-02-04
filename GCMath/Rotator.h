@@ -3,6 +3,7 @@
 #include "Vector3.h"
 namespace oocd
 {
+	class Quat;
 	class Rotator
 	{
 	public:
@@ -63,7 +64,7 @@ namespace oocd
 
 		Vector GetVector() const;
 
-		//todo Quat Quaternion() const;
+		Quat Quaternion() const;
 
 		//Å·À­
 		Vector Euler() const;

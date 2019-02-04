@@ -154,6 +154,7 @@
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="Quat.h" />
     <ClInclude Include="RotationMatrix.h" />
     <ClInclude Include="Rotator.h" />
     <ClInclude Include="stdafx.h" />
@@ -168,6 +169,7 @@
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="Quat.cpp" />
     <ClCompile Include="RotationMatrix.cpp" />
     <ClCompile Include="Rotator.cpp" />
     <ClCompile Include="stdafx.cpp">

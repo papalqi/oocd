@@ -117,6 +117,8 @@ oocd::Vector oocd::Rotator::GetVector() const
 	return V;
 }
 
+
+
 oocd::Vector oocd::Rotator::Euler() const
 {
 	return Vector(Roll, Pitch, Yaw);

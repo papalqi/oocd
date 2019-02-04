@@ -60,6 +60,9 @@
     <ClInclude Include="RotationMatrix.h">
       <Filter>头文件\Matrix</Filter>
     </ClInclude>
+    <ClInclude Include="Quat.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -90,6 +93,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RotationMatrix.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Quat.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

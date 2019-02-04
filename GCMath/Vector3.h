@@ -91,6 +91,7 @@ namespace oocd
 		T Size() const;
 		T SizeSquared()const;
 		T GetMax() const;
+		bool IsNearlyZero(float Tolerance = KINDA_SMALL_NUMBER) const;
 		bool Equals(const Vector3<T>& V, float Tolerance = KINDA_SMALL_NUMBER) const;
 	public:
 		static float CrossProduct(const Vector3<T>& A, const Vector3<T>& B);
@@ -98,6 +99,16 @@ namespace oocd
 		static float DistSquared(const Vector3<T>& V1, const  Vector3<T>& V2);
 		static float DotProduct(const Vector3<T>& A, const Vector3<T>& B);
 	};
+
+	template <typename T>
+	bool oocd::Vector3<T>::IsNearlyZero(float Tolerance /*= KINDA_SMALL_NUMBER*/) const
+	{
+		return
+			Math::Abs(X) <= Tolerance
+			&& Math::Abs(Y) <= Tolerance
+			&& Math::Abs(Z) <= Tolerance;
+	}
+
 	//Vector inline functions
 	template <typename T>
 	Vector3<T> operator*(float Scale, const Vector3<T>& V)
