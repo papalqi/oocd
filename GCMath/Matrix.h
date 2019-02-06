@@ -86,7 +86,7 @@ namespace  oocd
 		inline Matrix TransposeAdjoint() const;
 		//删除任何的缩放
 		inline void RemoveScaling(float Tolerance = SMALL_NUMBER);
-
+		inline void Mirror(Axis MirrorAxis, Axis FlipAxis);
 		//得到/删除任何的缩放的矩阵
 		inline Matrix GetMatrixWithoutScale(float Tolerance = SMALL_NUMBER) const;
 		//删除任何缩放，返回带有缩放的vector

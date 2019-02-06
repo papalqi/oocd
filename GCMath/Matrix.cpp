@@ -195,6 +195,53 @@ void oocd::Matrix::RemoveScaling(float Tolerance /*= SMALL_NUMBER*/)
 	M[2][2] *= Scale2;
 }
 
+void oocd::Matrix::Mirror(Axis MirrorAxis, Axis FlipAxis)
+{
+	if (MirrorAxis == Axis::X)
+	{
+		M[0][0] *= -1.f;
+		M[1][0] *= -1.f;
+		M[2][0] *= -1.f;
+
+		M[3][0] *= -1.f;
+	}
+	else if (MirrorAxis == Axis::Y)
+	{
+		M[0][1] *= -1.f;
+		M[1][1] *= -1.f;
+		M[2][1] *= -1.f;
+
+		M[3][1] *= -1.f;
+	}
+	else if (MirrorAxis == Axis::Z)
+	{
+		M[0][2] *= -1.f;
+		M[1][2] *= -1.f;
+		M[2][2] *= -1.f;
+
+		M[3][2] *= -1.f;
+	}
+
+	if (FlipAxis == Axis::X)
+	{
+		M[0][0] *= -1.f;
+		M[0][1] *= -1.f;
+		M[0][2] *= -1.f;
+	}
+	else if (FlipAxis == Axis::Y)
+	{
+		M[1][0] *= -1.f;
+		M[1][1] *= -1.f;
+		M[1][2] *= -1.f;
+	}
+	else if (FlipAxis == Axis::Z)
+	{
+		M[2][0] *= -1.f;
+		M[2][1] *= -1.f;
+		M[2][2] *= -1.f;
+	}
+}
+
 oocd::Matrix oocd::Matrix::GetMatrixWithoutScale(float Tolerance /*= SMALL_NUMBER*/) const
 {
 	Matrix Result = *this;

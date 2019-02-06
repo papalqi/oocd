@@ -21,7 +21,7 @@ namespace oocd
 
 	public:
 		Vector3() { X = Y = Z = 0; }
-
+		Vector3(T zz) { X = Y = Z = zz; }
 		Vector3(T xx, T yy, T zz) : X(xx), Y(yy), Z(zz) { }
 		Vector3(const Vector3<T> &p) :X(p.X), Y(p.Y), Z(p.Z) {};
 		//explicit Vector3(const Vector2D &p) :X(p.X), Y(p.Y), Z(0) {};
@@ -40,9 +40,15 @@ namespace oocd
 			return Vector3<T>(X / f, Y / f, Z*f);
 		}
 
-	
+		Vector3<T> operator*=(const Vector3<T>& V)
+		{
+			X = X * V.X;
+			Y = Y * V.Y;
+			Z = Z * V.Z;
+			return *this;
+		}
 
-			Vector3<T>  operator/(const Vector3<T>& V) const;
+		Vector3<T>  operator/(const Vector3<T>& V) const;
 
 		//dot product
 		T operator|(const Vector3<T>& V) const;
@@ -63,7 +69,7 @@ namespace oocd
 		bool operator>=(const Vector3<T>& Other) const;
 
 		//+=
-		Vector3<T> &operator+=(const Vector3<T>& Z)const;
+		Vector3<T> &operator+=(const Vector3<T>& Z);
 
 		//-=
 		Vector3<T> &operator-=(const Vector3<T> &V);
@@ -73,7 +79,7 @@ namespace oocd
 		bool operator!=(const Vector3<T> &V) const;
 
 		//*=
-		template <typename U>Vector3<T> &operator*=(U f)
+		Vector3<T> &operator*=(T f)
 		{
 			X *= f; Y *= f;
 			return *this;
@@ -233,7 +239,7 @@ namespace oocd
 	}
 
 	template <typename T>
-	oocd::Vector3<T> & Vector3<T>::operator+=(const Vector3<T>& V) const
+	oocd::Vector3<T> & Vector3<T>::operator+=(const Vector3<T>& V) 
 	{
 		X += V.X; Y += V.Y; Z += V.Z;
 		return *this;
