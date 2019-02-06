@@ -149,21 +149,31 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\BzTuts\Bounds.h" />
+    <ClInclude Include="AssertionMacros.h" />
+    <ClInclude Include="DirectxMath.h" />
     <ClInclude Include="Geometry.h" />
+    <ClInclude Include="IOMacros.h" />
     <ClInclude Include="MathBase.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="OOCDVectorConstanst.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="Platform.h" />
     <ClInclude Include="Quat.h" />
     <ClInclude Include="RotationMatrix.h" />
     <ClInclude Include="Rotator.h" />
+    <ClInclude Include="ScalarRegister.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Type.h" />
+    <ClInclude Include="Vector.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector4.h" />
+    <ClInclude Include="VectorRegister.h" />
+    <ClInclude Include="VectorRegisterCommon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathBase.cpp" />
@@ -179,6 +189,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="Vector4.cpp" />

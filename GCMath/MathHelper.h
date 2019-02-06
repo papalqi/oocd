@@ -14,6 +14,8 @@
 #define INV_PI			(0.31830988618f)
 #define HALF_PI			(1.57079632679f)
 
+#define THRESH_VECTOR_NORMALIZED		(0.01f)		/** Allowed error for a normalized vector (against squared magnitude) */
+#define THRESH_QUAT_NORMALIZED			(0.01f)	
 #define DELTA			(0.00001f)
 using namespace std;
 using namespace DirectX;
@@ -141,6 +143,13 @@ namespace oocd
 		static  bool IsNearlyEqual(float A, float B, float ErrorTolerance = SMALL_NUMBER)
 		{
 			return Abs<float>(A - B) <= ErrorTolerance;
+		}
+
+		/** Performs a linear interpolation between two values, Alpha ranges from 0-1 */
+		template< class T, class U >
+		static  T Lerp(const T& A, const T& B, const U& Alpha)
+		{
+			return (T)(A + Alpha * (B - A));
 		}
 	};
 

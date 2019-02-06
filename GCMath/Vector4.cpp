@@ -1,6 +1,11 @@
 ﻿#include "Vector4.h"
 
 using namespace oocd;
+
+const oocd::Vector4 oocd::Vector4::ZeroVector(0,0,0,0);
+
+const oocd::Vector4 oocd::Vector4::ZeroAndUnitVector(0,0,0,1);
+
 oocd::Vector4::Vector4(const Vector& InVector, float InW /*= 1.0f*/)
 	: X(InVector.X)
 	, Y(InVector.Y)

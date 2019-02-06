@@ -17,7 +17,8 @@ namespace oocd
 		float W;
 
 	public:
-
+		static const Vector4 ZeroVector;
+		static const Vector4 ZeroAndUnitVector;
 		Vector4(const Vector& InVector, float InW = 1.0f);
 
 		explicit Vector4(float InX = 0.0f, float InY = 0.0f, float InZ = 0.0f, float InW = 1.0f);

@@ -17,6 +17,7 @@ namespace oocd
 
 		static  const Vector3<T> ZeroVector;
 		static  const Vector3<T> UnitVector;
+		static const Vector3<T>OneVector;
 
 	public:
 		Vector3() { X = Y = Z = 0; }
@@ -38,7 +39,10 @@ namespace oocd
 		{
 			return Vector3<T>(X / f, Y / f, Z*f);
 		}
-		Vector3<T>  operator/(const Vector3<T>& V) const;
+
+	
+
+			Vector3<T>  operator/(const Vector3<T>& V) const;
 
 		//dot product
 		T operator|(const Vector3<T>& V) const;
@@ -76,11 +80,24 @@ namespace oocd
 		}
 
 		// /=
-		template <typename U>Vector3<T> &operator/=(U f);
-		Vector3<T> operator-() const { return Vector3(-X, -Y); }
+		template <typename T>Vector3<T> &operator/=(T f);
+		Vector3<T> operator-() const { return Vector3<T>(-X, -Y,-Z); }
 
 		//得到引用
-		T &operator[](int Index) { return ((Index == 0) ? X : Y); }
+		T &operator[](int Index) {
+			if (Index == 0)
+			{
+				return X;
+			}
+			else if (Index == 1)
+			{
+				return Y;
+			}
+			else
+			{
+				return Z;
+			}
+		}
 
 	public:
 		Vector3<T> GetAbs() const;
@@ -99,6 +116,9 @@ namespace oocd
 		static float DistSquared(const Vector3<T>& V1, const  Vector3<T>& V2);
 		static float DotProduct(const Vector3<T>& A, const Vector3<T>& B);
 	};
+
+	
+		
 
 	template <typename T>
 	bool oocd::Vector3<T>::IsNearlyZero(float Tolerance /*= KINDA_SMALL_NUMBER*/) const

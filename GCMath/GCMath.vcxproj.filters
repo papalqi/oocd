@@ -16,6 +16,12 @@
     <Filter Include="头文件\Matrix">
       <UniqueIdentifier>{1a787472-fe37-4e6a-8ed4-ee93c9f6d74b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Vector">
+      <UniqueIdentifier>{f82dfa91-8f1a-4828-8629-5df9bd57f459}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Macros">
+      <UniqueIdentifier>{445fe913-0050-4045-9243-e27ef754fb26}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -33,15 +39,6 @@
     <ClInclude Include="Plane.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector3.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector4.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MathHelper.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -49,9 +46,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MathBase.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Type.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Matrix.h">
@@ -65,6 +59,48 @@
     </ClInclude>
     <ClInclude Include="Sphere.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="OOCDVectorConstanst.h">
+      <Filter>头文件\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>头文件\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>头文件\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorRegister.h">
+      <Filter>头文件\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector4.h">
+      <Filter>头文件\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorRegisterCommon.h">
+      <Filter>头文件\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="AssertionMacros.h">
+      <Filter>头文件\Macros</Filter>
+    </ClInclude>
+    <ClInclude Include="IOMacros.h">
+      <Filter>头文件\Macros</Filter>
+    </ClInclude>
+    <ClInclude Include="Type.h">
+      <Filter>头文件\Macros</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform.h">
+      <Filter>头文件\Macros</Filter>
+    </ClInclude>
+    <ClInclude Include="ScalarRegister.h">
+      <Filter>头文件\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>头文件\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectxMath.h">
+      <Filter>头文件\Vector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +135,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Quat.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
