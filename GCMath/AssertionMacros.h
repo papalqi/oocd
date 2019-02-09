@@ -5,3 +5,7 @@
 #define checkfSlow(expr, format, ...)	{ CA_ASSUME(expr); }
 #define verifySlow(expr)				{ if(UNLIKELY(!(expr))) { CA_ASSUME(false); } }
 
+
+
+
+#define pps 1
