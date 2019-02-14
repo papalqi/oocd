@@ -1,4 +1,4 @@
-// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
+﻿// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -16,16 +16,14 @@ namespace oocd
 		friend struct Z_Construct_UScriptStruct_Transform_Statics;
 
 	protected:
-		/** Rotation of this transformation, as a quaternion. */
+		//旋转
 		Quat	MRotation;
-		/** Translation of this transformation, as a vector. */
+		//位置
 		Vector	Translation;
-		/** 3D scale (always applied in local space) as a vector. */
+		//大小
 		Vector	Scale3D;
 	public:
-		/**
-		* The identity transformation (Rotation = Quat::Identity, Translation = Vector::ZeroVector, Scale3D = (1,1,1)).
-		*/
+		//默认
 		static  const Transform Identity;
 		void DiagnosticCheckNaN_Translate() const {}
 		void DiagnosticCheckNaN_Rotate() const {}
@@ -34,300 +32,55 @@ namespace oocd
 		void DiagnosticCheck_IsValid() const {}
 
 
-		/** Default constructor. */
-		Transform()
-			: MRotation(0.f, 0.f, 0.f, 1.f)
-			, Translation(0.f)
-			, Scale3D(Vector::OneVector)
-		{
-		}
+		Transform();
 
-		/**
-		* Constructor with an initial translation
-		*
-		* @param InTranslation The value to use for the translation component
-		*/
-		explicit Transform(const Vector& InTranslation)
-			: MRotation(Quat::Identity),
-			Translation(InTranslation),
-			Scale3D(Vector::OneVector)
-		{
-			DiagnosticCheckNaN_All();
-		}
+		
+		explicit Transform(const Vector& InTranslation);
 
-		explicit Transform(const Quat& InRotation)
-			: MRotation(InRotation),
-			Translation(Vector::ZeroVector),
-			Scale3D(Vector::OneVector)
-		{
-			DiagnosticCheckNaN_All();
-		}
+		explicit Transform(const Quat& InRotation);
+
+		explicit Transform(const oocd::Rotator& InRotation);
 
 	
-		explicit Transform(const Rotator& InRotation)
-			: MRotation(InRotation),
-			Translation(Vector::ZeroVector),
-			Scale3D(Vector::OneVector)
-		{
-			DiagnosticCheckNaN_All();
-		}
+		Transform(const Quat& InRotation, const Vector& InTranslation, const Vector& InScale3D = Vector::OneVector);
 
 	
-		Transform(const Quat& InRotation, const Vector& InTranslation, const Vector& InScale3D = Vector::OneVector)
-			: MRotation(InRotation),
-			Translation(InTranslation),
-			Scale3D(InScale3D)
-		{
-			DiagnosticCheckNaN_All();
-		}
+		Transform(const Rotator& InRotation, const Vector& InTranslation, const Vector& InScale3D = Vector::OneVector);
 
 	
-		Transform(const Rotator& InRotation, const Vector& InTranslation, const Vector& InScale3D = Vector::OneVector)
-			: MRotation(InRotation),
-			Translation(InTranslation),
-			Scale3D(InScale3D)
-		{
-			DiagnosticCheckNaN_All();
-		}
+		Transform(const Transform& InTransform);
 
-		/**
-		* Copy-constructor
-		*
-		* @param InTransform The source transform from which all components will be copied
-		*/
-		Transform(const Transform& InTransform) :
-			MRotation(InTransform.MRotation),
-			Translation(InTransform.Translation),
-			Scale3D(InTransform.Scale3D)
-		{
-			DiagnosticCheckNaN_All();
-		}
-
-		/**
-		* Constructor for converting a Matrix (including scale) into a Transform.
-		*/
+		//转换构造
 		explicit Transform(const Matrix& InMatrix)
 		{
 			SetFromMatrix(InMatrix);
 			DiagnosticCheckNaN_All();
 		}
-
-		/** Constructor that takes basis axes and translation */
 		Transform(const Vector& InX, const Vector& InY, const Vector& InZ, const Vector& InTranslation)
 		{
 			SetFromMatrix(Matrix(InX, InY, InZ, InTranslation));
 			DiagnosticCheckNaN_All();
 		}
+		//得到大小matrix
+		Matrix ToMatrixWithScale() const;
 
-		/**
-		* Does a debugf of the contents of this Transform.
-		*/
-		void DebugPrint() const;
-
-		/** Debug purpose only **/
-		bool DebugEqualMatrix(const Matrix& Matrix) const;
-
-
-
-#ifdef IMPLEMENT_ASSIGNMENT_OPERATOR_MANUALLY
-		/**
-		* Copy another Transform into this one
-		*/
-		Transform& operator=(const Transform& Other)
-		{
-			this->Rotation = Other.Rotation;
-			this->Translation = Other.Translation;
-			this->Scale3D = Other.Scale3D;
-
-			return *this;
-		}
-#endif
-
-		/**
-		* Convert this Transform to a transformation matrix with scaling.
-		*/
-		Matrix ToMatrixWithScale() const
-		{
-			Matrix OutMatrix;
-
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST) && WITH_EDITORONLY_DATA
-			// Make sure Rotation is normalized when we turn it into a matrix.
-			check(IsRotationNormalized());
-#endif
-			OutMatrix.M[3][0] = Translation.X;
-			OutMatrix.M[3][1] = Translation.Y;
-			OutMatrix.M[3][2] = Translation.Z;
-
-			const float x2 = MRotation.X + MRotation.X;
-			const float y2 = MRotation.Y + MRotation.Y;
-			const float z2 = MRotation.Z + MRotation.Z;
-			{
-				const float xx2 = MRotation.X * x2;
-				const float yy2 = MRotation.Y * y2;
-				const float zz2 = MRotation.Z * z2;
-
-				OutMatrix.M[0][0] = (1.0f - (yy2 + zz2)) * Scale3D.X;
-				OutMatrix.M[1][1] = (1.0f - (xx2 + zz2)) * Scale3D.Y;
-				OutMatrix.M[2][2] = (1.0f - (xx2 + yy2)) * Scale3D.Z;
-			}
-			{
-				const float yz2 = MRotation.Y * z2;
-				const float wx2 = MRotation.W * x2;
-
-				OutMatrix.M[2][1] = (yz2 - wx2) * Scale3D.Z;
-				OutMatrix.M[1][2] = (yz2 + wx2) * Scale3D.Y;
-			}
-			{
-				const float xy2 = MRotation.X * y2;
-				const float wz2 = MRotation.W * z2;
-
-				OutMatrix.M[1][0] = (xy2 - wz2) * Scale3D.Y;
-				OutMatrix.M[0][1] = (xy2 + wz2) * Scale3D.X;
-			}
-			{
-				const float xz2 = MRotation.X * z2;
-				const float wy2 = MRotation.W * y2;
-
-				OutMatrix.M[2][0] = (xz2 + wy2) * Scale3D.Z;
-				OutMatrix.M[0][2] = (xz2 - wy2) * Scale3D.X;
-			}
-
-			OutMatrix.M[0][3] = 0.0f;
-			OutMatrix.M[1][3] = 0.0f;
-			OutMatrix.M[2][3] = 0.0f;
-			OutMatrix.M[3][3] = 1.0f;
-
-			return OutMatrix;
-		}
-
-		/**
-		* Convert this Transform to matrix with scaling and compute the inverse of that.
-		*/
 		Matrix ToInverseMatrixWithScale() const
 		{
 			// todo: optimize
 			return ToMatrixWithScale().Inverse();
 		}
 
-		/**
-		* Convert this Transform to inverse.
-		*/
-		Transform Inverse() const
-		{
-			Quat   InvRotation = MRotation.Inverse();
-			// this used to cause NaN if Scale contained 0 
-			Vector InvScale3D = GetSafeScaleReciprocal(Scale3D);
-			Vector InvTranslation = InvRotation * (InvScale3D * -Translation);
+		//得到逆变换
+		Transform Inverse() const;
 
-			return Transform(InvRotation, InvTranslation, InvScale3D);
-		}
+		//得到忽略scale的矩阵
+		Matrix ToMatrixNoScale() const;
 
-		/**
-		* Convert this Transform to a transformation matrix, ignoring its scaling
-		*/
-		Matrix ToMatrixNoScale() const
-		{
-			Matrix OutMatrix;
-
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST) && WITH_EDITORONLY_DATA
-			// Make sure Rotation is normalized when we turn it into a matrix.
-			check(IsRotationNormalized());
-#endif
-			OutMatrix.M[3][0] = Translation.X;
-			OutMatrix.M[3][1] = Translation.Y;
-			OutMatrix.M[3][2] = Translation.Z;
-
-			const float x2 = MRotation.X + MRotation.X;
-			const float y2 = MRotation.Y + MRotation.Y;
-			const float z2 = MRotation.Z + MRotation.Z;
-			{
-				const float xx2 = MRotation.X * x2;
-				const float yy2 = MRotation.Y * y2;
-				const float zz2 = MRotation.Z * z2;
-
-				OutMatrix.M[0][0] = (1.0f - (yy2 + zz2));
-				OutMatrix.M[1][1] = (1.0f - (xx2 + zz2));
-				OutMatrix.M[2][2] = (1.0f - (xx2 + yy2));
-			}
-			{
-				const float yz2 = MRotation.Y * z2;
-				const float wx2 = MRotation.W * x2;
-
-				OutMatrix.M[2][1] = (yz2 - wx2);
-				OutMatrix.M[1][2] = (yz2 + wx2);
-			}
-			{
-				const float xy2 = MRotation.X * y2;
-				const float wz2 = MRotation.W * z2;
-
-				OutMatrix.M[1][0] = (xy2 - wz2);
-				OutMatrix.M[0][1] = (xy2 + wz2);
-			}
-			{
-				const float xz2 = MRotation.X * z2;
-				const float wy2 = MRotation.W * y2;
-
-				OutMatrix.M[2][0] = (xz2 + wy2);
-				OutMatrix.M[0][2] = (xz2 - wy2);
-			}
-
-			OutMatrix.M[0][3] = 0.0f;
-			OutMatrix.M[1][3] = 0.0f;
-			OutMatrix.M[2][3] = 0.0f;
-			OutMatrix.M[3][3] = 1.0f;
-
-			return OutMatrix;
-		}
-
-		/** Set this transform to the weighted blend of the supplied two transforms. */
-		void Blend(const Transform& Atom1, const Transform& Atom2, float Alpha)
-		{
-
-			if (Alpha <= ZERO_ANIMWEIGHT_THRESH)
-			{
-				// if blend is all the way for child1, then just copy its bone atoms
-				(*this) = Atom1;
-			}
-			else if (Alpha >= 1.f - ZERO_ANIMWEIGHT_THRESH)
-			{
-				// if blend is all the way for child2, then just copy its bone atoms
-				(*this) = Atom2;
-			}
-			else
-			{
-				// Simple linear interpolation for translation and scale.
-				Translation = Math::Lerp(Atom1.Translation, Atom2.Translation, Alpha);
-				Scale3D = Math::Lerp(Atom1.Scale3D, Atom2.Scale3D, Alpha);
-				MRotation = Quat::FastLerp(Atom1.MRotation, Atom2.MRotation, Alpha);
-
-				// ..and renormalize
-				MRotation.Normalize();
-			}
-		}
+		//结合两个transform
+		void Blend(const Transform& Atom1, const Transform& Atom2, float Alpha);
 
 		/** Set this Transform to the weighted blend of it and the supplied Transform. */
-		void BlendWith(const Transform& OtherAtom, float Alpha)
-		{
-
-			if (Alpha > ZERO_ANIMWEIGHT_THRESH)
-			{
-				if (Alpha >= 1.f - ZERO_ANIMWEIGHT_THRESH)
-				{
-					// if blend is all the way for child2, then just copy its bone atoms
-					(*this) = OtherAtom;
-				}
-				else
-				{
-					// Simple linear interpolation for translation and scale.
-					Translation = Math::Lerp(Translation, OtherAtom.Translation, Alpha);
-					Scale3D = Math::Lerp(Scale3D, OtherAtom.Scale3D, Alpha);
-					MRotation = Quat::FastLerp(MRotation, OtherAtom.MRotation, Alpha);
-
-					// ..and renormalize
-					MRotation.Normalize();
-				}
-			}
-		}
+		void BlendWith(const Transform& OtherAtom, float Alpha);
 
 
 		/**
@@ -465,6 +218,7 @@ namespace oocd
 		Vector GetScaledAxis(Axis InAxis) const;
 		Vector GetUnitAxis(Axis InAxis) const;
 		void Mirror(Axis MirrorAxis, Axis FlipAxis);
+		//得到倒数
 		static Vector GetSafeScaleReciprocal(const Vector& InScale, float Tolerance = SMALL_NUMBER);
 
 		// temp function for easy conversion
@@ -1036,14 +790,7 @@ namespace oocd
 		* @param	OutTransform the constructed transform
 		*/
 		static void ConstructTransformFromMatrixWithDesiredScale(const Matrix& AMatrix, const Matrix& BMatrix, const Vector& DesiredScale, Transform& OutTransform);
-		/**
-		* Create a new transform: OutTransform = Base * Relative(-1) using the matrix while keeping the scale that's given by Base and Relative
-		* Please note that this operation is a lot more expensive than normal GetRelativeTrnasform
-		*
-		* @param  OutTransform pointer to transform that will store the result of Base * Relative(-1).
-		* @param  BAse Transform Base.
-		* @param  Relative Transform Relative.
-		*/
+	
 		static void GetRelativeTransformUsingMatrixWithScale(Transform* OutTransform, const Transform* Base, const Transform* Relative);
 	};
 
@@ -1370,47 +1117,5 @@ namespace oocd
 	SetFromMatrix(M);
 }
 
-
-
-
-
-
-// mathematically if you have 0 scale, it should be infinite, 
-// however, in practice if you have 0 scale, and relative transform doesn't make much sense 
-// anymore because you should be instead of showing gigantic infinite mesh
-// also returning BIG_NUMBER causes sequential NaN issues by multiplying 
-// so we hardcode as 0
- Vector Transform::GetSafeScaleReciprocal(const Vector& InScale, float Tolerance)
-{
-	Vector SafeReciprocalScale;
-	if (Math::Abs(InScale.X) <= Tolerance)
-	{
-		SafeReciprocalScale.X = 0.f;
-	}
-	else
-	{
-		SafeReciprocalScale.X = 1 / InScale.X;
-	}
-
-	if (Math::Abs(InScale.Y) <= Tolerance)
-	{
-		SafeReciprocalScale.Y = 0.f;
-	}
-	else
-	{
-		SafeReciprocalScale.Y = 1 / InScale.Y;
-	}
-
-	if (Math::Abs(InScale.Z) <= Tolerance)
-	{
-		SafeReciprocalScale.Z = 0.f;
-	}
-	else
-	{
-		SafeReciprocalScale.Z = 1 / InScale.Z;
-	}
-
-	return SafeReciprocalScale;
-}
 
 
