@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include"../GCMath/Type.h"
 #include"CameraType.h"
 namespace oocd
 {

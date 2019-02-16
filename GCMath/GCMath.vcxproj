@@ -153,7 +153,7 @@
     <ClInclude Include="DirectxMath.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="IOMacros.h" />
-    <ClInclude Include="Math.h" />
+    <ClInclude Include="GCMath.h" />
     <ClInclude Include="MathBase.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Matrix.h" />

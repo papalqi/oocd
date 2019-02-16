@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include"../GCMath/Math.h"
+#include"CoreMinimal.h"
 #include"EngineDefine.h"
 namespace CameraProjectionMode
 {
@@ -19,6 +19,7 @@ namespace CameraAnimPlaySpace
 		UserDefined,
 	};
 }
+using namespace oocd;
 
 struct CameraViewInfo
 {
