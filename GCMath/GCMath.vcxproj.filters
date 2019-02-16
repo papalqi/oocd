@@ -102,6 +102,9 @@
     <ClInclude Include="DirectxMath.h">
       <Filter>头文件\Vector</Filter>
     </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
