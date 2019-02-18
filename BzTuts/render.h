@@ -148,5 +148,39 @@ private:
 	ID3D12Resource* constantBufferUploadHeap[frameBufferCount]; // this is the memory on the gpu where our constant buffer will be placed.
 
 	ConstantBuffer cbColorMultiplierData;
-	UINT8* cbColorMultiplierGPUAddress[frameBufferCount]; // this is a pointer to the memory location we get when we map our constant buffer
+	UINT8* cbColorMultiplierGPUAddress[frameBufferCount]; 
+
+
+	struct ConstantBufferPerObject 
+	{
+		XMFLOAT4X4 wvpMat;
+	};
+
+
+	int ConstantBufferPerObjectAlignedSize = (sizeof(ConstantBufferPerObject) + 255) & ~255;
+
+	ConstantBufferPerObject cbPerObject; // this is the constant buffer data we will send to the gpu 
+											// (which will be placed in the resource we created above)
+
+	ID3D12Resource* constantBufferUploadHeaps[frameBufferCount]; // this is the memory on the gpu where constant buffers for each frame will be placed
+
+	UINT8* cbvGPUAddress[frameBufferCount]; // this is a pointer to each of the constant buffer resource heaps
+
+	XMFLOAT4X4 cameraProjMat; // this will store our projection matrix
+	XMFLOAT4X4 cameraViewMat; // this will store our view matrix
+
+	XMFLOAT4 cameraPosition; // this is our cameras position vector
+	XMFLOAT4 cameraTarget; // a vector describing the point in space our camera is looking at
+	XMFLOAT4 cameraUp; // the worlds up vector
+
+	XMFLOAT4X4 cube1WorldMat; // our first cubes world matrix (transformation matrix)
+	XMFLOAT4X4 cube1RotMat; // this will keep track of our rotation for the first cube
+	XMFLOAT4 cube1Position; // our first cubes position in space
+
+	XMFLOAT4X4 cube2WorldMat; // our first cubes world matrix (transformation matrix)
+	XMFLOAT4X4 cube2RotMat; // this will keep track of our rotation for the second cube
+	XMFLOAT4 cube2PositionOffset; // our second cube will rotate around the first cube, so this is the position offset from the first cube
+
+	int numCubeIndices; // the number of indices to draw the cube
 };
+
