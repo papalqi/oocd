@@ -23,9 +23,15 @@ namespace oocd
 		//如果为true，则在计算用于mesh的细节级别时考虑视角的范围。
 		uint32 bUseFieldOfViewForLOD : 1;
 		void SetUseFieldOfViewForLOD(bool bInUseFieldOfViewForLOD) { bUseFieldOfViewForLOD = bInUseFieldOfViewForLOD; }
+		CameraProjectionMode::Type ProjectionMode;
+		void SetProjectionMode(CameraProjectionMode::Type InProjectionMode) { ProjectionMode = InProjectionMode; }
 
 		Camera();
 		~Camera();
+
+	public:
+		virtual bool GetEditorPreviewInfo(float DeltaTime, CameraViewInfo& ViewOut) ;
+
 	};
 
 
