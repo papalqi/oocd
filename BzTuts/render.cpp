@@ -79,7 +79,6 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 	XMStoreFloat4x4(&cube2WorldMat, tmpMat); // store cube2's world matrix
 
 	return true;
-
 }
 
 void Render::Update()
@@ -131,9 +130,9 @@ void Render::Update()
 	// we want cube 2 to be half the size of cube 1, so we scale it by .5 in all dimensions
 	XMMATRIX scaleMat = XMMatrixScaling(0.5f, 0.5f, 0.5f);
 
-	// reuse worldMat. 
+	// reuse worldMat.
 	// first we scale cube2. scaling happens relative to point 0,0,0, so you will almost always want to scale first
-	// then we translate it. 
+	// then we translate it.
 	// then we rotate it. rotation always rotates around point 0,0,0
 	// finally we move it to cube 1's position, which will cause it to rotate around cube 1
 	worldMat = scaleMat * translationOffsetMat * rotMat * translationMat;
@@ -196,7 +195,7 @@ void Render::AddIndex(DWORD *iList, int iBufferSize)
 		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
 		IID_PPV_ARGS(&indexBuffer));
-
+	
 	vertexBuffer->SetName(L"Index Buffer Resource Heap");
 
 	ID3D12Resource* iBufferUploadHeap;
@@ -264,7 +263,6 @@ void Render::AddVertexsAndIndes(Vertex* vList, int vBufferSize, DWORD *iList, in
 
 	SetdepthStencil();
 
-		
 	// create the constant buffer resource heap
 	// We will update the constant buffer one or more times per frame, so we will use only an upload heap
 	// unlike previously we used an upload heap to upload the vertex and index data, and then copied over
@@ -274,8 +272,8 @@ void Render::AddVertexsAndIndes(Vertex* vList, int vBufferSize, DWORD *iList, in
 
 	// first we will create a resource heap (upload heap) for each frame for the cubes constant buffers
 	// As you can see, we are allocating 64KB for each resource we create. Buffer resource heaps must be
-	// an alignment of 64KB. We are creating 3 resources, one for each frame. Each constant buffer is 
-	// only a 4x4 matrix of floats in this tutorial. So with a float being 4 bytes, we have 
+	// an alignment of 64KB. We are creating 3 resources, one for each frame. Each constant buffer is
+	// only a 4x4 matrix of floats in this tutorial. So with a float being 4 bytes, we have
 	// 16 floats in one constant buffer, and we will store 2 constant buffers in each
 	// heap, one for each cube, thats only 64x2 bits, or 128 bits we are using for each
 	// resource, and each resource must be at least 64KB (65536 bits)
@@ -343,8 +341,7 @@ void Render::UpdatePipeline()
 		Running = false;
 	}
 
-	
-	hr = commandList->Reset(commandAllocator[frameIndex], pipelineStateObject.Get());
+	hr = commandList->Reset(commandAllocator[frameIndex], pipelineStateObject);
 	if (FAILED(hr))
 	{
 		Running = false;
@@ -470,7 +467,7 @@ void Render::Cleanup()
 		SAFE_RELEASE(fence[i]);
 	};
 
-	pipelineStateObject->Release();
+	SAFE_RELEASE(pipelineStateObject);
 	SAFE_RELEASE(rootSignature);
 	SAFE_RELEASE(vertexBuffer);
 	SAFE_RELEASE(indexBuffer);

@@ -7,6 +7,8 @@ using namespace DirectX; // we will be using the directxmath library
 //using namespace oocd;
 extern bool Running;
 
+
+
 int WINAPI WinMain(HINSTANCE hInstance,    //Main windows function
 	HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine,
@@ -15,7 +17,6 @@ int WINAPI WinMain(HINSTANCE hInstance,    //Main windows function
 {
 	//建立窗口
 	Pwindow mwindow;
-	//Vector3<float> sss;
 
 	//初始化窗口
 	CHECK_AND_OUT(mwindow.InitializeWindow(hInstance, nShowCmd, false), L"initialize error");
@@ -99,7 +100,7 @@ int WINAPI WinMain(HINSTANCE hInstance,    //Main windows function
 	};
 	int iBufferSize = sizeof(iList);
 	mwindow.render.AddVertexsAndIndes(vList, vBufferSize, iList, iBufferSize);
-
+	mwindow.render.numCubeIndices = sizeof(iList) / sizeof(DWORD);
 	// start the main loop
 	mwindow.mainloop();
 

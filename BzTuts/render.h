@@ -50,7 +50,7 @@ private:
 private:
 
 	//PSO
-	ComPtr<ID3D12PipelineState> pipelineStateObject; // pso containing a pipeline state
+	ID3D12PipelineState *pipelineStateObject; // pso containing a pipeline state
 
 	ID3D12RootSignature* rootSignature; // root signature defines data shaders will access
 
@@ -180,7 +180,7 @@ private:
 	XMFLOAT4X4 cube2WorldMat; // our first cubes world matrix (transformation matrix)
 	XMFLOAT4X4 cube2RotMat; // this will keep track of our rotation for the second cube
 	XMFLOAT4 cube2PositionOffset; // our second cube will rotate around the first cube, so this is the position offset from the first cube
-
+	public:
 	int numCubeIndices; // the number of indices to draw the cube
 };
 

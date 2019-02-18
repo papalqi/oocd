@@ -5,7 +5,6 @@
 #include "Type.h"
 #include "Vector.h"
 #include "AssertionMacros.h"
-//#include "Math/UnrealMathUtility.h"
 #include "VectorRegister.h"
 #include "ScalarRegister.h"
 namespace oocd

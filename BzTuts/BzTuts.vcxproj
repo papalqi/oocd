@@ -76,8 +76,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;C:\Users\Administrator\Desktop\BzTuts\GCMath;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;C:\Users\Administrator\Desktop\BzTuts\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;C:\Users\papalqi\source\repos\BzTuts\GCMath;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;C:\Users\papalqi\source\repos\BzTuts\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="ErrorException.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OCMath.cpp" />
@@ -161,8 +162,10 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraType.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="CoreMinimal.h" />
     <ClInclude Include="d3dx12.h" />
+    <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineDefine.h" />
     <ClInclude Include="ErrorException.h" />
     <ClInclude Include="OCMath.h" />
