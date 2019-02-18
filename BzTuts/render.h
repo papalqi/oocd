@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include"stdafx.h"
 #include <wrl.h>
+#include "TestMeshcpp.h"
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 const int frameBufferCount = 3;
@@ -17,7 +18,7 @@ public:
 
 	//初始化
 	bool InitD3D(int Width, int Height, HWND& hwnd, bool FullScreen, bool Running);
-
+	void LoadMesh(OCMesh one);
 	void AddVertexsAndIndes(Vertex* vList, int vBufferSize, DWORD *iList, int LSize);
 public:
 

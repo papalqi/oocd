@@ -158,6 +158,7 @@
     <ClCompile Include="OCMath.cpp" />
     <ClCompile Include="Pwindows.cpp" />
     <ClCompile Include="render.cpp" />
+    <ClCompile Include="TestMeshcpp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Pwindows.h" />
     <ClInclude Include="render.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TestMeshcpp.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">

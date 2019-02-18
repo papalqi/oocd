@@ -81,6 +81,13 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 	return true;
 }
 
+void Render::LoadMesh(OCMesh one)
+{
+	AddVertexsAndIndes(&one.vList[0],one.vBufferSize, &one.iList[0],one.iBufferSize);
+
+	numCubeIndices = one.iBufferSize;
+}
+
 void Render::Update()
 {
 	// update app logic, such as moving the camera or figuring out what objects are in view
