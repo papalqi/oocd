@@ -1,10 +1,10 @@
-﻿#pragma once
+#pragma once
 class StaticMeshRenderData
 {
 
 };
 
-struct StaticMeshVertexFactories
+struct StaticMeshOccluderData
 {
 
 };

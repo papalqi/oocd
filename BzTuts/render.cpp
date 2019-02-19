@@ -83,9 +83,16 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 
 void Render::LoadMesh(OCMesh one)
 {
-	AddVertexsAndIndes(&one.vList[0],one.vBufferSize, &one.iList[0],one.iBufferSize);
+	
+	XMVECTOR posVec = XMLoadFloat4(&one.MTransform.Position);
 
-	numCubeIndices = one.iBufferSize;
+	auto tmpMat = XMMatrixTranslationFromVector(posVec); 
+	XMStoreFloat4x4(&one.MTransform.RotMat, XMMatrixIdentity()); 
+	XMStoreFloat4x4(&one.MTransform.WorldMat, tmpMat); 
+	//进行顶点索引注册
+	AddVertexsAndIndes(one.GetVertex(),one.vBufferSize, one.GetIndex(),one.iBufferSize);
+	numCubeIndices = one.iList.size();
+
 }
 
 void Render::Update()
@@ -265,9 +272,11 @@ void Render::SetdepthStencil()
 
 void Render::AddVertexsAndIndes(Vertex* vList, int vBufferSize, DWORD *iList, int iBufferSize)
 {
+	//添加顶点
 	AddVertexs(vList, vBufferSize);
+	//添加索引
 	AddIndex(iList, iBufferSize);
-
+	//设置深度测试
 	SetdepthStencil();
 
 	// create the constant buffer resource heap
@@ -718,11 +727,8 @@ bool Render::CreateFenceAndRootSignature()
 bool Render::compileVertexShader(D3D12_SHADER_BYTECODE&vertexShaderBytecode)
 {
 	ID3DBlob* errorBuff;
+	ID3DBlob* vertexShader; 
 
-	// compile vertex shader
-	ID3DBlob* vertexShader; // d3d blob for holding vertex shader bytecode
-
-	// a buffer holding the error data if any
 	auto hr = D3DCompileFromFile(L"VertexShader.hlsl",
 		nullptr,
 		nullptr,
@@ -737,10 +743,6 @@ bool Render::compileVertexShader(D3D12_SHADER_BYTECODE&vertexShaderBytecode)
 		OutputDebugStringA((char*)errorBuff->GetBufferPointer());
 		return false;
 	}
-
-	// fill out a shader bytecode structure, which is basically just a pointer
-	// to the shader bytecode and the size of the shader bytecode
-	//D3D12_SHADER_BYTECODE vertexShaderBytecode = {};
 	vertexShaderBytecode.BytecodeLength = vertexShader->GetBufferSize();
 	vertexShaderBytecode.pShaderBytecode = vertexShader->GetBufferPointer();
 	return true;
@@ -750,7 +752,6 @@ bool Render::compilePixelShader(D3D12_SHADER_BYTECODE &pixelShaderBytecode)
 {
 	ID3DBlob* errorBuff;
 
-	// compile pixel shader
 	ID3DBlob* pixelShader;
 	auto hr = D3DCompileFromFile(L"PixelShader.hlsl",
 		nullptr,
@@ -767,8 +768,7 @@ bool Render::compilePixelShader(D3D12_SHADER_BYTECODE &pixelShaderBytecode)
 		return false;
 	}
 
-	// fill out shader bytecode structure for pixel shader
-	//D3D12_SHADER_BYTECODE pixelShaderBytecode = {};
+
 	pixelShaderBytecode.BytecodeLength = pixelShader->GetBufferSize();
 	pixelShaderBytecode.pShaderBytecode = pixelShader->GetBufferPointer();
 	return true;
@@ -776,47 +776,34 @@ bool Render::compilePixelShader(D3D12_SHADER_BYTECODE &pixelShaderBytecode)
 
 bool Render::CreatePsoAndInputLayout(D3D12_SHADER_BYTECODE &vertexShaderBytecode, D3D12_SHADER_BYTECODE &pixelShaderBytecode)
 {
-	//设置IL
+	//设置IL，只有两个参数
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{"COLOR",0,     DXGI_FORMAT_R32G32B32A32_FLOAT,0,12,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0}
 	};
 
-	// fill out an input layout description structure
+	//设置IL的desc
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc = {};
-
-	// we can get the number of elements in an array by "sizeof(array) / sizeof(arrayElementType)"
 	inputLayoutDesc.NumElements = sizeof(inputLayout) / sizeof(D3D12_INPUT_ELEMENT_DESC);
 	inputLayoutDesc.pInputElementDescs = inputLayout;
 
-	// create a pipeline state object (PSO)
+	//设置psoDesc
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {}; 
+	psoDesc.InputLayout = inputLayoutDesc; // IL描述
+	psoDesc.pRootSignature = rootSignature; // 设置root signature
+	psoDesc.VS = vertexShaderBytecode; //编译过的Vs
+	psoDesc.PS = pixelShaderBytecode; //
+	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE; // draw的类型
+	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; //  render target类型
+	psoDesc.SampleDesc = sampleDesc; // 采样类型
+	psoDesc.SampleMask = 0xffffffff; //
+	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT); // 默认
+	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT); // 默认
+	psoDesc.NumRenderTargets = 1; //只绑定以个
+	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT); //默认的深度测试
 
-	// In a real application, you will have many pso's. for each different shader
-	// or different combinations of shaders, different blend states or different rasterizer states,
-	// different topology types (point, line, triangle, patch), or a different number
-	// of render targets you will need a pso
-
-	// VS is the only required shader for a pso. You might be wondering when a case would be where
-	// you only set the VS. It's possible that you have a pso that only outputs data with the stream
-	// output, and not on a render target, which means you would not need anything after the stream
-	// output.
-
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {}; // a structure to define a pso
-	psoDesc.InputLayout = inputLayoutDesc; // the structure describing our input layout
-	psoDesc.pRootSignature = rootSignature; // the root signature that describes the input data this pso needs
-	psoDesc.VS = vertexShaderBytecode; // structure describing where to find the vertex shader bytecode and how large it is
-	psoDesc.PS = pixelShaderBytecode; // same as VS but for pixel shader
-	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE; // type of topology we are drawing
-	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // format of the render target
-	psoDesc.SampleDesc = sampleDesc; // must be the same sample description as the swapchain and depth/stencil buffer
-	psoDesc.SampleMask = 0xffffffff; // sample mask has to do with multi-sampling. 0xffffffff means point sampling is done
-	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT); // a default rasterizer state.
-	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT); // a default blent state.
-	psoDesc.NumRenderTargets = 1; // we are only binding one render target
-	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT); // a default depth stencil state
-
-	// create the pso
+	// 建立pso
 	auto hr = device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipelineStateObject));
 	if (FAILED(hr))
 	{
@@ -835,7 +822,7 @@ void Render::SetScissorRect()
 
 void Render::SetViewport()
 {
-	// Fill out the Viewport
+	//默认的viewport
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
 	viewport.Width = width;

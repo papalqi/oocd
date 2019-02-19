@@ -18,6 +18,7 @@ public:
 
 	//初始化
 	bool InitD3D(int Width, int Height, HWND& hwnd, bool FullScreen, bool Running);
+	//进行mesh注册
 	void LoadMesh(OCMesh one);
 	void AddVertexsAndIndes(Vertex* vList, int vBufferSize, DWORD *iList, int LSize);
 public:
@@ -39,6 +40,7 @@ public:
 	int height;
 public:
 	HANDLE fenceEvent;
+	vector<OCMesh> renderMesh;
 
 private:
 

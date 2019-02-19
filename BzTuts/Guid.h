@@ -1,4 +1,4 @@
-ï»¿#pragma once
+#pragma once
 #include"Type.h"
 #include<string>
 using namespace std;
@@ -7,7 +7,7 @@ using namespace std;
 
 enum class GuidFormats
 {
-	//32ä¸ªæ•°
+	//32¸öÊı
 	Digits,
 
 	/**
@@ -18,21 +18,21 @@ enum class GuidFormats
 	DigitsWithHyphens,
 
 	/**
-	 * *ç”±è¿å­—ç¬¦åˆ†éš”å¹¶ç”¨å¤§æ‹¬å·æ‹¬èµ·æ¥çš„32ä½æ•°å­—ã€‚
+	 * *ÓÉÁ¬×Ö·û·Ö¸ô²¢ÓÃ´óÀ¨ºÅÀ¨ÆğÀ´µÄ32Î»Êı×Ö¡£
 	 *
 	 * For example: {00000000-0000-0000-0000-000000000000}
 	 */
 	DigitsWithHyphensInBraces,
 
 	/**
-	 * ç”¨è¿å­—ç¬¦åˆ†éš”å¹¶ç”¨æ‹¬å·æ‹¬èµ·æ¥çš„32ä½æ•°å­—ã€‚
+	 * ÓÃÁ¬×Ö·û·Ö¸ô²¢ÓÃÀ¨ºÅÀ¨ÆğÀ´µÄ32Î»Êı×Ö¡£
 	 *
 	 * For example: (00000000-0000-0000-0000-000000000000)
 	 */
 	DigitsWithHyphensInParentheses,
 
 	/**
-	 * ç”¨é€—å·åˆ†éš”çš„åå…­è¿›åˆ¶å€¼ï¼Œç”¨å¤§æ‹¬å·æ‹¬èµ·æ¥ã€‚
+	 * ÓÃ¶ººÅ·Ö¸ôµÄÊ®Áù½øÖÆÖµ£¬ÓÃ´óÀ¨ºÅÀ¨ÆğÀ´¡£
 	 *
 	 * For example: {0x00000000,0x0000,0x0000,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}}
 	 */
@@ -43,7 +43,6 @@ struct Guid
 {
 public:
 
-	/** Default constructor. */
 	Guid()
 		: A(0)
 		, B(0)
@@ -51,51 +50,25 @@ public:
 		, D(0)
 	{ }
 
-	/**
-	 * Creates and initializes a new GUID from the specified components.
-	 *
-	 * @param InA The first component.
-	 * @param InB The second component.
-	 * @param InC The third component.
-	 * @param InD The fourth component.
-	 */
 	Guid(uint32 InA, uint32 InB, uint32 InC, uint32 InD)
 		: A(InA), B(InB), C(InC), D(InD)
 	{ }
 
 public:
 
-	/**
-	 * Compares two GUIDs for equality.
-	 *
-	 * @param X The first GUID to compare.
-	 * @param Y The second GUID to compare.
-	 * @return true if the GUIDs are equal, false otherwise.
-	 */
+
 	friend bool operator==(const Guid& X, const Guid& Y)
 	{
 		return ((X.A ^ Y.A) | (X.B ^ Y.B) | (X.C ^ Y.C) | (X.D ^ Y.D)) == 0;
 	}
 
-	/**
-	 * Compares two GUIDs for inequality.
-	 *
-	 * @param X The first GUID to compare.
-	 * @param Y The second GUID to compare.
-	 * @return true if the GUIDs are not equal, false otherwise.
-	 */
+
 	friend bool operator!=(const Guid& X, const Guid& Y)
 	{
 		return ((X.A ^ Y.A) | (X.B ^ Y.B) | (X.C ^ Y.C) | (X.D ^ Y.D)) != 0;
 	}
 
-	/**
-	 * Compares two GUIDs.
-	 *
-	 * @param X The first GUID to compare.
-	 * @param Y The second GUID to compare.
-	 * @return true if the first GUID is less than the second one.
-	 */
+
 	friend bool operator<(const Guid& X, const Guid& Y)
 	{
 		return	((X.A < Y.A) ? true : ((X.A > Y.A) ? false :
@@ -104,12 +77,7 @@ public:
 				((X.D < Y.D) ? true : ((X.D > Y.D) ? false : false)))))))); //-V583
 	}
 
-	/**
-	 * Provides access to the GUIDs components.
-	 *
-	 * @param Index The index of the component to return (0...3).
-	 * @return The component.
-	 */
+
 	uint32& operator[](int32 Index)
 	{
 		checkSlow(Index >= 0);
@@ -126,12 +94,7 @@ public:
 		return A;
 	}
 
-	/**
-	 * Provides read-only access to the GUIDs components.
-	 *
-	 * @param Index The index of the component to return (0...3).
-	 * @return The component.
-	 */
+
 	const uint32& operator[](int32 Index) const
 	{
 		checkSlow(Index >= 0);
@@ -266,7 +229,7 @@ public:
 
 public:
 
-	//ç¬¬ä¸€éƒ¨åˆ†
+	//µÚÒ»²¿·Ö
 	uint32 A;
 
 	uint32 B;

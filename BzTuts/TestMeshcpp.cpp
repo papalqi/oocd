@@ -1,27 +1,17 @@
-#include "TestMeshcpp.h"
+Ôªø#include "TestMeshcpp.h"
 
 
 
 Vertex* OCMesh::GetVertex()
 {
-	/*Vertex*buffer = (new Vertex[sizeof(vBufferSize)]);
-	if (!vList.empty())
-	{
-		memcpy(buffer, &vList[0], vList.size() * sizeof(Vertex));
-	}
-	return buffer;*/
+
 	return BeginVList;
 }
 
 DWORD *OCMesh::GetIndex()
 {
 
-	//DWORD *buffer = (new DWORD[sizeof(iBufferSize)]);
-	//if (!iList.empty())
-	//{
-	//	memcpy(buffer, &iList[0], iList.size() * sizeof(DWORD));
-	//}
-	//return buffer;
+
 	return BeginiList;
 }
 
@@ -29,7 +19,7 @@ OCMesh OCMesh::CreateTestMesh()
 {
 	OCMesh out;
 	out.vList = {
-		//«∞“ª∏ˆ√Ê
+		//Ââç‰∏Ä‰∏™Èù¢
 		{ -0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f },
 		{ 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f },
 		{ -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f },
