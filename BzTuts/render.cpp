@@ -9,7 +9,7 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 	// -- 建立工厂 -- //
 
 	IDXGIFactory4* dxgiFactory;
-	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory)));
+	ThrowIfFailed(CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory)));
 
 	// -- 建立适配器 -- //
 	IDXGIAdapter1* adapter = nullptr; // 显卡适配器
@@ -17,8 +17,7 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 	//寻找显卡
 	IF_FALSE_RETURN_FALSE(SetAdapter(adapter, dxgiFactory));
 
-	// -- 设置device -- //
-	IF_FALSE_RETURN_FALSE(SetDevice(adapter));
+
 
 	// -- 设置Commandqueue -- //
 	IF_FALSE_RETURN_FALSE(setCommandqueue());
@@ -44,192 +43,71 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 
 	//设置裁剪空间大小
 	SetScissorRect();
-
+	//设置cameraprojmat
 	XMMATRIX tmpMat = XMMatrixPerspectiveFovLH(45.0f*(3.14f / 180.0f), (float)Width / (float)Height, 0.1f, 1000.0f);
 	XMStoreFloat4x4(&cameraProjMat, tmpMat);
 
-	// set starting camera state
+	// 设置初始的camera状态
 	cameraPosition = XMFLOAT4(0.0f, 2.0f, -4.0f, 0.0f);
 	cameraTarget = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	cameraUp = XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f);
 
-	// build view matrix
+	// 建立cameraview
 	XMVECTOR cPos = XMLoadFloat4(&cameraPosition);
 	XMVECTOR cTarg = XMLoadFloat4(&cameraTarget);
 	XMVECTOR cUp = XMLoadFloat4(&cameraUp);
 	tmpMat = XMMatrixLookAtLH(cPos, cTarg, cUp);
 	XMStoreFloat4x4(&cameraViewMat, tmpMat);
-
-	// set starting cubes position
-	// first cube
-	cube1Position = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f); // set cube 1's position
-	XMVECTOR posVec = XMLoadFloat4(&cube1Position); // create xmvector for cube1's position
-
-	tmpMat = XMMatrixTranslationFromVector(posVec); // create translation matrix from cube1's position vector
-	XMStoreFloat4x4(&cube1RotMat, XMMatrixIdentity()); // initialize cube1's rotation matrix to identity matrix
-	XMStoreFloat4x4(&cube1WorldMat, tmpMat); // store cube1's world matrix
-
-	// second cube
-	cube2PositionOffset = XMFLOAT4(1.5f, 0.0f, 0.0f, 0.0f);
-	posVec = XMLoadFloat4(&cube2PositionOffset) + XMLoadFloat4(&cube1Position); // create xmvector for cube2's position
-																				// we are rotating around cube1 here, so add cube2's position to cube1
-
-	tmpMat = XMMatrixTranslationFromVector(posVec); // create translation matrix from cube2's position offset vector
-	XMStoreFloat4x4(&cube2RotMat, XMMatrixIdentity()); // initialize cube2's rotation matrix to identity matrix
-	XMStoreFloat4x4(&cube2WorldMat, tmpMat); // store cube2's world matrix
-
 	return true;
 }
 
-void Render::LoadMesh(OCMesh one)
+void Render::LoadMesh(OCMesh &one)
 {
-	
+	//将mesh增加到队尾
+	renderMesh.push_back(one);
+	//得到位置
 	XMVECTOR posVec = XMLoadFloat4(&one.MTransform.Position);
+	//得到位置矩阵
+	auto tmpMat = XMMatrixTranslationFromVector(posVec);
+	//设置mesh的rot矩阵
+	XMStoreFloat4x4(&one.MTransform.RotMat, XMMatrixIdentity());
+	//设置mesh的WorldMat
+	XMStoreFloat4x4(&one.MTransform.WorldMat, tmpMat);
+	one.RegistereForRender(device,commandList);
+}
 
-	auto tmpMat = XMMatrixTranslationFromVector(posVec); 
-	XMStoreFloat4x4(&one.MTransform.RotMat, XMMatrixIdentity()); 
-	XMStoreFloat4x4(&one.MTransform.WorldMat, tmpMat); 
-	//进行顶点索引注册
-	AddVertexsAndIndes(one.GetVertex(),one.vBufferSize, one.GetIndex(),one.iBufferSize);
-	numCubeIndices = one.iList.size();
-
+void Render::LoadMeshEnd()
+{
+	CreateConstantBuffer();
+	SetdepthStencil();
 }
 
 void Render::Update()
 {
-	// update app logic, such as moving the camera or figuring out what objects are in view
+	for (int i=0;i!= renderMesh.size();i++)
+	{
+		// 建立旋转矩阵
+		XMMATRIX rotXMat = XMMatrixRotationX(0.0001f);
+		XMMATRIX rotYMat = XMMatrixRotationY(0.0002f);
+		XMMATRIX rotZMat = XMMatrixRotationZ(0.0003f);
+		XMMATRIX rotMat = XMLoadFloat4x4(&renderMesh[i].MTransform.RotMat) * rotXMat * rotYMat * rotZMat;
+		XMStoreFloat4x4(&renderMesh[i].MTransform.RotMat, rotMat);
 
-	// create rotation matrices
-	XMMATRIX rotXMat = XMMatrixRotationX(0.0001f);
-	XMMATRIX rotYMat = XMMatrixRotationY(0.0002f);
-	XMMATRIX rotZMat = XMMatrixRotationZ(0.0003f);
+		XMMATRIX translationMat = XMMatrixTranslationFromVector(XMLoadFloat4(&renderMesh[i].MTransform.Position));
 
-	// add rotation to cube1's rotation matrix and store it
-	XMMATRIX rotMat = XMLoadFloat4x4(&cube1RotMat) * rotXMat * rotYMat * rotZMat;
-	XMStoreFloat4x4(&cube1RotMat, rotMat);
+		XMMATRIX worldMat = rotMat * translationMat;
+		XMStoreFloat4x4(&renderMesh[i].MTransform.WorldMat, worldMat);
+		// 更新每一个constant buffer
+		//建立mvp矩阵
+		XMMATRIX viewMat = XMLoadFloat4x4(&cameraViewMat); 
+		XMMATRIX projMat = XMLoadFloat4x4(&cameraProjMat);
+		XMMATRIX wvpMat = XMLoadFloat4x4(&renderMesh[i].MTransform.WorldMat) * viewMat * projMat; 
+		XMMATRIX transposed = XMMatrixTranspose(wvpMat); // must transpose wvp matrix for the gpu
+		XMStoreFloat4x4(&cbPerObject.wvpMat, transposed);
+	}
 
-	// create translation matrix for cube 1 from cube 1's position vector
-	XMMATRIX translationMat = XMMatrixTranslationFromVector(XMLoadFloat4(&cube1Position));
-
-	// create cube1's world matrix by first rotating the cube, then positioning the rotated cube
-	XMMATRIX worldMat = rotMat * translationMat;
-
-	// store cube1's world matrix
-	XMStoreFloat4x4(&cube1WorldMat, worldMat);
-
-	// update constant buffer for cube1
-	// create the wvp matrix and store in constant buffer
-	XMMATRIX viewMat = XMLoadFloat4x4(&cameraViewMat); // load view matrix
-	XMMATRIX projMat = XMLoadFloat4x4(&cameraProjMat); // load projection matrix
-	XMMATRIX wvpMat = XMLoadFloat4x4(&cube1WorldMat) * viewMat * projMat; // create wvp matrix
-	XMMATRIX transposed = XMMatrixTranspose(wvpMat); // must transpose wvp matrix for the gpu
-	XMStoreFloat4x4(&cbPerObject.wvpMat, transposed); // store transposed wvp matrix in constant buffer
-
-	// copy our ConstantBuffer instance to the mapped constant buffer resource
-	memcpy(cbvGPUAddress[frameIndex], &cbPerObject, sizeof(cbPerObject));
-
-	// now do cube2's world matrix
-	// create rotation matrices for cube2
-	rotXMat = XMMatrixRotationX(0.0003f);
-	rotYMat = XMMatrixRotationY(0.0002f);
-	rotZMat = XMMatrixRotationZ(0.0001f);
-
-	// add rotation to cube2's rotation matrix and store it
-	rotMat = rotZMat * (XMLoadFloat4x4(&cube2RotMat) * (rotXMat * rotYMat));
-	XMStoreFloat4x4(&cube2RotMat, rotMat);
-
-	// create translation matrix for cube 2 to offset it from cube 1 (its position relative to cube1
-	XMMATRIX translationOffsetMat = XMMatrixTranslationFromVector(XMLoadFloat4(&cube2PositionOffset));
-
-	// we want cube 2 to be half the size of cube 1, so we scale it by .5 in all dimensions
-	XMMATRIX scaleMat = XMMatrixScaling(0.5f, 0.5f, 0.5f);
-
-	// reuse worldMat.
-	// first we scale cube2. scaling happens relative to point 0,0,0, so you will almost always want to scale first
-	// then we translate it.
-	// then we rotate it. rotation always rotates around point 0,0,0
-	// finally we move it to cube 1's position, which will cause it to rotate around cube 1
-	worldMat = scaleMat * translationOffsetMat * rotMat * translationMat;
-
-	wvpMat = XMLoadFloat4x4(&cube2WorldMat) * viewMat * projMat; // create wvp matrix
-	transposed = XMMatrixTranspose(wvpMat); // must transpose wvp matrix for the gpu
-	XMStoreFloat4x4(&cbPerObject.wvpMat, transposed); // store transposed wvp matrix in constant buffer
-
-	// copy our ConstantBuffer instance to the mapped constant buffer resource
-	memcpy(cbvGPUAddress[frameIndex] + ConstantBufferPerObjectAlignedSize, &cbPerObject, sizeof(cbPerObject));
-
-	// store cube2's world matrix
-	XMStoreFloat4x4(&cube2WorldMat, worldMat);
-}
-void Render::AddVertexs(Vertex* vList, int vBufferSize)
-{
-	//建立默认堆存储Vertex
-	device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(vBufferSize),
-		D3D12_RESOURCE_STATE_COPY_DEST,
-		nullptr,
-		IID_PPV_ARGS(&vertexBuffer));
-
-	// todo:修改命名函数
-	vertexBuffer->SetName(L"Vertex Buffer Resource Heap");
-
-	//建立upload堆
-	ID3D12Resource* vBufferUploadHeap;
-	device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(vBufferSize),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vBufferUploadHeap));
-
-	// todo:修改命名函数
-	vBufferUploadHeap->SetName(L"Vertex Buffer Upload Resource Heap");
-
-	D3D12_SUBRESOURCE_DATA vertexData = {};
-	vertexData.pData = reinterpret_cast<BYTE*>(vList);
-	vertexData.RowPitch = vBufferSize;
-	vertexData.SlicePitch = vBufferSize;
-
-	//将UploadHeap传入默认堆
-	UpdateSubresources(commandList, vertexBuffer, vBufferUploadHeap, 0, 0, 1, &vertexData);
-
-	// 将顶点缓冲区数据从复制目标状态转换为顶点缓冲区状态
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(vertexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
 }
 
-void Render::AddIndex(DWORD *iList, int iBufferSize)
-{
-	device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(iBufferSize),
-		D3D12_RESOURCE_STATE_COPY_DEST,
-		nullptr,
-		IID_PPV_ARGS(&indexBuffer));
-	
-	vertexBuffer->SetName(L"Index Buffer Resource Heap");
-
-	ID3D12Resource* iBufferUploadHeap;
-	device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(iBufferSize),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&iBufferUploadHeap));
-	iBufferUploadHeap->SetName(L"Index Buffer Upload Resource Heap");
-
-	D3D12_SUBRESOURCE_DATA indexData = {};
-	indexData.pData = reinterpret_cast<BYTE*>(iList);
-	indexData.RowPitch = iBufferSize;
-	indexData.SlicePitch = iBufferSize;
-
-	UpdateSubresources(commandList, indexBuffer, iBufferUploadHeap, 0, 0, 1, &indexData);
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(indexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
-}
 
 void Render::SetdepthStencil()
 {
@@ -270,168 +148,63 @@ void Render::SetdepthStencil()
 	device->CreateDepthStencilView(depthStencilBuffer, &depthStencilDesc, dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
-void Render::AddVertexsAndIndes(Vertex* vList, int vBufferSize, DWORD *iList, int iBufferSize)
-{
-	//添加顶点
-	AddVertexs(vList, vBufferSize);
-	//添加索引
-	AddIndex(iList, iBufferSize);
-	//设置深度测试
-	SetdepthStencil();
-
-	// create the constant buffer resource heap
-	// We will update the constant buffer one or more times per frame, so we will use only an upload heap
-	// unlike previously we used an upload heap to upload the vertex and index data, and then copied over
-	// to a default heap. If you plan to use a resource for more than a couple frames, it is usually more
-	// efficient to copy to a default heap where it stays on the gpu. In this case, our constant buffer
-	// will be modified and uploaded at least once per frame, so we only use an upload heap
-
-	// first we will create a resource heap (upload heap) for each frame for the cubes constant buffers
-	// As you can see, we are allocating 64KB for each resource we create. Buffer resource heaps must be
-	// an alignment of 64KB. We are creating 3 resources, one for each frame. Each constant buffer is
-	// only a 4x4 matrix of floats in this tutorial. So with a float being 4 bytes, we have
-	// 16 floats in one constant buffer, and we will store 2 constant buffers in each
-	// heap, one for each cube, thats only 64x2 bits, or 128 bits we are using for each
-	// resource, and each resource must be at least 64KB (65536 bits)
-	for (int i = 0; i < frameBufferCount; ++i)
-	{
-		// create resource for cube 1
-		auto hr = device->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), // this heap will be used to upload the constant buffer data
-			D3D12_HEAP_FLAG_NONE, // no flags
-			&CD3DX12_RESOURCE_DESC::Buffer(1024 * 64), // size of the resource heap. Must be a multiple of 64KB for single-textures and constant buffers
-			D3D12_RESOURCE_STATE_GENERIC_READ, // will be data that is read from so we keep it in the generic read state
-			nullptr, // we do not have use an optimized clear value for constant buffers
-			IID_PPV_ARGS(&constantBufferUploadHeaps[i]));
-		constantBufferUploadHeaps[i]->SetName(L"Constant Buffer Upload Resource Heap");
-
-		ZeroMemory(&cbPerObject, sizeof(cbPerObject));
-
-		CD3DX12_RANGE readRange(0, 0);	// We do not intend to read from this resource on the CPU. (so end is less than or equal to begin)
-
-		// map the resource heap to get a gpu virtual address to the beginning of the heap
-		hr = constantBufferUploadHeaps[i]->Map(0, &readRange, reinterpret_cast<void**>(&cbvGPUAddress[i]));
-
-		// Because of the constant read alignment requirements, constant buffer views must be 256 bit aligned. Our buffers are smaller than 256 bits,
-		// so we need to add spacing between the two buffers, so that the second buffer starts at 256 bits from the beginning of the resource heap.
-		memcpy(cbvGPUAddress[i], &cbPerObject, sizeof(cbPerObject)); // cube1's constant buffer data
-		memcpy(cbvGPUAddress[i] + ConstantBufferPerObjectAlignedSize, &cbPerObject, sizeof(cbPerObject)); // cube2's constant buffer data
-	}
-
-	// Now we execute the command list to upload the initial assets (triangle data)
-	commandList->Close();
-	ID3D12CommandList* ppCommandLists[] = { commandList };
-	commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
-
-	// increment the fence value now, otherwise the buffer might not be uploaded by the time we start drawing
-	fenceValue[frameIndex]++;
-	auto hr = commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]);
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
-
-	// create a vertex buffer view for the triangle. We get the GPU memory address to the vertex pointer using the GetGPUVirtualAddress() method
-	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-	vertexBufferView.StrideInBytes = sizeof(Vertex);
-	vertexBufferView.SizeInBytes = vBufferSize;
-
-	// create a vertex buffer view for the triangle. We get the GPU memory address to the vertex pointer using the GetGPUVirtualAddress() method
-	indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
-	indexBufferView.Format = DXGI_FORMAT_R32_UINT; // 32-bit unsigned integer (this is what a dword is, double word, a word is 2 bytes)
-	indexBufferView.SizeInBytes = iBufferSize;
-}
 
 void Render::UpdatePipeline()
 {
 	HRESULT hr;
-
-	// We have to wait for the gpu to finish with the command allocator before we reset it
+	//等待GPU完成
 	WaitForPreviousFrame();
 
-	// we can only reset an allocator once the gpu is done with it
-	// resetting an allocator frees the memory that the command list was stored in
-	hr = commandAllocator[frameIndex]->Reset();
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	//将分配器重置
+	CHECK_HR_RUN(commandAllocator[frameIndex]->Reset());
+	CHECK_HR_RUN(commandList->Reset(commandAllocator[frameIndex], pipelineStateObject));
 
-	hr = commandList->Reset(commandAllocator[frameIndex], pipelineStateObject);
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
-
-	// here we start recording commands into the commandList (which all the commands will be stored in the commandAllocator)
-
-	// transition the "frameIndex" render target from the present state to the render target state so the command list draws to it starting from here
+	//将渲染目标的状态从 present state 变为 render target state 
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTargets[frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
-
-	// here we again get the handle to our current render target view so we can set it as the render target in the output merger stage of the pipeline
+	//获得rtv句柄
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), frameIndex, rtvDescriptorSize);
 
-	// set the render target for the output merger stage (the output of the pipeline)
-	 // get a handle to the depth/stencil buffer
+	//得到深度测试句柄
 	CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-
-	// set the render target for the output merger stage (the output of the pipeline)
+	//设置
 	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
-
-	//	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
-
-		// Clear the render target by using the ClearRenderTargetView command
+	//清空
 	const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
 	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
-	// clear the depth/stencil buffer
+	// 清空深度测试
 	commandList->ClearDepthStencilView(dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	// draw triangle
-// set root signature
-	commandList->SetGraphicsRootSignature(rootSignature); // set the root signature
+	// 设置root signature
+	commandList->SetGraphicsRootSignature(rootSignature); 
 
 	// draw triangle
-	commandList->RSSetViewports(1, &viewport); // set the viewports
-	commandList->RSSetScissorRects(1, &scissorRect); // set the scissor rects
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // set the primitive topology
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView); // set the vertex buffer (using the vertex buffer view)
-	commandList->IASetIndexBuffer(&indexBufferView);
+	commandList->RSSetViewports(1, &viewport); 
+	commandList->RSSetScissorRects(1, &scissorRect); 
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); 
 
-	// first cube
 
-	// set cube1's constant buffer
-	commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress());
+	for (int i = 0; i != renderMesh.size(); i++)
+	{
 
-	// draw first cube
-	commandList->DrawIndexedInstanced(numCubeIndices, 1, 0, 0, 0);
+		commandList->IASetVertexBuffers(0, 1, &renderMesh[i].vertexBufferView); // set the vertex buffer (using the vertex buffer view)
+		commandList->IASetIndexBuffer(&renderMesh[i].indexBufferView);
+		commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress() +i* ConstantBufferPerObjectAlignedSize);
+		commandList->DrawIndexedInstanced(renderMesh[i].iList.size(), 1, 0, 0, 0);
+	}
 
-	// second cube
-
-	// set cube2's constant buffer. You can see we are adding the size of ConstantBufferPerObject to the constant buffer
-	// resource heaps address. This is because cube1's constant buffer is stored at the beginning of the resource heap, while
-	// cube2's constant buffer data is stored after (256 bits from the start of the heap).
-	commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress() + ConstantBufferPerObjectAlignedSize);
-
-	// draw second cube
-	commandList->DrawIndexedInstanced(numCubeIndices, 1, 0, 0, 0);
-
-	// transition the "frameIndex" render target from the render target state to the present state. If the debug layer is enabled, you will receive a
-	// warning if present is called on the render target when it's not in the present state
+	//调整状态
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTargets[frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
-	hr = commandList->Close();
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	CHECK_HR_RUN(commandList->Close());
+	
 }
 
 void Render::run()
 {
 	HRESULT hr;
-
-	UpdatePipeline(); // update the pipeline by sending commands to the commandqueue
+	//更新pso
+	UpdatePipeline(); 
 
 	// create an array of command lists (only one command list here)
 	ID3D12CommandList* ppCommandLists[] = { commandList };
@@ -485,8 +258,7 @@ void Render::Cleanup()
 
 	SAFE_RELEASE(pipelineStateObject);
 	SAFE_RELEASE(rootSignature);
-	SAFE_RELEASE(vertexBuffer);
-	SAFE_RELEASE(indexBuffer);
+
 	SAFE_RELEASE(depthStencilBuffer);
 	SAFE_RELEASE(dsDescriptorHeap);
 	for (int i = 0; i < frameBufferCount; ++i)
@@ -499,26 +271,17 @@ void Render::WaitForPreviousFrame()
 {
 	HRESULT hr;
 
-	// swap the current rtv buffer index so we draw on the correct buffer
+	
 	frameIndex = swapChain->GetCurrentBackBufferIndex();
 
-	// if the current fence value is still less than "fenceValue", then we know the GPU has not finished executing
-	// the command queue since it has not reached the "commandQueue->Signal(fence, fenceValue)" command
 	if (fence[frameIndex]->GetCompletedValue() < fenceValue[frameIndex])
 	{
-		// we have the fence create an event which is signaled once the fence's current value is "fenceValue"
-		hr = fence[frameIndex]->SetEventOnCompletion(fenceValue[frameIndex], fenceEvent);
-		if (FAILED(hr))
-		{
-			Running = false;
-		}
-
-		// We will wait until the fence has triggered the event that it's current value has reached "fenceValue". once it's value
-		// has reached "fenceValue", we know the command queue has finished executing
+		//将围栏值设为当前值，并设置事件
+		CHECK_HR_RUN( fence[frameIndex]->SetEventOnCompletion(fenceValue[frameIndex], fenceEvent));
+		//直到事件触发
 		WaitForSingleObject(fenceEvent, INFINITE);
 	}
 
-	// increment fenceValue for next frame
 	fenceValue[frameIndex]++;
 }
 
@@ -549,7 +312,7 @@ bool Render::SetAdapter(IDXGIAdapter1* adapter, IDXGIFactory4* dxgiFactory)
 		}
 
 		// we want a device that is compatible with direct3d 12 (feature level 11 or higher)
-		auto hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr);
+		auto hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), nullptr);
 		if (SUCCEEDED(hr))
 		{
 			adapterFound = true;
@@ -563,6 +326,9 @@ bool Render::SetAdapter(IDXGIAdapter1* adapter, IDXGIFactory4* dxgiFactory)
 	{
 		return false;
 	}
+
+	// -- 设置device -- //
+	IF_FALSE_RETURN_FALSE(SetDevice(adapter));
 	return true;
 }
 
@@ -570,7 +336,7 @@ bool Render::SetDevice(IDXGIAdapter1* adapter)
 {
 	if (FAILED(D3D12CreateDevice(
 		adapter,
-		D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_12_0,
 		IID_PPV_ARGS(&device)
 	)))
 	{
@@ -665,6 +431,46 @@ void Render::CreateRtvDescriptor()
 	}
 }
 
+void Render::CreateConstantBuffer()
+{
+
+	for (int i = 0; i < frameBufferCount; ++i)
+	{
+		// 建立upload
+		device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Buffer(1024 * 64), //大小，必须是64kb倍数
+			D3D12_RESOURCE_STATE_GENERIC_READ, // 读取
+			nullptr,
+			IID_PPV_ARGS(&constantBufferUploadHeaps[i]));
+		constantBufferUploadHeaps[i]->SetName(L"Constant Buffer Upload Resource Heap");
+
+		ZeroMemory(&cbPerObject, sizeof(cbPerObject));
+		//我们不需要读取，只需要写入
+		CD3DX12_RANGE readRange(0, 0);
+
+		//使其获取到内存中
+
+		for (int j = 0; j != renderMesh.size(); j++)
+		{
+			constantBufferUploadHeaps[i]->Map(0, &readRange, reinterpret_cast<void**>(&cbvGPUAddress[i]));
+			memcpy(cbvGPUAddress[i] + ConstantBufferPerObjectAlignedSize * j, &cbPerObject, sizeof(cbPerObject)); 
+
+		}
+	}
+
+	commandList->Close();
+	ID3D12CommandList* ppCommandLists[] = { commandList };
+	commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+	fenceValue[frameIndex]++;
+	CHECK_HR_RUN(commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]));
+
+
+}
+
+
 bool Render::CreateFenceAndRootSignature()
 {
 	HRESULT hr;
@@ -727,7 +533,7 @@ bool Render::CreateFenceAndRootSignature()
 bool Render::compileVertexShader(D3D12_SHADER_BYTECODE&vertexShaderBytecode)
 {
 	ID3DBlob* errorBuff;
-	ID3DBlob* vertexShader; 
+	ID3DBlob* vertexShader;
 
 	auto hr = D3DCompileFromFile(L"VertexShader.hlsl",
 		nullptr,
@@ -768,7 +574,6 @@ bool Render::compilePixelShader(D3D12_SHADER_BYTECODE &pixelShaderBytecode)
 		return false;
 	}
 
-
 	pixelShaderBytecode.BytecodeLength = pixelShader->GetBufferSize();
 	pixelShaderBytecode.pShaderBytecode = pixelShader->GetBufferPointer();
 	return true;
@@ -789,7 +594,7 @@ bool Render::CreatePsoAndInputLayout(D3D12_SHADER_BYTECODE &vertexShaderBytecode
 	inputLayoutDesc.pInputElementDescs = inputLayout;
 
 	//设置psoDesc
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {}; 
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
 	psoDesc.InputLayout = inputLayoutDesc; // IL描述
 	psoDesc.pRootSignature = rootSignature; // 设置root signature
 	psoDesc.VS = vertexShaderBytecode; //编译过的Vs

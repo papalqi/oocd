@@ -1,20 +1,16 @@
-﻿
-
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include"Pwindows.h"
 #include"render.h"
 #include "TestMeshcpp.h"
-using namespace DirectX; 
+using namespace DirectX;
 extern bool Running;
 
-
-int WINAPI WinMain(HINSTANCE hInstance,   
+int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine,
 	int nShowCmd)
 
 {
-	
 	Pwindow mwindow;
 
 	//todo:将要转换到engine
@@ -31,10 +27,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// 前三个是位置，后4个是颜色
 // a quad
-	auto mesh = OCMesh:: CreateTestMesh();
-	
-	mwindow.render.AddVertexsAndIndes(mesh.GetVertex(), mesh.vBufferSize, mesh.GetIndex(), mesh.iBufferSize);
-	mwindow.render.numCubeIndices = mesh.iList.size();
+	auto mesh = OCMesh::CreateTestMesh();
+
+	mwindow.render.LoadMesh(mesh);
+	mwindow.render.LoadMeshEnd();
 	// start the main loop
 	mwindow.mainloop();
 

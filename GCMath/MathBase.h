@@ -9,6 +9,7 @@ namespace oocd
 	class MathBase
 	{
 	public:
+
 		//将浮点数转换为整数
 		static   int TruncToInt(float F)
 		{
@@ -53,6 +54,7 @@ namespace oocd
 		{
 			return FloorToDouble(F + 0.5);
 		}
+
 		//向上
 		static  int CeilToInt(float F)
 		{
@@ -95,8 +97,10 @@ namespace oocd
 
 		// 指数函数
 		static  float Exp(float Value) { return expf(Value); }
+
 		// Returns 2^Value
 		static  float Exp2(float Value) { return powf(2.f, Value); /*exp2f(Value);*/ }
+
 		//log
 		static  float Loge(float Value) { return logf(Value); }
 		static  float LogX(float Base, float Value) { return Loge(Value) / Loge(Base); }
@@ -195,6 +199,7 @@ namespace oocd
 		static  uint32 FloorLog2(uint32 Value)
 		{
 			/*		// reference implementation
+
 					// 1500ms on test data
 					uint Bit = 32;
 					for (; Bit > 0;)
@@ -207,6 +212,7 @@ namespace oocd
 					}
 					return Bit;
 			*/
+
 			// same output as reference
 
 			// see http://codinggorilla.domemtech.com/?p=81 or http://en.wikipedia.org/wiki/Binary_logarithm but modified to return 0 for a input value of 0

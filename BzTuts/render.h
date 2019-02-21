@@ -18,9 +18,10 @@ public:
 
 	//初始化
 	bool InitD3D(int Width, int Height, HWND& hwnd, bool FullScreen, bool Running);
+
 	//进行mesh注册
-	void LoadMesh(OCMesh one);
-	void AddVertexsAndIndes(Vertex* vList, int vBufferSize, DWORD *iList, int LSize);
+	void LoadMesh(OCMesh& one);
+	void LoadMeshEnd();
 public:
 
 	//基础的更新，tick
@@ -39,10 +40,12 @@ public:
 	int width;
 	int height;
 public:
+	//fence事件，一旦变为当前值，那么通知cpu
 	HANDLE fenceEvent;
 	vector<OCMesh> renderMesh;
 
 private:
+
 
 	//编译VertexShader
 	bool compileVertexShader(D3D12_SHADER_BYTECODE& vertexShaderBytecode);
@@ -114,14 +117,9 @@ private:
 
 private:
 
-	ID3D12Resource* vertexBuffer;
-	ID3D12Resource*indexBuffer;
+
 	ID3D12Resource* depthStencilBuffer;
 
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
-	D3D12_INDEX_BUFFER_VIEW indexBufferView;
-	void AddVertexs(Vertex* vList, int vBufferSize);
-	void AddIndex(DWORD *iList, int LSize);
 
 	void SetdepthStencil();
 
@@ -130,7 +128,7 @@ private:
 	//render targets view 堆，有多少个缓存，里面就有几个这个
 	ID3D12DescriptorHeap* rtvDescriptorHeap;
 
-	//	depth
+	//深度测试
 	ID3D12DescriptorHeap* dsDescriptorHeap;
 
 	//视口数量
@@ -145,29 +143,29 @@ private:
 	//建立Descriptor
 	void CreateRtvDescriptor();
 private:
+
 	//const buffer desc存储堆
 	ID3D12DescriptorHeap* mainDescriptorHeap[frameBufferCount]; // this heap will store the descripor to our constant buffer
+
 	//const buffer上传堆
 	ID3D12Resource* constantBufferUploadHeap[frameBufferCount]; // this is the memory on the gpu where our constant buffer will be placed.
-
+	void CreateConstantBuffer();
 	ConstantBuffer cbColorMultiplierData;
-	UINT8* cbColorMultiplierGPUAddress[frameBufferCount]; 
+	UINT8* cbColorMultiplierGPUAddress[frameBufferCount];
 
-
-	struct ConstantBufferPerObject 
+	struct ConstantBufferPerObject
 	{
 		XMFLOAT4X4 wvpMat;
 	};
 
-
 	int ConstantBufferPerObjectAlignedSize = (sizeof(ConstantBufferPerObject) + 255) & ~255;
 
-	ConstantBufferPerObject cbPerObject; // this is the constant buffer data we will send to the gpu 
-											// (which will be placed in the resource we created above)
-
-	ID3D12Resource* constantBufferUploadHeaps[frameBufferCount]; // this is the memory on the gpu where constant buffers for each frame will be placed
-
-	UINT8* cbvGPUAddress[frameBufferCount]; // this is a pointer to each of the constant buffer resource heaps
+	//ConstantBuffer的数据
+	ConstantBufferPerObject cbPerObject; 
+	//GPU共享的显存
+	ID3D12Resource* constantBufferUploadHeaps[frameBufferCount]; 
+	//constantBuffer的GPU地址
+	UINT8* cbvGPUAddress[frameBufferCount]; 
 
 	XMFLOAT4X4 cameraProjMat; // this will store our projection matrix
 	XMFLOAT4X4 cameraViewMat; // this will store our view matrix
@@ -176,14 +174,6 @@ private:
 	XMFLOAT4 cameraTarget; // a vector describing the point in space our camera is looking at
 	XMFLOAT4 cameraUp; // the worlds up vector
 
-	XMFLOAT4X4 cube1WorldMat; // our first cubes world matrix (transformation matrix)
-	XMFLOAT4X4 cube1RotMat; // this will keep track of our rotation for the first cube
-	XMFLOAT4 cube1Position; // our first cubes position in space
-
-	XMFLOAT4X4 cube2WorldMat; // our first cubes world matrix (transformation matrix)
-	XMFLOAT4X4 cube2RotMat; // this will keep track of our rotation for the second cube
-	XMFLOAT4 cube2PositionOffset; // our second cube will rotate around the first cube, so this is the position offset from the first cube
-	public:
+	
 	int numCubeIndices; // the number of indices to draw the cube
 };
-

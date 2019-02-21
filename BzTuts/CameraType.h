@@ -25,14 +25,19 @@ struct CameraViewInfo
 {
 	Vector Location;
 	Rotator Rotation;
+
 	//只在透视投影中起作用
 	float FOV;
+
 	//原始的FOV
 	float DesiredFOV;
+
 	//正交投影使用
 	float OrthoWidth;
+
 	//正交投影的近面
 	float OrthoNearClipPlane;
+
 	//正交投影的远面
 	float OrthoFarClipPlane;
 	float AspectRatio;
