@@ -20,6 +20,7 @@ public:
 	bool InitD3D(int Width, int Height, HWND& hwnd, bool FullScreen, bool Running);
 	//进行mesh注册
 	void LoadMesh(OCMesh *one);
+	void LoadMeshEnd();
 public:
 
 	//基础的更新，tick

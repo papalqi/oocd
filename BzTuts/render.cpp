@@ -59,7 +59,7 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 	XMVECTOR cUp = XMLoadFloat4(&cameraUp);
 	tmpMat = XMMatrixLookAtLH(cPos, cTarg, cUp);
 	XMStoreFloat4x4(&cameraViewMat, tmpMat);
-
+	SetdepthStencil();
 
 	return true;
 }
@@ -73,10 +73,16 @@ void Render::LoadMesh(OCMesh* one)
 	XMStoreFloat4x4(&one->MTransform.RotMat, XMMatrixIdentity());
 	XMStoreFloat4x4(&one->MTransform.WorldMat, tmpMat);
 	//进行顶点索引注册
-	numCubeIndices = one->iList.size();
+	
 	one->RegistereForRender(device,commandList);
-	SetdepthStencil();
-	for (int i = 0; i < frameBufferCount; ++i)
+	
+
+
+}
+
+void Render::LoadMeshEnd()
+{
+	for (int i = 0; i < frameBufferCount; i++)
 	{
 		// create resource for cube 1
 		auto hr = device->CreateCommittedResource(
@@ -95,8 +101,11 @@ void Render::LoadMesh(OCMesh* one)
 		// map the resource heap to get a gpu virtual address to the beginning of the heap
 		hr = constantBufferUploadHeaps[i]->Map(0, &readRange, reinterpret_cast<void**>(&cbvGPUAddress[i]));
 
-		
-		memcpy(cbvGPUAddress[i], &cbPerObject, sizeof(cbPerObject)); // cube1's constant buffer data
+		for (int j = 0; j != renderMesh.size(); j++)
+		{
+			memcpy(cbvGPUAddress[i]+j* ConstantBufferPerObjectAlignedSize, &cbPerObject, sizeof(cbPerObject)); // cube1's constant buffer data
+
+		}
 	}
 
 	// Now we execute the command list to upload the initial assets (triangle data)
@@ -111,7 +120,6 @@ void Render::LoadMesh(OCMesh* one)
 	{
 		Running = false;
 	}
-
 }
 
 void Render::Update()
@@ -248,16 +256,16 @@ void Render::UpdatePipeline()
 	commandList->RSSetViewports(1, &viewport); // set the viewports
 	commandList->RSSetScissorRects(1, &scissorRect); // set the scissor rects
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // set the primitive topology
-	commandList->IASetVertexBuffers(0, 1, &renderMesh[0]->vertexBufferView); // set the vertex buffer (using the vertex buffer view)
-	commandList->IASetIndexBuffer(&renderMesh[0]->indexBufferView);
 
-	// first cube
 
-	// set cube1's constant buffer
-	commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress());
+	for (int i = 0; i != renderMesh.size(); i++)
+	{
+		commandList->IASetVertexBuffers(0, 1, &renderMesh[i]->vertexBufferView); // set the vertex buffer (using the vertex buffer view)
+		commandList->IASetIndexBuffer(&renderMesh[i]->indexBufferView);
+		commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress() + i*ConstantBufferPerObjectAlignedSize);
+		commandList->DrawIndexedInstanced(renderMesh[i]->iList.size(), 1, 0, 0, 0);
+	}
 
-	// draw first cube
-	commandList->DrawIndexedInstanced(numCubeIndices, 1, 0, 0, 0);
 
 	
 	hr = commandList->Close();

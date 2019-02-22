@@ -33,7 +33,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 // a quad
 	auto mesh = OCMesh:: CreateTestMesh();
 	mwindow.render.LoadMesh(mesh);
-	mwindow.render.numCubeIndices = mesh->iList.size();
+	mwindow.render.LoadMeshEnd();
 	// start the main loop
 	mwindow.mainloop();
 
