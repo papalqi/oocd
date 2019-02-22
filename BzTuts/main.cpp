@@ -31,8 +31,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// 前三个是位置，后4个是颜色
 // a quad
-	auto mesh = OCMesh:: CreateTestMesh();
-	mwindow.render.LoadMesh(mesh);
+	auto mesh1 = OCMesh:: CreateTestMesh();
+	mwindow.render.LoadMesh(mesh1);
+	auto mesh2 = OCMesh::CreateTestMesh();
+	
+	mesh2->MTransform.Position = XMFLOAT4(3.0f, 0.0f, 0.0f, 0.0f);
+	mwindow.render.LoadMesh(mesh2);
+
 	mwindow.render.LoadMeshEnd();
 	// start the main loop
 	mwindow.mainloop();
