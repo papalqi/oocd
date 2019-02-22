@@ -32,9 +32,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// 前三个是位置，后4个是颜色
 // a quad
 	auto mesh = OCMesh:: CreateTestMesh();
-	
-	mwindow.render.AddVertexsAndIndes(mesh.GetVertex(), mesh.vBufferSize, mesh.GetIndex(), mesh.iBufferSize);
-	mwindow.render.numCubeIndices = mesh.iList.size();
+	mwindow.render.LoadMesh(mesh);
+	mwindow.render.numCubeIndices = mesh->iList.size();
 	// start the main loop
 	mwindow.mainloop();
 

@@ -10,10 +10,10 @@ DWORD *OCMesh::GetIndex()
 	return BeginiList;
 }
 
-OCMesh OCMesh::CreateTestMesh()
+OCMesh *OCMesh::CreateTestMesh()
 {
-	OCMesh out;
-	out.vList = {
+	OCMesh *out=new OCMesh;
+	out->vList = {
 
 		//前一个面
 		{ -0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f },
@@ -46,9 +46,9 @@ OCMesh OCMesh::CreateTestMesh()
 		{ 0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f },
 		{ -0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f },
 	};
-	out.vBufferSize = out.vList.size() * sizeof(Vertex);
-	out.BeginVList = &out.vList[0];
-	out.iList = {
+	out->vBufferSize = out->vList.size() * sizeof(Vertex);
+	out->BeginVList = &out->vList[0];
+	out->iList = {
 
 		// ffront face
 		0, 1, 2, // first triangle
@@ -74,13 +74,13 @@ OCMesh OCMesh::CreateTestMesh()
 		20, 21, 22, // first triangle
 		20, 23, 21, // second triangle
 	};
-	out.BeginiList = &out.iList[0];
+	out->BeginiList = &out->iList[0];
 
-	out.iBufferSize = out.iList.size() * sizeof(DWORD);
+	out->iBufferSize = out->iList.size() * sizeof(DWORD);
 	return out;
 }
 
-void OCMesh::RegistereForRender(ID3D12Device4* device, ID3D12GraphicsCommandList* commandList)
+void OCMesh::RegistereForRender(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
 {
 	//建立默认堆存储Vertex
 	device->CreateCommittedResource(

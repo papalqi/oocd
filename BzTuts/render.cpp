@@ -81,17 +81,55 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 	return true;
 }
 
-void Render::LoadMesh(OCMesh one)
+void Render::LoadMesh(OCMesh* one)
 {
-	
-	XMVECTOR posVec = XMLoadFloat4(&one.MTransform.Position);
+	renderMesh.push_back(one);
+	XMVECTOR posVec = XMLoadFloat4(&one->MTransform.Position);
 
 	auto tmpMat = XMMatrixTranslationFromVector(posVec); 
-	XMStoreFloat4x4(&one.MTransform.RotMat, XMMatrixIdentity()); 
-	XMStoreFloat4x4(&one.MTransform.WorldMat, tmpMat); 
+	XMStoreFloat4x4(&one->MTransform.RotMat, XMMatrixIdentity());
+	XMStoreFloat4x4(&one->MTransform.WorldMat, tmpMat);
 	//进行顶点索引注册
-	AddVertexsAndIndes(one.GetVertex(),one.vBufferSize, one.GetIndex(),one.iBufferSize);
-	numCubeIndices = one.iList.size();
+	numCubeIndices = one->iList.size();
+	one->RegistereForRender(device,commandList);
+	SetdepthStencil();
+	for (int i = 0; i < frameBufferCount; ++i)
+	{
+		// create resource for cube 1
+		auto hr = device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), // this heap will be used to upload the constant buffer data
+			D3D12_HEAP_FLAG_NONE, // no flags
+			&CD3DX12_RESOURCE_DESC::Buffer(1024 * 64), // size of the resource heap. Must be a multiple of 64KB for single-textures and constant buffers
+			D3D12_RESOURCE_STATE_GENERIC_READ, // will be data that is read from so we keep it in the generic read state
+			nullptr, // we do not have use an optimized clear value for constant buffers
+			IID_PPV_ARGS(&constantBufferUploadHeaps[i]));
+		constantBufferUploadHeaps[i]->SetName(L"Constant Buffer Upload Resource Heap");
+
+		ZeroMemory(&cbPerObject, sizeof(cbPerObject));
+
+		CD3DX12_RANGE readRange(0, 0);	// We do not intend to read from this resource on the CPU. (so end is less than or equal to begin)
+
+		// map the resource heap to get a gpu virtual address to the beginning of the heap
+		hr = constantBufferUploadHeaps[i]->Map(0, &readRange, reinterpret_cast<void**>(&cbvGPUAddress[i]));
+
+		// Because of the constant read alignment requirements, constant buffer views must be 256 bit aligned. Our buffers are smaller than 256 bits,
+		// so we need to add spacing between the two buffers, so that the second buffer starts at 256 bits from the beginning of the resource heap.
+		memcpy(cbvGPUAddress[i], &cbPerObject, sizeof(cbPerObject)); // cube1's constant buffer data
+		memcpy(cbvGPUAddress[i] + ConstantBufferPerObjectAlignedSize, &cbPerObject, sizeof(cbPerObject)); // cube2's constant buffer data
+	}
+
+	// Now we execute the command list to upload the initial assets (triangle data)
+	commandList->Close();
+	ID3D12CommandList* ppCommandLists[] = { commandList };
+	commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+	// increment the fence value now, otherwise the buffer might not be uploaded by the time we start drawing
+	fenceValue[frameIndex]++;
+	auto hr = commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]);
+	if (FAILED(hr))
+	{
+		Running = false;
+	}
 
 }
 
@@ -161,75 +199,9 @@ void Render::Update()
 	// store cube2's world matrix
 	XMStoreFloat4x4(&cube2WorldMat, worldMat);
 }
-void Render::AddVertexs(Vertex* vList, int vBufferSize)
-{
-	//建立默认堆存储Vertex
-	device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(vBufferSize),
-		D3D12_RESOURCE_STATE_COPY_DEST,
-		nullptr,
-		IID_PPV_ARGS(&vertexBuffer));
 
-	// todo:修改命名函数
-	vertexBuffer->SetName(L"Vertex Buffer Resource Heap");
 
-	//建立upload堆
-	ID3D12Resource* vBufferUploadHeap;
-	device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(vBufferSize),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vBufferUploadHeap));
 
-	// todo:修改命名函数
-	vBufferUploadHeap->SetName(L"Vertex Buffer Upload Resource Heap");
-
-	D3D12_SUBRESOURCE_DATA vertexData = {};
-	vertexData.pData = reinterpret_cast<BYTE*>(vList);
-	vertexData.RowPitch = vBufferSize;
-	vertexData.SlicePitch = vBufferSize;
-
-	//将UploadHeap传入默认堆
-	UpdateSubresources(commandList, vertexBuffer, vBufferUploadHeap, 0, 0, 1, &vertexData);
-
-	// 将顶点缓冲区数据从复制目标状态转换为顶点缓冲区状态
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(vertexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
-}
-
-void Render::AddIndex(DWORD *iList, int iBufferSize)
-{
-	device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(iBufferSize),
-		D3D12_RESOURCE_STATE_COPY_DEST,
-		nullptr,
-		IID_PPV_ARGS(&indexBuffer));
-	
-	vertexBuffer->SetName(L"Index Buffer Resource Heap");
-
-	ID3D12Resource* iBufferUploadHeap;
-	device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(iBufferSize),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&iBufferUploadHeap));
-	iBufferUploadHeap->SetName(L"Index Buffer Upload Resource Heap");
-
-	D3D12_SUBRESOURCE_DATA indexData = {};
-	indexData.pData = reinterpret_cast<BYTE*>(iList);
-	indexData.RowPitch = iBufferSize;
-	indexData.SlicePitch = iBufferSize;
-
-	UpdateSubresources(commandList, indexBuffer, iBufferUploadHeap, 0, 0, 1, &indexData);
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(indexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
-}
 
 void Render::SetdepthStencil()
 {
@@ -270,77 +242,6 @@ void Render::SetdepthStencil()
 	device->CreateDepthStencilView(depthStencilBuffer, &depthStencilDesc, dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
-void Render::AddVertexsAndIndes(Vertex* vList, int vBufferSize, DWORD *iList, int iBufferSize)
-{
-	//添加顶点
-	AddVertexs(vList, vBufferSize);
-	//添加索引
-	AddIndex(iList, iBufferSize);
-	//设置深度测试
-	SetdepthStencil();
-
-	// create the constant buffer resource heap
-	// We will update the constant buffer one or more times per frame, so we will use only an upload heap
-	// unlike previously we used an upload heap to upload the vertex and index data, and then copied over
-	// to a default heap. If you plan to use a resource for more than a couple frames, it is usually more
-	// efficient to copy to a default heap where it stays on the gpu. In this case, our constant buffer
-	// will be modified and uploaded at least once per frame, so we only use an upload heap
-
-	// first we will create a resource heap (upload heap) for each frame for the cubes constant buffers
-	// As you can see, we are allocating 64KB for each resource we create. Buffer resource heaps must be
-	// an alignment of 64KB. We are creating 3 resources, one for each frame. Each constant buffer is
-	// only a 4x4 matrix of floats in this tutorial. So with a float being 4 bytes, we have
-	// 16 floats in one constant buffer, and we will store 2 constant buffers in each
-	// heap, one for each cube, thats only 64x2 bits, or 128 bits we are using for each
-	// resource, and each resource must be at least 64KB (65536 bits)
-	for (int i = 0; i < frameBufferCount; ++i)
-	{
-		// create resource for cube 1
-		auto hr = device->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), // this heap will be used to upload the constant buffer data
-			D3D12_HEAP_FLAG_NONE, // no flags
-			&CD3DX12_RESOURCE_DESC::Buffer(1024 * 64), // size of the resource heap. Must be a multiple of 64KB for single-textures and constant buffers
-			D3D12_RESOURCE_STATE_GENERIC_READ, // will be data that is read from so we keep it in the generic read state
-			nullptr, // we do not have use an optimized clear value for constant buffers
-			IID_PPV_ARGS(&constantBufferUploadHeaps[i]));
-		constantBufferUploadHeaps[i]->SetName(L"Constant Buffer Upload Resource Heap");
-
-		ZeroMemory(&cbPerObject, sizeof(cbPerObject));
-
-		CD3DX12_RANGE readRange(0, 0);	// We do not intend to read from this resource on the CPU. (so end is less than or equal to begin)
-
-		// map the resource heap to get a gpu virtual address to the beginning of the heap
-		hr = constantBufferUploadHeaps[i]->Map(0, &readRange, reinterpret_cast<void**>(&cbvGPUAddress[i]));
-
-		// Because of the constant read alignment requirements, constant buffer views must be 256 bit aligned. Our buffers are smaller than 256 bits,
-		// so we need to add spacing between the two buffers, so that the second buffer starts at 256 bits from the beginning of the resource heap.
-		memcpy(cbvGPUAddress[i], &cbPerObject, sizeof(cbPerObject)); // cube1's constant buffer data
-		memcpy(cbvGPUAddress[i] + ConstantBufferPerObjectAlignedSize, &cbPerObject, sizeof(cbPerObject)); // cube2's constant buffer data
-	}
-
-	// Now we execute the command list to upload the initial assets (triangle data)
-	commandList->Close();
-	ID3D12CommandList* ppCommandLists[] = { commandList };
-	commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
-
-	// increment the fence value now, otherwise the buffer might not be uploaded by the time we start drawing
-	fenceValue[frameIndex]++;
-	auto hr = commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]);
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
-
-	// create a vertex buffer view for the triangle. We get the GPU memory address to the vertex pointer using the GetGPUVirtualAddress() method
-	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-	vertexBufferView.StrideInBytes = sizeof(Vertex);
-	vertexBufferView.SizeInBytes = vBufferSize;
-
-	// create a vertex buffer view for the triangle. We get the GPU memory address to the vertex pointer using the GetGPUVirtualAddress() method
-	indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
-	indexBufferView.Format = DXGI_FORMAT_R32_UINT; // 32-bit unsigned integer (this is what a dword is, double word, a word is 2 bytes)
-	indexBufferView.SizeInBytes = iBufferSize;
-}
 
 void Render::UpdatePipeline()
 {
@@ -395,8 +296,8 @@ void Render::UpdatePipeline()
 	commandList->RSSetViewports(1, &viewport); // set the viewports
 	commandList->RSSetScissorRects(1, &scissorRect); // set the scissor rects
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // set the primitive topology
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView); // set the vertex buffer (using the vertex buffer view)
-	commandList->IASetIndexBuffer(&indexBufferView);
+	commandList->IASetVertexBuffers(0, 1, &renderMesh[0]->vertexBufferView); // set the vertex buffer (using the vertex buffer view)
+	commandList->IASetIndexBuffer(&renderMesh[0]->indexBufferView);
 
 	// first cube
 
@@ -485,9 +386,9 @@ void Render::Cleanup()
 
 	SAFE_RELEASE(pipelineStateObject);
 	SAFE_RELEASE(rootSignature);
-	SAFE_RELEASE(vertexBuffer);
-	SAFE_RELEASE(indexBuffer);
-	SAFE_RELEASE(depthStencilBuffer);
+	//SAFE_RELEASE(vertexBuffer);
+	//SAFE_RELEASE(indexBuffer);
+	//SAFE_RELEASE(depthStencilBuffer);
 	SAFE_RELEASE(dsDescriptorHeap);
 	for (int i = 0; i < frameBufferCount; ++i)
 	{

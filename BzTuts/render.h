@@ -19,8 +19,7 @@ public:
 	//初始化
 	bool InitD3D(int Width, int Height, HWND& hwnd, bool FullScreen, bool Running);
 	//进行mesh注册
-	void LoadMesh(OCMesh one);
-	void AddVertexsAndIndes(Vertex* vList, int vBufferSize, DWORD *iList, int LSize);
+	void LoadMesh(OCMesh *one);
 public:
 
 	//基础的更新，tick
@@ -40,7 +39,7 @@ public:
 	int height;
 public:
 	HANDLE fenceEvent;
-	vector<OCMesh> renderMesh;
+	vector<OCMesh*> renderMesh;
 
 private:
 
@@ -114,12 +113,12 @@ private:
 
 private:
 
-	ID3D12Resource* vertexBuffer;
-	ID3D12Resource*indexBuffer;
+	//ID3D12Resource* vertexBuffer;
+	//ID3D12Resource*indexBuffer;
 	ID3D12Resource* depthStencilBuffer;
 
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
-	D3D12_INDEX_BUFFER_VIEW indexBufferView;
+	//D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+	//D3D12_INDEX_BUFFER_VIEW indexBufferView;
 	void AddVertexs(Vertex* vList, int vBufferSize);
 	void AddIndex(DWORD *iList, int LSize);
 
