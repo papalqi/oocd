@@ -29,3 +29,5 @@ inline void ThrowIfFailed(HRESULT hr)
 }
 
 #define IF_FALSE_RETURN_FALSE(input) if(!input)return false;
+#define CHECK_HR_RETURN(HR) if(FAILED(HR)){return false;}
+#define CHECK_HR_RUN(HR) if(FAILED(HR)){Running=false;}
