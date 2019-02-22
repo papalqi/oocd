@@ -20,7 +20,7 @@ public:
 	bool InitD3D(int Width, int Height, HWND& hwnd, bool FullScreen, bool Running);
 
 	//进行mesh注册
-	void LoadMesh(OCMesh& one);
+	void LoadMesh(OCMesh* one);
 	void LoadMeshEnd();
 public:
 
@@ -42,7 +42,7 @@ public:
 public:
 	//fence事件，一旦变为当前值，那么通知cpu
 	HANDLE fenceEvent;
-	vector<OCMesh> renderMesh;
+	vector<OCMesh*> renderMesh;
 
 private:
 
@@ -90,7 +90,7 @@ private:
 	DXGI_SAMPLE_DESC sampleDesc = {};
 
 	// direct3d device
-	ID3D12Device4* device;
+	ID3D12Device* device;
 
 	// 交换链
 	IDXGISwapChain3* swapChain;

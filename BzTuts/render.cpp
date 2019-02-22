@@ -61,19 +61,19 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 	return true;
 }
 
-void Render::LoadMesh(OCMesh &one)
+void Render::LoadMesh(OCMesh *one)
 {
 	//将mesh增加到队尾
 	renderMesh.push_back(one);
 	//得到位置
-	XMVECTOR posVec = XMLoadFloat4(&one.MTransform.Position);
+	XMVECTOR posVec = XMLoadFloat4(&one->MTransform.Position);
 	//得到位置矩阵
 	auto tmpMat = XMMatrixTranslationFromVector(posVec);
 	//设置mesh的rot矩阵
-	XMStoreFloat4x4(&one.MTransform.RotMat, XMMatrixIdentity());
+	XMStoreFloat4x4(&one->MTransform.RotMat, XMMatrixIdentity());
 	//设置mesh的WorldMat
-	XMStoreFloat4x4(&one.MTransform.WorldMat, tmpMat);
-	one.RegistereForRender(device,commandList);
+	XMStoreFloat4x4(&one->MTransform.WorldMat, tmpMat);
+	one->RegistereForRender(device,commandList);
 }
 
 void Render::LoadMeshEnd()
@@ -91,18 +91,18 @@ void Render::Update()
 		XMMATRIX rotXMat = XMMatrixRotationX(0.0001f);
 		XMMATRIX rotYMat = XMMatrixRotationY(0.0002f);
 		XMMATRIX rotZMat = XMMatrixRotationZ(0.0003f);
-		XMMATRIX rotMat = XMLoadFloat4x4(&renderMesh[i].MTransform.RotMat) * rotXMat * rotYMat * rotZMat;
-		XMStoreFloat4x4(&renderMesh[i].MTransform.RotMat, rotMat);
+		XMMATRIX rotMat = XMLoadFloat4x4(&renderMesh[i]->MTransform.RotMat) * rotXMat * rotYMat * rotZMat;
+		XMStoreFloat4x4(&renderMesh[i]->MTransform.RotMat, rotMat);
 
-		XMMATRIX translationMat = XMMatrixTranslationFromVector(XMLoadFloat4(&renderMesh[i].MTransform.Position));
+		XMMATRIX translationMat = XMMatrixTranslationFromVector(XMLoadFloat4(&renderMesh[i]->MTransform.Position));
 
 		XMMATRIX worldMat = rotMat * translationMat;
-		XMStoreFloat4x4(&renderMesh[i].MTransform.WorldMat, worldMat);
+		XMStoreFloat4x4(&renderMesh[i]->MTransform.WorldMat, worldMat);
 		// 更新每一个constant buffer
 		//建立mvp矩阵
 		XMMATRIX viewMat = XMLoadFloat4x4(&cameraViewMat); 
 		XMMATRIX projMat = XMLoadFloat4x4(&cameraProjMat);
-		XMMATRIX wvpMat = XMLoadFloat4x4(&renderMesh[i].MTransform.WorldMat) * viewMat * projMat; 
+		XMMATRIX wvpMat = XMLoadFloat4x4(&renderMesh[i]->MTransform.WorldMat) * viewMat * projMat;
 		XMMATRIX transposed = XMMatrixTranspose(wvpMat); // must transpose wvp matrix for the gpu
 		XMStoreFloat4x4(&cbPerObject.wvpMat, transposed);
 	}
@@ -157,8 +157,8 @@ void Render::UpdatePipeline()
 	WaitForPreviousFrame();
 
 	//将分配器重置
-	CHECK_HR_RUN(commandAllocator[frameIndex]->Reset());
-	CHECK_HR_RUN(commandList->Reset(commandAllocator[frameIndex], pipelineStateObject));
+	(commandAllocator[frameIndex]->Reset());
+	(commandList->Reset(commandAllocator[frameIndex], pipelineStateObject));
 
 	//将渲染目标的状态从 present state 变为 render target state 
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTargets[frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
@@ -188,10 +188,10 @@ void Render::UpdatePipeline()
 	for (int i = 0; i != renderMesh.size(); i++)
 	{
 
-		commandList->IASetVertexBuffers(0, 1, &renderMesh[i].vertexBufferView); // set the vertex buffer (using the vertex buffer view)
-		commandList->IASetIndexBuffer(&renderMesh[i].indexBufferView);
+		commandList->IASetVertexBuffers(0, 1, &renderMesh[i]->vertexBufferView); // set the vertex buffer (using the vertex buffer view)
+		commandList->IASetIndexBuffer(&renderMesh[i]->indexBufferView);
 		commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress() +i* ConstantBufferPerObjectAlignedSize);
-		commandList->DrawIndexedInstanced(renderMesh[i].iList.size(), 1, 0, 0, 0);
+		commandList->DrawIndexedInstanced(renderMesh[i]->iList.size(), 1, 0, 0, 0);
 	}
 
 	//调整状态
@@ -466,7 +466,7 @@ void Render::CreateConstantBuffer()
 	commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
 	fenceValue[frameIndex]++;
-	CHECK_HR_RUN(commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]));
+	(commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]));
 
 
 }
