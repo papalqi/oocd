@@ -80,7 +80,7 @@ OCMesh OCMesh::CreateTestMesh()
 	return out;
 }
 
-void OCMesh::RegistereForRender(ID3D12Device* device,ID3D12GraphicsCommandList* commandList)
+void OCMesh::RegistereForRender(ID3D12Device4* device,ID3D12GraphicsCommandList* commandList)
 {
 	//建立默认堆存储Vertex
 	device->CreateCommittedResource(
@@ -114,6 +114,9 @@ void OCMesh::RegistereForRender(ID3D12Device* device,ID3D12GraphicsCommandList* 
 
 	// 将顶点缓冲区数据从复制目标状态转换为顶点缓冲区状态
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(vertexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
+	
+	
+	
 	device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 		D3D12_HEAP_FLAG_NONE,
@@ -122,7 +125,7 @@ void OCMesh::RegistereForRender(ID3D12Device* device,ID3D12GraphicsCommandList* 
 		nullptr,
 		IID_PPV_ARGS(&indexBuffer));
 
-	vertexBuffer->SetName(L"Index Buffer Resource Heap");
+	indexBuffer->SetName(L"Index Buffer Resource Heap");
 
 	ID3D12Resource* iBufferUploadHeap;
 	device->CreateCommittedResource(

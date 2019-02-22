@@ -29,8 +29,7 @@ struct OCMesh
 	//得到默认的mesh
 	static OCMesh CreateTestMesh();
 	//registered
-	void RegistereForRender(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
-	void SetdepthStencil(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	void RegistereForRender(ID3D12Device4* device, ID3D12GraphicsCommandList* commandList);
 	//得到原始索引数组
 	DWORD *GetIndex();
 

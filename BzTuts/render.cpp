@@ -78,8 +78,9 @@ void Render::LoadMesh(OCMesh &one)
 
 void Render::LoadMeshEnd()
 {
-	CreateConstantBuffer();
 	SetdepthStencil();
+	CreateConstantBuffer();
+
 }
 
 void Render::Update()
@@ -195,8 +196,8 @@ void Render::UpdatePipeline()
 
 	//调整状态
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTargets[frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
-
-	CHECK_HR_RUN(commandList->Close());
+	auto thr = commandList->Close();
+	//CHECK_HR_RUN(commandList->Close());
 	
 }
 

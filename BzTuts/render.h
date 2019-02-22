@@ -90,7 +90,7 @@ private:
 	DXGI_SAMPLE_DESC sampleDesc = {};
 
 	// direct3d device
-	ID3D12Device* device;
+	ID3D12Device4* device;
 
 	// 交换链
 	IDXGISwapChain3* swapChain;
@@ -143,12 +143,7 @@ private:
 	//建立Descriptor
 	void CreateRtvDescriptor();
 private:
-
-	//const buffer desc存储堆
-	ID3D12DescriptorHeap* mainDescriptorHeap[frameBufferCount]; // this heap will store the descripor to our constant buffer
-
 	//const buffer上传堆
-	ID3D12Resource* constantBufferUploadHeap[frameBufferCount]; // this is the memory on the gpu where our constant buffer will be placed.
 	void CreateConstantBuffer();
 	ConstantBuffer cbColorMultiplierData;
 	UINT8* cbColorMultiplierGPUAddress[frameBufferCount];
@@ -175,5 +170,4 @@ private:
 	XMFLOAT4 cameraUp; // the worlds up vector
 
 	
-	int numCubeIndices; // the number of indices to draw the cube
 };
