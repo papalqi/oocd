@@ -97,6 +97,7 @@ void Render::Update(const GameTimer& gt)
 	{
 		XMMATRIX viewMat = XMLoadFloat4x4(&mCamera.GetView4x4f()); // load view matrix
 		XMMATRIX projMat = XMLoadFloat4x4(&mCamera.GetProj4x4f()); // load projection matrix
+
 		XMMATRIX wvpMat = XMLoadFloat4x4(&renderMesh[i]->MTransform.WorldMat) * viewMat * projMat; // create wvp matrix
 		XMMATRIX transposed = XMMatrixTranspose(wvpMat); // must transpose wvp matrix for the gpu
 		XMStoreFloat4x4(&cbPerObject.wvpMat, transposed); // store transposed wvp matrix in constant buffer
@@ -181,16 +182,16 @@ void Render::OnKeyboardInput(const GameTimer& gt)
 	const float dt = gt.DeltaTime();
 
 	if (GetAsyncKeyState('W') & 0x8000)
-		mCamera.Walk(MOUSE_SPEED_LOW*dt);
+		mCamera.Walk(-MOUSE_SPEED_LOW*dt);
 
 	if (GetAsyncKeyState('S') & 0x8000)
-		mCamera.Walk(-MOUSE_SPEED_LOW * dt);
+		mCamera.Walk(MOUSE_SPEED_LOW * dt);
 
 	if (GetAsyncKeyState('A') & 0x8000)
-		mCamera.Strafe(-MOUSE_SPEED_LOW * dt);
+		mCamera.Strafe(MOUSE_SPEED_LOW * dt);
 
 	if (GetAsyncKeyState('D') & 0x8000)
-		mCamera.Strafe(MOUSE_SPEED_LOW*dt);
+		mCamera.Strafe(-MOUSE_SPEED_LOW*dt);
 
 	mCamera.UpdateViewMatrix();
 }
