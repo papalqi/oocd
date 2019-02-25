@@ -69,9 +69,6 @@ void Render::LoadMesh(OCMesh* one)
 	//进行顶点索引注册
 	
 	one->RegistereForRender(device,commandList);
-	
-
-
 }
 
 void Render::LoadMeshEnd()

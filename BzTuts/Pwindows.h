@@ -2,38 +2,27 @@
 #include"stdafx.h"
 #include"render.h"
 #include"Timer.h"
-#define CHECK_AND_OUT(input,ErrorString)  if(input ==false) {MessageBox(0, ErrorString,L"Error", MB_OK);return 1;}
+#include"ErrorException.h"
 
-// callback function for windows messages
 
-	// we will exit the program when this becomes false
 
-LRESULT CALLBACK WndProc(HWND hWnd,
-	UINT msg,
-	WPARAM wParam,
-	LPARAM lParam);
 
 class Pwindow
 {
 public:
-	Pwindow();
-	~Pwindow();
-
-	// create a window
 	bool InitializeWindow(HINSTANCE hInstance,
 		int ShowWnd,
-		bool fullscreen);
+		bool fullscreen, WNDPROC);
 
-	// main application loop
-	void mainloop();
-	GameTimer mtimer;
+	/*void mainloop();*/
+
 	inline void SetWidth() { this->Width = Width; }
 	inline void SetHeight() { this->Width = Height; }
 	inline int GetWidth() { return Width; }
 	inline int GetHeight() { return Height; }
 	inline HWND& Gethwnd() { return hwnd; }
 	inline bool GetFullScreen() { return FullScreen; }
-	Render render;
+
 private:
 
 	//

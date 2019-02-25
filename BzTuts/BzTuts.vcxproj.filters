@@ -25,6 +25,9 @@
     <Filter Include="Header Files\Mesh">
       <UniqueIdentifier>{81496b37-c09a-4a26-bdf7-6888cf527977}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{1186bd80-288b-4825-a1f2-91e548478e51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -65,12 +68,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Pwindows.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ErrorException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -83,13 +80,7 @@
     <ClInclude Include="CameraType.h">
       <Filter>Header Files\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="EngineDefine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CoreMinimal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
@@ -98,8 +89,20 @@
     <ClInclude Include="TestMeshcpp.h">
       <Filter>Header Files\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineDefine.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
     <ClInclude Include="EngineMacro.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Pwindows.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="render.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

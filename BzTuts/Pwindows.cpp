@@ -7,7 +7,7 @@ bool Running = true;
 // create and show the window
 bool Pwindow::InitializeWindow(HINSTANCE hInstance,
 	int ShowWnd,
-	bool fullscreen)
+	bool fullscreen, WNDPROC WndProc)
 
 {
 	OnlyWindwos = this;
@@ -28,7 +28,7 @@ bool Pwindow::InitializeWindow(HINSTANCE hInstance,
 
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = WndProc;
+	wc.lpfnWndProc =WndProc;
 	wc.cbClsExtra = NULL;
 	wc.cbWndExtra = NULL;
 	wc.hInstance = hInstance;
@@ -75,85 +75,27 @@ bool Pwindow::InitializeWindow(HINSTANCE hInstance,
 	return true;
 }
 
-void Pwindow::mainloop() {
-	MSG msg;
-	ZeroMemory(&msg, sizeof(MSG));
+//void Pwindow::mainloop() {
+	//MSG msg;
+	//ZeroMemory(&msg, sizeof(MSG));
 
-	while (Running)
-	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT)
-				break;
+	//while (Running)
+	//{
+	//	if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	//	{
+	//		if (msg.message == WM_QUIT)
+	//			break;
 
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		else {
-			// run game code
-			render.Update( mtimer); // update the game logic
-			render.run(); // execute the command queue (rendering the scene is the result of the gpu executing the command lists)
-		}
-	}
-}
+	//		TranslateMessage(&msg);
+	//		DispatchMessage(&msg);
+	//	}
+	//	else {
+	//		// run game code
+	//		render.Update( mtimer);
+	//		render.run(); 
+	//	}
+//	//}
+//}
 
-LRESULT CALLBACK WndProc(HWND hwnd,
-	UINT msg,
-	WPARAM wParam,
-	LPARAM lParam)
 
-{
-	switch (msg)
-	{
-	case WM_KEYDOWN:
-		if (wParam == VK_ESCAPE) {
-			if (MessageBox(0, L"Are you sure you want to exit?",
-				L"Really?", MB_YESNO | MB_ICONQUESTION) == IDYES)
-			{
-				Running = false;
-				DestroyWindow(hwnd);
-			}
-		}
-		return 0;
-	case WM_ACTIVATE:
-		if (LOWORD(wParam) == WA_INACTIVE)
-		{
-			OnlyWindwos->mtimer.Stop();
-		}
-		else
-		{
-			OnlyWindwos->mtimer.Start();
-		}
-		return 0;
-	case WM_LBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-		OnlyWindwos->render.OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		return 0;
-	case WM_LBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_RBUTTONUP:
-		OnlyWindwos->render.OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		return 0;
-	case WM_MOUSEMOVE:
-		OnlyWindwos->render.OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		return 0;
 
-	case WM_DESTROY: // x button on top right corner of window was pressed
-		Running = false;
-		PostQuitMessage(0);
-		return 0;
-	}
-	return DefWindowProc(hwnd,
-		msg,
-		wParam,
-		lParam);
-}
-
-Pwindow::Pwindow()
-{
-}
-
-Pwindow::~Pwindow()
-{
-}
