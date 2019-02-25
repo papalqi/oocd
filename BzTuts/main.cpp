@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		mwindow.GetFullScreen(),
 		Running),
 		L"initialize direct3d 12 Error");
-
+	mwindow.render.mhMainWnd = mwindow.Gethwnd();
 	// 前三个是位置，后4个是颜色
 // a quad
 	auto mesh1 = OCMesh:: CreateTestMesh();

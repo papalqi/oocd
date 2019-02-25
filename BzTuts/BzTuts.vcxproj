@@ -159,6 +159,8 @@
     <ClCompile Include="Pwindows.cpp" />
     <ClCompile Include="render.cpp" />
     <ClCompile Include="TestMeshcpp.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -168,6 +170,7 @@
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineDefine.h" />
+    <ClInclude Include="EngineMacro.h" />
     <ClInclude Include="ErrorException.h" />
     <ClInclude Include="OCMath.h" />
     <ClInclude Include="Pwindows.h" />

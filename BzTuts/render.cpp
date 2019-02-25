@@ -1,5 +1,6 @@
 ﻿#include "render.h"
-
+#include"Timer.h"
+#include"EngineMacro.h"
 bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Running)
 {
 	HRESULT hr;
@@ -46,19 +47,12 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 	SetScissorRect();
 
 	XMMATRIX tmpMat = XMMatrixPerspectiveFovLH(45.0f*(3.14f / 180.0f), (float)Width / (float)Height, 0.1f, 1000.0f);
-	XMStoreFloat4x4(&cameraProjMat, tmpMat);
+	mCamera.SetLens(45.0f*(3.14f / 180.0f), (float)Width / (float)Height, 0.1f, 1000.0f);
 
 	// set starting camera state
-	cameraPosition = XMFLOAT4(0.0f, 2.0f, -4.0f, 0.0f);
-	cameraTarget = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	cameraUp = XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f);
 
-	// build view matrix
-	XMVECTOR cPos = XMLoadFloat4(&cameraPosition);
-	XMVECTOR cTarg = XMLoadFloat4(&cameraTarget);
-	XMVECTOR cUp = XMLoadFloat4(&cameraUp);
-	tmpMat = XMMatrixLookAtLH(cPos, cTarg, cUp);
-	XMStoreFloat4x4(&cameraViewMat, tmpMat);
+	mCamera.SetPosition(0.0f, 2.0f, -4.0f);
+
 	SetdepthStencil();
 
 	return true;
@@ -122,35 +116,15 @@ void Render::LoadMeshEnd()
 	}
 }
 
-void Render::Update()
+void Render::Update(const GameTimer& gt)
 {
-	// update app logic, such as moving the camera or figuring out what objects are in view
 
-	// create rotation matrices
-	XMMATRIX rotXMat = XMMatrixRotationX(0.0001f);
-	XMMATRIX rotYMat = XMMatrixRotationY(0.0002f);
-	XMMATRIX rotZMat = XMMatrixRotationZ(0.0003f);
-
-
+	OnKeyboardInput(gt);
 	for (int i=0;i!=renderMesh.size();i++)
 	{
-		// add rotation to cube1's rotation matrix and store it
-		XMMATRIX rotMat = XMLoadFloat4x4(&renderMesh[i]->MTransform.RotMat) * rotXMat * rotYMat * rotZMat;
-		XMStoreFloat4x4(&renderMesh[i]->MTransform.RotMat, rotMat);
-
-		// create translation matrix for cube 1 from cube 1's position vector
-		XMMATRIX translationMat = XMMatrixTranslationFromVector(XMLoadFloat4(&renderMesh[i]->MTransform.Position));
-
-		// create cube1's world matrix by first rotating the cube, then positioning the rotated cube
-		XMMATRIX worldMat = rotMat * translationMat;
-
-		// store cube1's world matrix
-		XMStoreFloat4x4(&renderMesh[i]->MTransform.WorldMat, worldMat);
-
-		// update constant buffer for cube1
-		// create the wvp matrix and store in constant buffer
-		XMMATRIX viewMat = XMLoadFloat4x4(&cameraViewMat); // load view matrix
-		XMMATRIX projMat = XMLoadFloat4x4(&cameraProjMat); // load projection matrix
+	
+		XMMATRIX viewMat = XMLoadFloat4x4(&mCamera.GetView4x4f()); // load view matrix
+		XMMATRIX projMat = XMLoadFloat4x4(&mCamera.GetProj4x4f()); // load projection matrix
 		XMMATRIX wvpMat = XMLoadFloat4x4(&renderMesh[i]->MTransform.WorldMat) * viewMat * projMat; // create wvp matrix
 		XMMATRIX transposed = XMMatrixTranspose(wvpMat); // must transpose wvp matrix for the gpu
 		XMStoreFloat4x4(&cbPerObject.wvpMat, transposed); // store transposed wvp matrix in constant buffer
@@ -273,6 +247,55 @@ void Render::UpdatePipeline()
 	{
 		Running = false;
 	}
+}
+
+void Render::OnKeyboardInput(const GameTimer& gt)
+{
+	const float dt = gt.DeltaTime();
+
+	if (GetAsyncKeyState('W') & 0x8000)
+		mCamera.Walk(MOUSE_SPEED_LOW*dt);
+
+	if (GetAsyncKeyState('S') & 0x8000)
+		mCamera.Walk(-MOUSE_SPEED_LOW *dt);
+
+	if (GetAsyncKeyState('A') & 0x8000)
+		mCamera.Strafe(-MOUSE_SPEED_LOW *dt);
+
+	if (GetAsyncKeyState('D') & 0x8000)
+		mCamera.Strafe(MOUSE_SPEED_LOW*dt);
+
+	mCamera.UpdateViewMatrix();
+}
+
+void Render::OnMouseDown(WPARAM btnState, int x, int y)
+{
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
+
+	SetCapture(mhMainWnd);
+}
+
+void Render::OnMouseUp(WPARAM btnState, int x, int y)
+{
+	ReleaseCapture();
+
+}
+
+void Render::OnMouseMove(WPARAM btnState, int x, int y)
+{
+	if ((btnState & MK_LBUTTON) != 0)
+	{
+		// Make each pixel correspond to a quarter of a degree.
+		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
+		float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
+
+		mCamera.Pitch(dy);
+		mCamera.RotateY(dx);
+	}
+
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
 }
 
 void Render::run()

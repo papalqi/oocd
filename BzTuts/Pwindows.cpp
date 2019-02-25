@@ -1,14 +1,16 @@
 ﻿#include "Pwindows.h"
 #include"render.h"
+#include<windowsx.h>
 
 bool Running = true;
-
+ static Pwindow *OnlyWindwos;
 // create and show the window
 bool Pwindow::InitializeWindow(HINSTANCE hInstance,
 	int ShowWnd,
 	bool fullscreen)
 
 {
+	OnlyWindwos = this;
 	//如果是全屏的话
 	if (fullscreen)
 	{
@@ -89,7 +91,7 @@ void Pwindow::mainloop() {
 		}
 		else {
 			// run game code
-			render.Update(); // update the game logic
+			render.Update( mtimer); // update the game logic
 			render.run(); // execute the command queue (rendering the scene is the result of the gpu executing the command lists)
 		}
 	}
@@ -112,6 +114,29 @@ LRESULT CALLBACK WndProc(HWND hwnd,
 				DestroyWindow(hwnd);
 			}
 		}
+		return 0;
+	case WM_ACTIVATE:
+		if (LOWORD(wParam) == WA_INACTIVE)
+		{
+			OnlyWindwos->mtimer.Stop();
+		}
+		else
+		{
+			OnlyWindwos->mtimer.Start();
+		}
+		return 0;
+	case WM_LBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+		OnlyWindwos->render.OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		return 0;
+	case WM_LBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_RBUTTONUP:
+		OnlyWindwos->render.OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		return 0;
+	case WM_MOUSEMOVE:
+		OnlyWindwos->render.OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 
 	case WM_DESTROY: // x button on top right corner of window was pressed

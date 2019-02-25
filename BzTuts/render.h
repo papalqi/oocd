@@ -2,6 +2,8 @@
 #include"stdafx.h"
 #include <wrl.h>
 #include "TestMeshcpp.h"
+#include"Camera.h"
+#include"Timer.h"
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 const int frameBufferCount = 3;
@@ -22,16 +24,19 @@ public:
 	void LoadMesh(OCMesh *one);
 	void LoadMeshEnd();
 public:
-
+	Camera mCamera;
 	//基础的更新，tick
-	void Update();
+	void Update(const GameTimer& gt);
 	void UpdatePipeline();
-
+	void OnKeyboardInput(const GameTimer& gt);
+	virtual void OnMouseDown(WPARAM btnState, int x, int y);
+	virtual void OnMouseUp(WPARAM btnState, int x, int y);
+	virtual void OnMouseMove(WPARAM btnState, int x, int y);
 	void run();
 	void Cleanup();
-
+	POINT mLastMousePos;
 	void WaitForPreviousFrame();
-
+	HWND mhMainWnd;
 	Render();
 	~Render();
 public:
@@ -169,12 +174,6 @@ private:
 
 	UINT8* cbvGPUAddress[frameBufferCount]; // this is a pointer to each of the constant buffer resource heaps
 
-	XMFLOAT4X4 cameraProjMat; // this will store our projection matrix
-	XMFLOAT4X4 cameraViewMat; // this will store our view matrix
-
-	XMFLOAT4 cameraPosition; // this is our cameras position vector
-	XMFLOAT4 cameraTarget; // a vector describing the point in space our camera is looking at
-	XMFLOAT4 cameraUp; // the worlds up vector
 
 	public:
 	int numCubeIndices; // the number of indices to draw the cube

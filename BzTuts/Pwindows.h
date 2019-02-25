@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include"stdafx.h"
 #include"render.h"
-
+#include"Timer.h"
 #define CHECK_AND_OUT(input,ErrorString)  if(input ==false) {MessageBox(0, ErrorString,L"Error", MB_OK);return 1;}
 
 // callback function for windows messages
@@ -26,7 +26,7 @@ public:
 
 	// main application loop
 	void mainloop();
-
+	GameTimer mtimer;
 	inline void SetWidth() { this->Width = Width; }
 	inline void SetHeight() { this->Width = Height; }
 	inline int GetWidth() { return Width; }
