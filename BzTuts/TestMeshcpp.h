@@ -13,7 +13,6 @@ struct OCTranForm
 };
 struct OCMesh
 {
-
 	//变换
 	OCTranForm MTransform;
 
@@ -36,7 +35,7 @@ struct OCMesh
 	//顶点大小，单位是字节
 	int vBufferSize;
 
-	//索引大小，单位是字节	
+	//索引大小，单位是字节
 	int iBufferSize;
 	ID3D12Resource* vertexBuffer;
 	ID3D12Resource*indexBuffer;

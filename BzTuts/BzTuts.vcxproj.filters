@@ -39,9 +39,6 @@
     <ClCompile Include="render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ErrorException.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="OCMath.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>

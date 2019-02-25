@@ -112,7 +112,7 @@ LRESULT Engine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		OnlyRender.OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 
-	case WM_DESTROY: // x button on top right corner of window was pressed
+	case WM_DESTROY: 
 		Running = false;
 		PostQuitMessage(0);
 		return 0;

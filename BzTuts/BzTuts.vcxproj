@@ -153,7 +153,6 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="ErrorException.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OCMath.cpp" />
     <ClCompile Include="Pwindows.cpp" />

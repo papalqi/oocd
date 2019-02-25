@@ -32,3 +32,4 @@ inline void ThrowIfFailed(HRESULT hr)
 #define CHECK_HR_RETURN(HR) if(FAILED(HR)){return false;}
 #define CHECK_HR_RUN(HR) if(FAILED(HR)){Running=false;}
 #define CHECK_AND_OUT(input,ErrorString)  if(input ==false) {MessageBox(0, ErrorString,L"Error", MB_OK);return 1;}
+#define CHECK_NULL_RETURN(OTHER) if(OTHER==nullptr){return false;}

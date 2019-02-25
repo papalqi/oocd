@@ -3,33 +3,24 @@
 #include"EngineMacro.h"
 bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Running)
 {
-	HRESULT hr;
 	this->width = Width;
 	this->height = Height;
-
-	// -- 建立工厂 -- //
 
 	IDXGIFactory4* dxgiFactory;
 	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory)));
 
-	// -- 建立适配器 -- //
 	IDXGIAdapter1* adapter = nullptr; // 显卡适配器
 
-	//寻找显卡
 	IF_FALSE_RETURN_FALSE(SetAdapter(adapter, dxgiFactory));
 
-	// -- 设置device -- //
 	IF_FALSE_RETURN_FALSE(SetDevice(adapter));
 
-	// -- 设置Commandqueue -- //
 	IF_FALSE_RETURN_FALSE(setCommandqueue());
 
-	//建立交换链
 	CreateSwapChain(hwnd, FullScreen, dxgiFactory);
 
 	CreateRtvDescriptor();
 
-	// create the command list with the first allocator
 	ThrowIfFailed(device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
 		commandAllocator[frameIndex], NULL, IID_PPV_ARGS(&commandList)));
 
@@ -40,16 +31,12 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 	compilePixelShader(pixelShaderBytecode);
 	CreatePsoAndInputLayout(vertexShaderBytecode, pixelShaderBytecode);
 
-	//设置视口大小
 	SetViewport();
 
-	//设置裁剪空间大小
 	SetScissorRect();
 
 	XMMATRIX tmpMat = XMMatrixPerspectiveFovLH(45.0f*(3.14f / 180.0f), (float)Width / (float)Height, 0.1f, 1000.0f);
 	mCamera.SetLens(45.0f*(3.14f / 180.0f), (float)Width / (float)Height, 0.1f, 1000.0f);
-
-	// set starting camera state
 
 	mCamera.SetPosition(0.0f, 2.0f, -4.0f);
 
@@ -63,76 +50,59 @@ void Render::LoadMesh(OCMesh* one)
 	renderMesh.push_back(one);
 	XMVECTOR posVec = XMLoadFloat4(&one->MTransform.Position);
 
-	auto tmpMat = XMMatrixTranslationFromVector(posVec); 
+	auto tmpMat = XMMatrixTranslationFromVector(posVec);
 	XMStoreFloat4x4(&one->MTransform.RotMat, XMMatrixIdentity());
 	XMStoreFloat4x4(&one->MTransform.WorldMat, tmpMat);
 	//进行顶点索引注册
-	
-	one->RegistereForRender(device,commandList);
+
+	one->RegistereForRender(device, commandList);
 }
 
 void Render::LoadMeshEnd()
 {
 	for (int i = 0; i < frameBufferCount; i++)
 	{
-		// create resource for cube 1
 		auto hr = device->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), // this heap will be used to upload the constant buffer data
-			D3D12_HEAP_FLAG_NONE, // no flags
-			&CD3DX12_RESOURCE_DESC::Buffer(1024 * 64), // size of the resource heap. Must be a multiple of 64KB for single-textures and constant buffers
-			D3D12_RESOURCE_STATE_GENERIC_READ, // will be data that is read from so we keep it in the generic read state
-			nullptr, // we do not have use an optimized clear value for constant buffers
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Buffer(1024 * 64),
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
 			IID_PPV_ARGS(&constantBufferUploadHeaps[i]));
 		constantBufferUploadHeaps[i]->SetName(L"Constant Buffer Upload Resource Heap");
 
 		ZeroMemory(&cbPerObject, sizeof(cbPerObject));
 
-		CD3DX12_RANGE readRange(0, 0);	// We do not intend to read from this resource on the CPU. (so end is less than or equal to begin)
+		CD3DX12_RANGE readRange(0, 0);
 
-		// map the resource heap to get a gpu virtual address to the beginning of the heap
 		hr = constantBufferUploadHeaps[i]->Map(0, &readRange, reinterpret_cast<void**>(&cbvGPUAddress[i]));
 
 		for (int j = 0; j != renderMesh.size(); j++)
 		{
-			memcpy(cbvGPUAddress[i]+j* ConstantBufferPerObjectAlignedSize, &cbPerObject, sizeof(cbPerObject)); // cube1's constant buffer data
-
+			memcpy(cbvGPUAddress[i] + j * ConstantBufferPerObjectAlignedSize, &cbPerObject, sizeof(cbPerObject));
 		}
 	}
 
-	// Now we execute the command list to upload the initial assets (triangle data)
 	commandList->Close();
 	ID3D12CommandList* ppCommandLists[] = { commandList };
 	commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
-
-	// increment the fence value now, otherwise the buffer might not be uploaded by the time we start drawing
 	fenceValue[frameIndex]++;
-	auto hr = commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]);
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	CHECK_HR_RUN(commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]));
 }
 
 void Render::Update(const GameTimer& gt)
 {
-
 	OnKeyboardInput(gt);
-	for (int i=0;i!=renderMesh.size();i++)
+	for (int i = 0; i != renderMesh.size(); i++)
 	{
-	
 		XMMATRIX viewMat = XMLoadFloat4x4(&mCamera.GetView4x4f()); // load view matrix
 		XMMATRIX projMat = XMLoadFloat4x4(&mCamera.GetProj4x4f()); // load projection matrix
 		XMMATRIX wvpMat = XMLoadFloat4x4(&renderMesh[i]->MTransform.WorldMat) * viewMat * projMat; // create wvp matrix
 		XMMATRIX transposed = XMMatrixTranspose(wvpMat); // must transpose wvp matrix for the gpu
 		XMStoreFloat4x4(&cbPerObject.wvpMat, transposed); // store transposed wvp matrix in constant buffer
-		memcpy(cbvGPUAddress[frameIndex] + ConstantBufferPerObjectAlignedSize*i, &cbPerObject, sizeof(cbPerObject));
-
+		memcpy(cbvGPUAddress[frameIndex] + ConstantBufferPerObjectAlignedSize * i, &cbPerObject, sizeof(cbPerObject));
 	}
-	
 }
-
-
-
 
 void Render::SetdepthStencil()
 {
@@ -150,11 +120,8 @@ void Render::SetdepthStencil()
 	dsvHeapDesc.NumDescriptors = 1;
 	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	auto hr = device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsDescriptorHeap));
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	CHECK_HR_RUN(device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsDescriptorHeap)));
+
 	device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 		D3D12_HEAP_FLAG_NONE,
@@ -163,87 +130,50 @@ void Render::SetdepthStencil()
 		&depthOptimizedClearValue,
 		IID_PPV_ARGS(&depthStencilBuffer)
 	);
-	hr = device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsDescriptorHeap));
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	CHECK_HR_RUN(device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsDescriptorHeap)));
+
 	dsDescriptorHeap->SetName(L"Depth/Stencil Resource Heap");
 
 	device->CreateDepthStencilView(depthStencilBuffer, &depthStencilDesc, dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
-
 void Render::UpdatePipeline()
 {
 	HRESULT hr;
 
-	// We have to wait for the gpu to finish with the command allocator before we reset it
 	WaitForPreviousFrame();
 
-	// we can only reset an allocator once the gpu is done with it
-	// resetting an allocator frees the memory that the command list was stored in
-	hr = commandAllocator[frameIndex]->Reset();
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	CHECK_HR_RUN(commandAllocator[frameIndex]->Reset());
 
-	hr = commandList->Reset(commandAllocator[frameIndex], pipelineStateObject);
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	CHECK_HR_RUN(commandList->Reset(commandAllocator[frameIndex], pipelineStateObject));
 
-	// here we start recording commands into the commandList (which all the commands will be stored in the commandAllocator)
-
-	// transition the "frameIndex" render target from the present state to the render target state so the command list draws to it starting from here
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTargets[frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
-	// here we again get the handle to our current render target view so we can set it as the render target in the output merger stage of the pipeline
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), frameIndex, rtvDescriptorSize);
 
-	// set the render target for the output merger stage (the output of the pipeline)
-	 // get a handle to the depth/stencil buffer
 	CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
-	// set the render target for the output merger stage (the output of the pipeline)
 	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
 
-	//	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
-
-		// Clear the render target by using the ClearRenderTargetView command
 	const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
 	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
-	// clear the depth/stencil buffer
 	commandList->ClearDepthStencilView(dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	// draw triangle
-// set root signature
-	commandList->SetGraphicsRootSignature(rootSignature); // set the root signature
-
-	// draw triangle
-	commandList->RSSetViewports(1, &viewport); // set the viewports
-	commandList->RSSetScissorRects(1, &scissorRect); // set the scissor rects
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // set the primitive topology
-
+	commandList->SetGraphicsRootSignature(rootSignature);
+	commandList->RSSetViewports(1, &viewport);
+	commandList->RSSetScissorRects(1, &scissorRect);
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	for (int i = 0; i != renderMesh.size(); i++)
 	{
-		commandList->IASetVertexBuffers(0, 1, &renderMesh[i]->vertexBufferView); // set the vertex buffer (using the vertex buffer view)
-		commandList->IASetIndexBuffer(&renderMesh[i]->indexBufferView);
-		commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress() + i*ConstantBufferPerObjectAlignedSize);
+		commandList->IASetVertexBuffers(0, 1, &renderMesh[i]->vertexBufferView); 
+			commandList->IASetIndexBuffer(&renderMesh[i]->indexBufferView);
+		commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress() + i * ConstantBufferPerObjectAlignedSize);
 		commandList->DrawIndexedInstanced(renderMesh[i]->iList.size(), 1, 0, 0, 0);
 	}
 
-
-	
-	hr = commandList->Close();
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	CHECK_HR_RUN(commandList->Close());
 }
 
 void Render::OnKeyboardInput(const GameTimer& gt)
@@ -254,10 +184,10 @@ void Render::OnKeyboardInput(const GameTimer& gt)
 		mCamera.Walk(MOUSE_SPEED_LOW*dt);
 
 	if (GetAsyncKeyState('S') & 0x8000)
-		mCamera.Walk(-MOUSE_SPEED_LOW *dt);
+		mCamera.Walk(-MOUSE_SPEED_LOW * dt);
 
 	if (GetAsyncKeyState('A') & 0x8000)
-		mCamera.Strafe(-MOUSE_SPEED_LOW *dt);
+		mCamera.Strafe(-MOUSE_SPEED_LOW * dt);
 
 	if (GetAsyncKeyState('D') & 0x8000)
 		mCamera.Strafe(MOUSE_SPEED_LOW*dt);
@@ -276,14 +206,12 @@ void Render::OnMouseDown(WPARAM btnState, int x, int y)
 void Render::OnMouseUp(WPARAM btnState, int x, int y)
 {
 	ReleaseCapture();
-
 }
 
 void Render::OnMouseMove(WPARAM btnState, int x, int y)
 {
 	if ((btnState & MK_LBUTTON) != 0)
 	{
-		// Make each pixel correspond to a quarter of a degree.
 		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
 		float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
 
@@ -299,41 +227,25 @@ void Render::run()
 {
 	HRESULT hr;
 
-	UpdatePipeline(); // update the pipeline by sending commands to the commandqueue
+	UpdatePipeline();
 
-	// create an array of command lists (only one command list here)
 	ID3D12CommandList* ppCommandLists[] = { commandList };
 
-	// execute the array of command lists
 	commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
-	// this command goes in at the end of our command queue. we will know when our command queue
-	// has finished because the fence value will be set to "fenceValue" from the GPU since the command
-	// queue is being executed on the GPU
-	hr = commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]);
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	CHECK_HR_RUN(commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]));
 
-	// present the current backbuffer
-	hr = swapChain->Present(0, 0);
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	CHECK_HR_RUN(swapChain->Present(0, 0));
 }
 
 void Render::Cleanup()
 {
-	// wait for the gpu to finish all frames
 	for (int i = 0; i < frameBufferCount; ++i)
 	{
 		frameIndex = i;
 		WaitForPreviousFrame();
 	}
 
-	// get swapchain out of full screen before exiting
 	BOOL fs = false;
 	if (swapChain->GetFullscreenState(&fs, NULL))
 		swapChain->SetFullscreenState(false, NULL);
@@ -353,9 +265,7 @@ void Render::Cleanup()
 
 	SAFE_RELEASE(pipelineStateObject);
 	SAFE_RELEASE(rootSignature);
-	//SAFE_RELEASE(vertexBuffer);
-	//SAFE_RELEASE(indexBuffer);
-	//SAFE_RELEASE(depthStencilBuffer);
+
 	SAFE_RELEASE(dsDescriptorHeap);
 	for (int i = 0; i < frameBufferCount; ++i)
 	{
@@ -367,26 +277,15 @@ void Render::WaitForPreviousFrame()
 {
 	HRESULT hr;
 
-	// swap the current rtv buffer index so we draw on the correct buffer
 	frameIndex = swapChain->GetCurrentBackBufferIndex();
 
-	// if the current fence value is still less than "fenceValue", then we know the GPU has not finished executing
-	// the command queue since it has not reached the "commandQueue->Signal(fence, fenceValue)" command
 	if (fence[frameIndex]->GetCompletedValue() < fenceValue[frameIndex])
 	{
-		// we have the fence create an event which is signaled once the fence's current value is "fenceValue"
-		hr = fence[frameIndex]->SetEventOnCompletion(fenceValue[frameIndex], fenceEvent);
-		if (FAILED(hr))
-		{
-			Running = false;
-		}
+		CHECK_HR_RUN(fence[frameIndex]->SetEventOnCompletion(fenceValue[frameIndex], fenceEvent));
 
-		// We will wait until the fence has triggered the event that it's current value has reached "fenceValue". once it's value
-		// has reached "fenceValue", we know the command queue has finished executing
 		WaitForSingleObject(fenceEvent, INFINITE);
 	}
 
-	// increment fenceValue for next frame
 	fenceValue[frameIndex]++;
 }
 
@@ -416,7 +315,6 @@ bool Render::SetAdapter(IDXGIAdapter1* adapter, IDXGIFactory4* dxgiFactory)
 			continue;
 		}
 
-		// we want a device that is compatible with direct3d 12 (feature level 11 or higher)
 		auto hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr);
 		if (SUCCEEDED(hr))
 		{
@@ -427,23 +325,17 @@ bool Render::SetAdapter(IDXGIAdapter1* adapter, IDXGIFactory4* dxgiFactory)
 		adapterIndex++;
 	}
 
-	if (!adapterFound)
-	{
-		return false;
-	}
+	IF_FALSE_RETURN_FALSE(adapterFound);
 	return true;
 }
 
 bool Render::SetDevice(IDXGIAdapter1* adapter)
 {
-	if (FAILED(D3D12CreateDevice(
+	CHECK_HR_RETURN((D3D12CreateDevice(
 		adapter,
 		D3D_FEATURE_LEVEL_11_0,
 		IID_PPV_ARGS(&device)
-	)))
-	{
-		return false;
-	}
+	)));
 	return true;
 }
 
@@ -454,18 +346,12 @@ bool Render::setCommandqueue()
 	cqDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT; // 立即执行
 
 	//只有一个queue
-	if (FAILED(device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(&commandQueue))))
-	{
-		return false;
-	}
+	CHECK_HR_RETURN(device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(&commandQueue)));
 
-	//有多少个commandlist就有多少个CommandAllocator
 	for (int i = 0; i < frameBufferCount; i++)
 	{
-		if (FAILED(device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator[i]))))
-		{
-			return false;
-		}
+		CHECK_HR_RETURN(device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+			IID_PPV_ARGS(&commandAllocator[i])));
 	}
 
 	return true;
@@ -518,84 +404,61 @@ void Render::CreateRtvDescriptor()
 	//得到栈顶的handle
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
-	// Create a RTV for each buffer (double buffering is two buffers, tripple buffering is 3).
 	for (int i = 0; i < frameBufferCount; i++)
 	{
-		// first we get the n'th buffer in the swap chain and store it in the n'th
-		// position of our ID3D12Resource array
 		swapChain->GetBuffer(i, IID_PPV_ARGS(&renderTargets[i]));
 
-		// the we "create" a render target view which binds the swap chain buffer (ID3D12Resource[n]) to the rtv handle
 		device->CreateRenderTargetView(renderTargets[i], nullptr, rtvHandle);
 
-		// we increment the rtv handle by the rtv descriptor size we got above
 		rtvHandle.Offset(1, rtvDescriptorSize);
 	}
 }
 
 bool Render::CreateFenceAndRootSignature()
 {
-	HRESULT hr;
 	for (int i = 0; i < frameBufferCount; i++)
 	{
-		hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence[i]));
-		if (FAILED(hr))
-		{
-			return false;
-		}
-		fenceValue[i] = 0; // set the initial fence value to 0
+		CHECK_HR_RETURN(device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence[i])));
+		fenceValue[i] = 0;
 	}
 
-	// create a handle to a fence event
 	fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-	if (fenceEvent == nullptr)
-	{
-		return false;
-	}
 
-	// create root signature
+	CHECK_NULL_RETURN(fenceEvent);
 
-	// create a root descriptor, which explains where to find the data for this root parameter
 	D3D12_ROOT_DESCRIPTOR rootCBVDescriptor;
 	rootCBVDescriptor.RegisterSpace = 0;
 	rootCBVDescriptor.ShaderRegister = 0;
 
-	// create a root parameter and fill it out
 	D3D12_ROOT_PARAMETER  rootParameters[1]; // only one parameter right now
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // this is a constant buffer view root descriptor
 	rootParameters[0].Descriptor = rootCBVDescriptor; // this is the root descriptor for this root parameter
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // our pixel shader will be the only shader accessing this parameter for now
 
 	CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-	rootSignatureDesc.Init(_countof(rootParameters), // we have 1 root parameter
-		rootParameters, // a pointer to the beginning of our root parameters array
+	rootSignatureDesc.Init(_countof(rootParameters),
+		rootParameters,
 		0,
 		nullptr,
-		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // we can deny shader stages here for better performance
+		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
 		D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
 		D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
 		D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
 		D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS);
 
 	ID3DBlob* signature;
-	hr = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, nullptr);
-	if (FAILED(hr))
-	{
-		return false;
-	}
+	CHECK_HR_RETURN(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, nullptr));
 
-	hr = device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
-	if (FAILED(hr))
-	{
-		return false;
-	}
+	CHECK_HR_RETURN(device->CreateRootSignature(0, signature->GetBufferPointer(),
+		signature->GetBufferSize(), IID_PPV_ARGS(&rootSignature)));
+
 	return true;
 }
 
 bool Render::compileVertexShader(D3D12_SHADER_BYTECODE&vertexShaderBytecode)
 {
 	ID3DBlob* errorBuff;
-	ID3DBlob* vertexShader; 
+	ID3DBlob* vertexShader;
 
 	auto hr = D3DCompileFromFile(L"VertexShader.hlsl",
 		nullptr,
@@ -619,7 +482,6 @@ bool Render::compileVertexShader(D3D12_SHADER_BYTECODE&vertexShaderBytecode)
 bool Render::compilePixelShader(D3D12_SHADER_BYTECODE &pixelShaderBytecode)
 {
 	ID3DBlob* errorBuff;
-
 	ID3DBlob* pixelShader;
 	auto hr = D3DCompileFromFile(L"PixelShader.hlsl",
 		nullptr,
@@ -635,7 +497,6 @@ bool Render::compilePixelShader(D3D12_SHADER_BYTECODE &pixelShaderBytecode)
 		OutputDebugStringA((char*)errorBuff->GetBufferPointer());
 		return false;
 	}
-
 
 	pixelShaderBytecode.BytecodeLength = pixelShader->GetBufferSize();
 	pixelShaderBytecode.pShaderBytecode = pixelShader->GetBufferPointer();
@@ -657,7 +518,7 @@ bool Render::CreatePsoAndInputLayout(D3D12_SHADER_BYTECODE &vertexShaderBytecode
 	inputLayoutDesc.pInputElementDescs = inputLayout;
 
 	//设置psoDesc
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {}; 
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
 	psoDesc.InputLayout = inputLayoutDesc; // IL描述
 	psoDesc.pRootSignature = rootSignature; // 设置root signature
 	psoDesc.VS = vertexShaderBytecode; //编译过的Vs
@@ -672,11 +533,8 @@ bool Render::CreatePsoAndInputLayout(D3D12_SHADER_BYTECODE &vertexShaderBytecode
 	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT); //默认的深度测试
 
 	// 建立pso
-	auto hr = device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipelineStateObject));
-	if (FAILED(hr))
-	{
-		return false;
-	}
+	CHECK_HR_RETURN(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipelineStateObject)));
+
 	return true;
 }
 
