@@ -76,7 +76,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;C:\Users\papalqi\source\repos\BzTuts\GCMath;C:\Users\Administrator\Desktop\BzTuts\BzTuts;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;C:\Users\papalqi\source\repos\BzTuts\GCMath;C:\Users\Administrator\Desktop\BzTuts\BzTuts;C:\Users\Administrator\Desktop\BzTuts\GCMath;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;C:\Users\papalqi\source\repos\BzTuts\Lib;C:\Users\Administrator\Desktop\BzTuts\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -158,6 +158,7 @@
     <ClCompile Include="Pwindows.cpp" />
     <ClCompile Include="render.cpp" />
     <ClCompile Include="TestMeshcpp.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Timer.h" />
   </ItemGroup>
@@ -176,6 +177,7 @@
     <ClInclude Include="render.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestMeshcpp.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
