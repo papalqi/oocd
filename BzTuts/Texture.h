@@ -6,6 +6,7 @@ class Texture
 {
 	ID3D12DescriptorHeap* mainDescriptorHeap;
 	ID3D12Resource* textureBuffer; // the resource heap containing our texture
+
 	//从本地读取图片文件
 	int LoadImageDataFromFile(BYTE** imageData, D3D12_RESOURCE_DESC& resourceDescription, LPCWSTR filename, int &bytesPerRow);
 

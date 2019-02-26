@@ -18,7 +18,7 @@ public:
 	bool InitD3D(int Width, int Height, HWND& hwnd, bool FullScreen, bool Running);
 	bool Running;
 
-	Camera mCamera;
+	NCamera mCamera;
 	ConstantBufferPerObject cbPerObject;
 	D3D12_RECT scissorRect;
 	D3D12_VIEWPORT viewport;

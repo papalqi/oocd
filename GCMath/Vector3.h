@@ -117,7 +117,7 @@ namespace oocd
 		bool IsNearlyZero(float Tolerance = KINDA_SMALL_NUMBER) const;
 		bool Equals(const Vector3<T>& V, float Tolerance = KINDA_SMALL_NUMBER) const;
 	public:
-		static float CrossProduct(const Vector3<T>& A, const Vector3<T>& B);
+		static Vector3<T> CrossProduct(const Vector3<T>& A, const Vector3<T>& B);
 		static float Distance(const Vector3<T>& V1, const  Vector3<T>& V2);
 		static float DistSquared(const Vector3<T>& V1, const  Vector3<T>& V2);
 		static float DotProduct(const Vector3<T>& A, const Vector3<T>& B);
@@ -282,7 +282,7 @@ namespace oocd
 	}
 
 	template <typename T>
-	float Vector3<T>::CrossProduct(const Vector3<T>& A, const Vector3<T>& B)
+	Vector3<T> Vector3<T>::CrossProduct(const Vector3<T>& A, const Vector3<T>& B)
 	{
 		return A ^ B;
 	}

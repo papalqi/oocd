@@ -1,6 +1,7 @@
 ﻿#include "render.h"
 #include"Timer.h"
 #include"EngineMacro.h"
+#include"Matrix.h"
 bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Running)
 {
 	this->width = Width;
@@ -53,6 +54,7 @@ void Render::LoadMesh(OCMesh* one)
 	auto tmpMat = XMMatrixTranslationFromVector(posVec);
 	XMStoreFloat4x4(&one->MTransform.RotMat, XMMatrixIdentity());
 	XMStoreFloat4x4(&one->MTransform.WorldMat, tmpMat);
+
 	//进行顶点索引注册
 
 	one->RegistereForRender(device, commandList);
@@ -95,12 +97,19 @@ void Render::Update(const GameTimer& gt)
 	OnKeyboardInput(gt);
 	for (int i = 0; i != renderMesh.size(); i++)
 	{
-		XMMATRIX viewMat = XMLoadFloat4x4(&mCamera.GetView4x4f()); // load view matrix
-		XMMATRIX projMat = XMLoadFloat4x4(&mCamera.GetProj4x4f()); // load projection matrix
+		//XMMATRIX viewMat = XMLoadFloat4x4(&mCamera.GetView4x4f()); // load view matrix
+		//XMMATRIX projMat = XMLoadFloat4x4(&mCamera.GetProj4x4f()); // load projection matrix
 
-		XMMATRIX wvpMat = XMLoadFloat4x4(&renderMesh[i]->MTransform.WorldMat) * viewMat * projMat; // create wvp matrix
-		XMMATRIX transposed = XMMatrixTranspose(wvpMat); // must transpose wvp matrix for the gpu
-		XMStoreFloat4x4(&cbPerObject.wvpMat, transposed); // store transposed wvp matrix in constant buffer
+		//XMMATRIX wvpMat = XMLoadFloat4x4(&renderMesh[i]->MTransform.WorldMat) * viewMat * projMat; // create wvp matrix
+		//XMMATRIX transposed = XMMatrixTranspose(wvpMat); // must transpose wvp matrix for the gpu
+
+
+		oocd::Matrix viewMat = mCamera.GetView();
+		oocd::Matrix projMat = mCamera.GetProj();
+
+		oocd::Matrix wvpMat = renderMesh[i]->MTransform.WorldMat * viewMat * projMat; // create wvp matrix
+	
+		cbPerObject.wvpMat=wvpMat.GetTransposed(); // store transposed wvp matrix in constant buffer
 		memcpy(cbvGPUAddress[frameIndex] + ConstantBufferPerObjectAlignedSize * i, &cbPerObject, sizeof(cbPerObject));
 	}
 }
@@ -168,8 +177,8 @@ void Render::UpdatePipeline()
 
 	for (int i = 0; i != renderMesh.size(); i++)
 	{
-		commandList->IASetVertexBuffers(0, 1, &renderMesh[i]->vertexBufferView); 
-			commandList->IASetIndexBuffer(&renderMesh[i]->indexBufferView);
+		commandList->IASetVertexBuffers(0, 1, &renderMesh[i]->vertexBufferView);
+		commandList->IASetIndexBuffer(&renderMesh[i]->indexBufferView);
 		commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress() + i * ConstantBufferPerObjectAlignedSize);
 		commandList->DrawIndexedInstanced(renderMesh[i]->iList.size(), 1, 0, 0, 0);
 	}
@@ -182,7 +191,7 @@ void Render::OnKeyboardInput(const GameTimer& gt)
 	const float dt = gt.DeltaTime();
 
 	if (GetAsyncKeyState('W') & 0x8000)
-		mCamera.Walk(-MOUSE_SPEED_LOW*dt);
+		mCamera.Walk(-MOUSE_SPEED_LOW * dt);
 
 	if (GetAsyncKeyState('S') & 0x8000)
 		mCamera.Walk(MOUSE_SPEED_LOW * dt);
@@ -191,7 +200,7 @@ void Render::OnKeyboardInput(const GameTimer& gt)
 		mCamera.Strafe(MOUSE_SPEED_LOW * dt);
 
 	if (GetAsyncKeyState('D') & 0x8000)
-		mCamera.Strafe(-MOUSE_SPEED_LOW*dt);
+		mCamera.Strafe(-MOUSE_SPEED_LOW * dt);
 
 	mCamera.UpdateViewMatrix();
 }
@@ -289,7 +298,6 @@ void Render::WaitForPreviousFrame()
 
 	fenceValue[frameIndex]++;
 }
-
 
 bool Render::SetAdapter(IDXGIAdapter1* adapter, IDXGIFactory4* dxgiFactory)
 {

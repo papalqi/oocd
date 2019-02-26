@@ -4,7 +4,6 @@
 #include"TestMeshcpp.h"
 #include"Type.h"
 
-
 class Actor
 {
 public:
@@ -16,10 +15,5 @@ private:
 public:
 	uint8 bHidden : 1;
 
-
 protected:
-
-
 };
-
-

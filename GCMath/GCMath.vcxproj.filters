@@ -22,6 +22,9 @@
     <Filter Include="头文件\Macros">
       <UniqueIdentifier>{445fe913-0050-4045-9243-e27ef754fb26}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\Matrix">
+      <UniqueIdentifier>{471bf48f-bd74-4441-9761-2959653ffba6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -110,9 +113,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Matrix.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Plane.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -134,14 +134,17 @@
     <ClCompile Include="MathBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="RotationMatrix.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Quat.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix.cpp">
+      <Filter>源文件\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="RotationMatrix.cpp">
+      <Filter>源文件\Matrix</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

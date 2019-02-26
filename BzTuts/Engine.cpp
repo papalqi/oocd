@@ -2,11 +2,9 @@
 #include"ErrorException.h"
 #include<windowsx.h>
 
-
 Engine* Engine::mEngine = nullptr;
 
-
-int Engine::EngineInit(HINSTANCE hInstance, int nShowCmd )
+int Engine::EngineInit(HINSTANCE hInstance, int nShowCmd)
 {
 	mEngine = this;
 	CHECK_AND_OUT(Onlywindow.InitializeWindow(hInstance, nShowCmd, false, WndProc), L"initialize error");
@@ -40,9 +38,6 @@ void Engine::StartLoop()
 	OnlyRender.Cleanup();
 }
 
-
-
-
 void Engine::EngineLoop()
 {
 	OnlyRender.CreateConstBuffer();
@@ -60,6 +55,7 @@ void Engine::EngineLoop()
 			DispatchMessage(&msg);
 		}
 		else {
+
 			// run game code
 			OnlyRender.Update(mtimer);
 			OnlyRender.run();
@@ -70,7 +66,6 @@ void Engine::EngineLoop()
 Engine* Engine::GetEngine()
 {
 	return mEngine;
-
 }
 
 LRESULT Engine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -111,7 +106,7 @@ LRESULT Engine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		OnlyRender.OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 
-	case WM_DESTROY: 
+	case WM_DESTROY:
 		Running = false;
 		PostQuitMessage(0);
 		return 0;
