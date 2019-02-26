@@ -10,7 +10,6 @@ int Engine::EngineInit(HINSTANCE hInstance, int nShowCmd )
 {
 	mEngine = this;
 	CHECK_AND_OUT(Onlywindow.InitializeWindow(hInstance, nShowCmd, false, WndProc), L"initialize error");
-
 	CHECK_AND_OUT(OnlyRender.InitD3D(
 		Onlywindow.GetWidth(),
 		Onlywindow.GetHeight(),
@@ -31,7 +30,7 @@ void Engine::LoadMesh(OCMesh *one)
 
 void Engine::StartLoop()
 {
-	OnlyRender.LoadMeshEnd();
+	OnlyRender.CreateConstBuffer();
 	EngineLoop();
 
 	OnlyRender.WaitForPreviousFrame();
@@ -46,7 +45,7 @@ void Engine::StartLoop()
 
 void Engine::EngineLoop()
 {
-	OnlyRender.LoadMeshEnd();
+	OnlyRender.CreateConstBuffer();
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
 

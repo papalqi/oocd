@@ -151,18 +151,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OCMath.cpp" />
     <ClCompile Include="Pwindows.cpp" />
     <ClCompile Include="render.cpp" />
+    <ClCompile Include="RenderDefine.h" />
     <ClCompile Include="TestMeshcpp.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Actor.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraType.h" />
     <ClInclude Include="Component.h" />

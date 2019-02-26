@@ -4,178 +4,69 @@
 #include "TestMeshcpp.h"
 #include"Camera.h"
 #include"Timer.h"
+#include"RenderDefine.h"
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
-const int frameBufferCount = 3;
-
-// this is the structure of our constant buffer.
-struct ConstantBuffer {
-	XMFLOAT4 colorMultiplier;
-};
 
 class Render
 
 {
 public:
 
-	//初始化
+	bool compilePixelShader(D3D12_SHADER_BYTECODE &pixelShaderBytecode);
+	bool compileVertexShader(D3D12_SHADER_BYTECODE& vertexShaderBytecode);
 	bool InitD3D(int Width, int Height, HWND& hwnd, bool FullScreen, bool Running);
-	//进行mesh注册
-	void LoadMesh(OCMesh *one);
-	void LoadMeshEnd();
-public:
+	bool Running;
+
 	Camera mCamera;
-	//基础的更新，tick
+	ConstantBufferPerObject cbPerObject;
+	D3D12_RECT scissorRect;
+	D3D12_VIEWPORT viewport;
+	DXGI_SAMPLE_DESC sampleDesc = {};
+	HANDLE fenceEvent;
+	HWND mhMainWnd;
+	ID3D12CommandAllocator* commandAllocator[frameBufferCount];
+	ID3D12CommandQueue* commandQueue;
+	ID3D12DescriptorHeap* dsDescriptorHeap;
+	ID3D12DescriptorHeap* rtvDescriptorHeap;
+	ID3D12Device* device;
+	ID3D12Fence* fence[frameBufferCount];
+	ID3D12GraphicsCommandList* commandList;
+	ID3D12PipelineState *pipelineStateObject;
+	ID3D12Resource* constantBufferUploadHeaps[frameBufferCount];
+	ID3D12Resource* depthStencilBuffer;
+	ID3D12Resource* renderTargets[frameBufferCount];
+	ID3D12RootSignature* rootSignature; // root signature defines data shaders will access
+	IDXGISwapChain3* swapChain;
+	int frameIndex;
+	int height;
+	int rtvDescriptorSize;
+	int width;
+	POINT mLastMousePos;
+	UINT64 fenceValue[frameBufferCount];
+	UINT8* cbvGPUAddress[frameBufferCount];
+	vector<OCMesh*> renderMesh;
+	virtual void OnMouseDown(WPARAM btnState, int x, int y);
+	virtual void OnMouseMove(WPARAM btnState, int x, int y);
+	virtual void OnMouseUp(WPARAM btnState, int x, int y);
+	void Cleanup();
+	void CreateRtvDescriptor();
+	void CreateSwapChain(HWND &hwnd, bool FullScreen, IDXGIFactory4* dxgiFactory);
+	void LoadMesh(OCMesh *one);
+	void run();
 	void Update(const GameTimer& gt);
 	void UpdatePipeline();
-	void OnKeyboardInput(const GameTimer& gt);
-	virtual void OnMouseDown(WPARAM btnState, int x, int y);
-	virtual void OnMouseUp(WPARAM btnState, int x, int y);
-	virtual void OnMouseMove(WPARAM btnState, int x, int y);
-	void run();
-	void Cleanup();
-	POINT mLastMousePos;
 	void WaitForPreviousFrame();
-	HWND mhMainWnd;
-	Render();
-	~Render();
-public:
-	bool Running;
-	int width;
-	int height;
-public:
-	HANDLE fenceEvent;
-	vector<OCMesh*> renderMesh;
+	void CreateConstBuffer();
 
 private:
-
-	//编译VertexShader
-	bool compileVertexShader(D3D12_SHADER_BYTECODE& vertexShaderBytecode);
-
-	//编译PixelShader
-	bool compilePixelShader(D3D12_SHADER_BYTECODE &pixelShaderBytecode);
-
-private:
-
-	//PSO
-	ID3D12PipelineState *pipelineStateObject; // pso containing a pipeline state
-
-	ID3D12RootSignature* rootSignature; // root signature defines data shaders will access
-
-	//屏幕视口
-	D3D12_VIEWPORT viewport;
-
-	// 超出这个区域会被裁剪
-	D3D12_RECT scissorRect;
-	void SetScissorRect();
 	void SetViewport();
-
-	//建立PSO和IL
-	bool CreatePsoAndInputLayout(D3D12_SHADER_BYTECODE &vertexShaderBytecode, D3D12_SHADER_BYTECODE &pixelShaderBytecode);
-private:
-
-	// 命令队列
-	ID3D12CommandQueue* commandQueue;
-
-	//每一个buffer有一个Allocator
-	ID3D12CommandAllocator* commandAllocator[frameBufferCount];
-
-	//一个command list
-	ID3D12GraphicsCommandList* commandList;
-
-	//设置命令队列
-	bool setCommandqueue();
-
-private:
-
-	//采样类型描述
-	DXGI_SAMPLE_DESC sampleDesc = {};
-
-	// direct3d device
-	ID3D12Device* device;
-
-	// 交换链
-	IDXGISwapChain3* swapChain;
-
-	//建立交换链
-	void CreateSwapChain(HWND &hwnd, bool FullScreen, IDXGIFactory4* dxgiFactory);
-
-	//设置适配器
-	bool SetAdapter(IDXGIAdapter1*, IDXGIFactory4* dxgiFactory);
-
-	//设置device
-	bool SetDevice(IDXGIAdapter1* adapter);
-
-private:
-
-	//当command list执行时将锁住，
-	ID3D12Fence* fence[frameBufferCount];
-
-	//每一帧都会增加
-	UINT64 fenceValue[frameBufferCount];
-
-	//建立Fence，设置同步
-	bool CreateFenceAndRootSignature();
-
-private:
-
-	//ID3D12Resource* vertexBuffer;
-	//ID3D12Resource*indexBuffer;
-	ID3D12Resource* depthStencilBuffer;
-
-	//D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
-	//D3D12_INDEX_BUFFER_VIEW indexBufferView;
-	void AddVertexs(Vertex* vList, int vBufferSize);
-	void AddIndex(DWORD *iList, int LSize);
-
+	void SetScissorRect();
 	void SetdepthStencil();
-
-private:
-
-	//render targets view 堆，有多少个缓存，里面就有几个这个
-	ID3D12DescriptorHeap* rtvDescriptorHeap;
-
-	//	depth
-	ID3D12DescriptorHeap* dsDescriptorHeap;
-
-	//视口数量
-	ID3D12Resource* renderTargets[frameBufferCount];
-
-	//当前的backbuffer
-	int frameIndex;
-
-	//RTV的size
-	int rtvDescriptorSize;
-
-	//建立Descriptor
-	void CreateRtvDescriptor();
-private:
-	//const buffer desc存储堆
-	ID3D12DescriptorHeap* mainDescriptorHeap[frameBufferCount]; // this heap will store the descripor to our constant buffer
-	//const buffer上传堆
-	ID3D12Resource* constantBufferUploadHeap[frameBufferCount]; // this is the memory on the gpu where our constant buffer will be placed.
-
-	ConstantBuffer cbColorMultiplierData;
-	UINT8* cbColorMultiplierGPUAddress[frameBufferCount]; 
-
-
-	struct ConstantBufferPerObject 
-	{
-		XMFLOAT4X4 wvpMat;
-	};
-
-
-	int ConstantBufferPerObjectAlignedSize = (sizeof(ConstantBufferPerObject) + 255) & ~255;
-
-	ConstantBufferPerObject cbPerObject; // this is the constant buffer data we will send to the gpu 
-											// (which will be placed in the resource we created above)
-
-	ID3D12Resource* constantBufferUploadHeaps[frameBufferCount]; // this is the memory on the gpu where constant buffers for each frame will be placed
-
-	UINT8* cbvGPUAddress[frameBufferCount]; // this is a pointer to each of the constant buffer resource heaps
-
-
-	public:
-	int numCubeIndices; // the number of indices to draw the cube
+	void OnKeyboardInput(const GameTimer& gt);
+	bool SetDevice(IDXGIAdapter1* adapter);
+	bool CreatePsoAndInputLayout(D3D12_SHADER_BYTECODE &vertexShaderBytecode, D3D12_SHADER_BYTECODE &pixelShaderBytecode);
+	bool CreateFenceAndRootSignature();
+	bool SetAdapter(IDXGIAdapter1*, IDXGIFactory4* dxgiFactory);
+	bool setCommandqueue();
 };
-

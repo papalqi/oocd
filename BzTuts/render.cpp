@@ -58,7 +58,7 @@ void Render::LoadMesh(OCMesh* one)
 	one->RegistereForRender(device, commandList);
 }
 
-void Render::LoadMeshEnd()
+void Render::CreateConstBuffer()
 {
 	for (int i = 0; i < frameBufferCount; i++)
 	{
@@ -290,13 +290,6 @@ void Render::WaitForPreviousFrame()
 	fenceValue[frameIndex]++;
 }
 
-Render::Render()
-{
-}
-
-Render::~Render()
-{
-}
 
 bool Render::SetAdapter(IDXGIAdapter1* adapter, IDXGIFactory4* dxgiFactory)
 {
