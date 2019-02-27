@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "MathHelper.h"
 #include "Vector3.h"
 namespace oocd
@@ -7,11 +7,14 @@ namespace oocd
 	class Rotator
 	{
 	public:
-		//ÈÆÓÒÖáĞı×ª Y
+
+		//ç»•å³è½´æ—‹è½¬ Y
 		float Pitch;
-		//ÈÆZÖáĞı×ª
+
+		//ç»•Zè½´æ—‹è½¬
 		float Yaw;
-		//ÈÆXÖáĞı×ª
+
+		//ç»•Xè½´æ—‹è½¬
 		float Roll;
 
 		static  const Rotator ZeroRotator;
@@ -19,8 +22,9 @@ namespace oocd
 		Rotator() {};
 		explicit  Rotator(float InF);
 		Rotator(float InPitch, float InYaw, float InRoll);
+
 		//explicit  Rotator(const FQuat& Quat);
-		~Rotator();
+		~Rotator() {};
 
 	public:
 
@@ -44,19 +48,19 @@ namespace oocd
 
 		// Functions.
 
-		//¼ì²éÊÇ·ñ¼¸ºõÎª0
+		//æ£€æŸ¥æ˜¯å¦å‡ ä¹ä¸º0
 		bool IsNearlyZero(float Tolerance = KINDA_SMALL_NUMBER) const;
 
-		//ÊÇ·ñÊÇ0
+		//æ˜¯å¦æ˜¯0
 		bool IsZero() const;
 
-		//ÊÇ·ñÏàµÈ
+		//æ˜¯å¦ç›¸ç­‰
 		bool Equals(const Rotator& R, float Tolerance = KINDA_SMALL_NUMBER) const;
 
-		//Ôö¼Ó
+		//å¢åŠ 
 		Rotator Add(float DeltaPitch, float DeltaYaw, float DeltaRoll);
 
-		//µÃµ½Äætodo
+		//å¾—åˆ°é€†todo
 		 //Rotator GetInverse() const;
 
 		//todo
@@ -66,30 +70,31 @@ namespace oocd
 
 		Quat Quaternion() const;
 
-		//Å·À­
+		//æ¬§æ‹‰
 		Vector Euler() const;
 
-		//Ğı×ªVector
+		//æ—‹è½¬Vector
 		Vector RotateVector(const Vector& V) const;
 
-		//ÄæÈ»ºóÓ¦ÓÃ
+		//é€†ç„¶ååº”ç”¨
 		Vector UnrotateVector(const Vector& V) const;
 
-		//»ñµÃĞı×ªÖµ
+		//è·å¾—æ—‹è½¬å€¼
 		Rotator Clamp() const;
 
-		//µÃµ½±ê×¼Ğı×ª
+		//å¾—åˆ°æ ‡å‡†æ—‹è½¬
 		Rotator GetNormalized() const;
 
 		//todo
 		Rotator GetDenormalized() const;
 
-		//µÃµ½ÌØ¶¨ÖáµÄÖµ
+		//å¾—åˆ°ç‰¹å®šè½´çš„å€¼
 		float GetComponentForAxis(Axis tAxis) const;
-		//ÉèÖÃÌØ¶¨ÖáµÄÖµ
+
+		//è®¾ç½®ç‰¹å®šè½´çš„å€¼
 		void SetComponentForAxis(Axis tAxis, float Component);
 
-		//±ê×¼»¯
+		//æ ‡å‡†åŒ–
 		void Normalize();
 
 		//todo

@@ -106,7 +106,7 @@ public:
 	
 		SetLens(0.25f*PI, 1.0f, 1.0f, 1000.0f);
 	};
-	~NCamera();
+	~NCamera() {};
 	
 	Vector GetPosition()const { return mPosition; }
 	void SetPosition(float x, float y, float z) { mPosition = { x,y,z }; }

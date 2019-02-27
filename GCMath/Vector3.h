@@ -16,7 +16,6 @@ namespace oocd
 	public:
 
 		static  const Vector3<T> ZeroVector;
-		static  const Vector3<T> UnitVector;
 		static const Vector3<T>OneVector;
 
 	public:
@@ -123,8 +122,12 @@ namespace oocd
 		static float DotProduct(const Vector3<T>& A, const Vector3<T>& B);
 	};
 
-	
+	 template <typename T>
+		const Vector3<T> oocd::Vector3<T>::ZeroVector(0.0f, 0.0f, 0.0f);
 		
+		template <typename T>
+		const Vector3<T> oocd::Vector3<T>::OneVector(1.0f, 1.0f, 1.0f);
+	
 
 	template <typename T>
 	bool oocd::Vector3<T>::IsNearlyZero(float Tolerance /*= KINDA_SMALL_NUMBER*/) const

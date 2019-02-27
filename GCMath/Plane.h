@@ -185,7 +185,7 @@ namespace oocd
 		return this->TransformByUsingAdjointT(M, DetM, tmpTA);
 	}
 
-	bool MakeFrustumPlane(float A, float B, float C, float D, Plane& OutPlane)
+	inline bool MakeFrustumPlane(float A, float B, float C, float D, Plane& OutPlane)
 	{
 		const float	LengthSquared = A * A + B * B + C * C;
 		if (LengthSquared > DELTA*DELTA)

@@ -147,6 +147,7 @@ oocd::Matrix oocd::Matrix::Inverse() const
 	{
 		VectorMatrixInverse(&Result, this);
 	}
+	return Result;
 }
 
 oocd::Matrix oocd::Matrix::TransposeAdjoint() const

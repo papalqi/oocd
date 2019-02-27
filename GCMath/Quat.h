@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Rotator.h"
 #include "Vector3.h"
 #include "Matrix.h"
@@ -22,93 +22,47 @@ namespace oocd
 
 	public:
 
-		 Quat() { }
-		 Quat(float InX, float InY, float InZ, float InW);
+		Quat() { }
+		Quat(float InX, float InY, float InZ, float InW);
 
-		 Quat(const Quat& Q);
+		Quat(const Quat& Q);
 
-		
 		explicit Quat(const Matrix& M);
 
-		
 		explicit Quat(const Rotator& R);
 
-		Quat(Vector Axis, float AngleRad);
+		Quat(oocd::Vector Axis, float AngleRad);
 
 	public:
 
+		Quat operator+(const Quat& Q) const;
 
+		Quat operator+=(const Quat& Q);
 
-		
-		 Quat operator+(const Quat& Q) const;
+		Quat operator-(const Quat& Q) const;
 
-		
-		 Quat operator+=(const Quat& Q)
-		 {
-			 this->X += Q.X;
-			 this->Y += Q.Y;
-			 this->Z += Q.Z;
-			 this->W += Q.W;
+		bool Equals(const Quat& Q, float Tolerance = KINDA_SMALL_NUMBER) const;
 
+		bool IsIdentity(float Tolerance = SMALL_NUMBER) const;
 
-			 return *this;
-		 }
+		Quat operator-=(const Quat& Q);
 
-		
-		 Quat operator-(const Quat& Q) const
-		 {
-			 return Quat(X - Q.X, Y - Q.Y, Z - Q.Z, W - Q.W);
+		Quat operator*(const Quat& Q) const;
+		//todo
+		Quat operator*=(const Quat& Q);
 
-		 }
+		oocd::Vector operator*(const oocd::Vector& V) const;
 
-		 bool Equals(const Quat& Q, float Tolerance = KINDA_SMALL_NUMBER) const
-		 {
-			 return (Math::Abs(X - Q.X) <= Tolerance && Math::Abs(Y - Q.Y) <= Tolerance && Math::Abs(Z - Q.Z) <= Tolerance && Math::Abs(W - Q.W) <= Tolerance)
-				 || (Math::Abs(X + Q.X) <= Tolerance && Math::Abs(Y + Q.Y) <= Tolerance && Math::Abs(Z + Q.Z) <= Tolerance && Math::Abs(W + Q.W) <= Tolerance);
-		 }
-
-	
-		 bool IsIdentity(float Tolerance = SMALL_NUMBER) const
-		 {
-			 return Equals(Quat::Identity, Tolerance);
-
-		 }
-
-		 Quat operator-=(const Quat& Q)
-		 {
-			 this->X -= Q.X;
-			 this->Y -= Q.Y;
-			 this->Z -= Q.Z;
-			 this->W -= Q.W;
-
-
-			 return *this;
-		 }
-
-		
-		 Quat operator*(const Quat& Q) const;
-
-	
-		 Quat operator*=(const Quat& Q);
-
-	
-		Vector operator*(const Vector& V) const;
-
-	
 		Matrix operator*(const Matrix& M) const;
 
-		 Quat operator*=(const float Scale);
+		Quat operator*=(const float Scale);
 
-	
-		 Quat operator*(const float Scale) const;
+		Quat operator*(const float Scale) const;
 
-		
-		 Quat operator/=(const float Scale);
+		Quat operator/=(const float Scale);
 
-	
-		 Quat operator/(const float Scale) const;
+		Quat operator/(const float Scale) const;
 
-	
 		bool operator==(const Quat& Q) const;
 
 		bool operator!=(const Quat& Q) const;
@@ -117,196 +71,100 @@ namespace oocd
 
 	public:
 
+		static  Quat MakeFromEuler(const oocd::Vector& Euler);
+
+		oocd::Vector Euler() const;
+
 	
-		static  Quat MakeFromEuler(const Vector& Euler);
+		void Normalize(float Tolerance = SMALL_NUMBER);
 
-		/** Convert a Quaternion into floating-point Euler angles (in degrees). */
-		 Vector Euler() const;
+	
+		Quat GetNormalized(float Tolerance = SMALL_NUMBER) const;
 
-		/**
-		 * Normalize this quaternion if it is large enough.
-		 * If it is too small, returns an identity quaternion.
-		 *
-		 * @param Tolerance Minimum squared length of quaternion for normalization.
-		 */
-		 void Normalize(float Tolerance = SMALL_NUMBER);
-
-		/**
-		 * Get a normalized copy of this quaternion.
-		 * If it is too small, returns an identity quaternion.
-		 *
-		 * @param Tolerance Minimum squared length of quaternion for normalization.
-		 */
-		 Quat GetNormalized(float Tolerance = SMALL_NUMBER) const;
-
-		// Return true if this quaternion is normalized
 		bool IsNormalized() const;
 
-		/**
-		 * Get the length of this quaternion.
-		 *
-		 * @return The length of this quaternion.
-		 */
-		 float Size() const;
+	
+		float Size() const;
 
-		/**
-		 * Get the length squared of this quaternion.
-		 *
-		 * @return The length of this quaternion.
-		 */
-		 float SizeSquared() const;
+	
+		float SizeSquared() const;
 
+		float GetAngle() const;
 
-		/** Get the angle of this quaternion */
-		 float GetAngle() const;
+		void ToAxisAndAngle(oocd::Vector& Axis, float& Angle) const;
 
-		/**
-		 * get the axis and angle of rotation of this quaternion
-		 *
-		 * @param Axis{out] vector of axis of the quaternion
-		 * @param Angle{out] angle of the quaternion
-		 * @warning : assumes normalized quaternions.
-		 */
-		void ToAxisAndAngle(Vector& Axis, float& Angle) const;
+	
+		void ToSwingTwist(const oocd::Vector& InTwistAxis, Quat& OutSwing, Quat& OutTwist) const;
 
-		/**
-		 * Get the swing and twist decomposition for a specified axis
-		 *
-		 * @param InTwistAxis Axis to use for decomposition
-		 * @param OutSwing swing component quaternion
-		 * @param OutTwist Twist component quaternion
-		 * @warning assumes normalised quaternion and twist axis
-		 */
-		 void ToSwingTwist(const Vector& InTwistAxis, Quat& OutSwing, Quat& OutTwist) const;
+	
+		oocd::Vector RotateVector(oocd::Vector V) const;
 
-		/**
-		 * Rotate a vector by this quaternion.
-		 *
-		 * @param V the vector to be rotated
-		 * @return vector after rotation
-		 */
-		Vector RotateVector(Vector V) const;
+	
+		oocd::Vector UnrotateVector(oocd::Vector V) const;
 
-		/**
-		 * Rotate a vector by the inverse of this quaternion.
-		 *
-		 * @param V the vector to be rotated
-		 * @return vector after rotation by the inverse of this quaternion.
-		 */
-		Vector UnrotateVector(Vector V) const;
+		
+		Quat Inverse() const;
 
-		/**
-		 * @return quaternion with W=0 and V=theta*v.
-		 */
-		 Quat Log() const;
-
-		/**
-		 * @note Exp should really only be used after Log.
-		 * Assumes a quaternion with W=0 and V=theta*v (where |v| = 1).
-		 * Exp(q) = (sin(theta)*v, cos(theta))
-		 */
-		 Quat Exp() const;
-
-		/**
-		 * @return inverse of this quaternion
-		 */
-		 Quat Inverse() const;
-
-		/**
-		 * Enforce that the delta between this Quaternion and another one represents
-		 * the shortest possible rotation angle
-		 */
+	
 		void EnforceShortestArcWith(const Quat& OtherQuat);
 
 		/** Get the forward direction (X axis) after it has been rotated by this Quaternion. */
-		 Vector GetAxisX() const;
+		oocd::Vector GetAxisX() const;
 
 		/** Get the right direction (Y axis) after it has been rotated by this Quaternion. */
-		 Vector GetAxisY() const;
+		oocd::Vector GetAxisY() const;
 
 		/** Get the up direction (Z axis) after it has been rotated by this Quaternion. */
-		 Vector GetAxisZ() const;
+		oocd::Vector GetAxisZ() const;
 
 		/** Get the forward direction (X axis) after it has been rotated by this Quaternion. */
-		 Vector GetForwardVector() const;
+		oocd::Vector GetForwardVector() const;
 
 		/** Get the right direction (Y axis) after it has been rotated by this Quaternion. */
-		 Vector GetRightVector() const;
+		oocd::Vector GetRightVector() const;
 
 		/** Get the up direction (Z axis) after it has been rotated by this Quaternion. */
-		 Vector GetUpVector() const;
+		oocd::Vector GetUpVector() const;
 
-		/** Convert a rotation into a unit vector facing in its direction. Equivalent to GetForwardVector(). */
-		 Vector Vector() const;
+		oocd::Vector Vector() const;
 
-		/** Get the FRotator representation of this Quaternion. */
-		 Rotator Rotator() const;
-
-		/**
-		 * Get the axis of rotation of the Quaternion.
-		 * This is the axis around which rotation occurs to transform the canonical coordinate system to the target orientation.
-		 * For the identity Quaternion which has no such rotation, Vector(1,0,0) is returned.
-		 */
-		 oocd::Vector GetRotationAxis() const;
-
-		/** Find the angular distance between two rotation quaternions (in radians) */
-		 float AngularDistance(const Quat& Q) const;
-
-		
-		/**
-		 * Utility to check if there are any non-finite values (NaN or Inf) in this Quat.
-		 *
-		 * @return true if there are any non-finite values in this Quaternion, otherwise false.
-		 */
-		bool ContainsNaN() const;
+		oocd::Rotator Rotator() const;
 
 	
+		oocd::Vector GetRotationAxis() const;
+
+		float AngularDistance(const Quat& Q) const;
+
+	
+		bool ContainsNaN() const;
 
 	public:
 
-		/**
-		 * Generates the 'smallest' (geodesic) rotation between two vectors of arbitrary length.
-		 */
-		static  Quat FindBetween(const  oocd::Vector& Vector1, const  oocd::Vector& Vector2)
-		{
-			return FindBetweenVectors(Vector1, Vector2);
-		}
 
-		/**
-		 * Generates the 'smallest' (geodesic) rotation between two normals (assumed to be unit length).
-		 */
-		static  Quat FindBetweenNormals(const  oocd::Vector& Normal1, const  oocd::Vector& Normal2);
-
-		/**
-		 * Generates the 'smallest' (geodesic) rotation between two vectors of arbitrary length.
-		 */
-		static  Quat FindBetweenVectors(const  oocd::Vector& Vector1, const  oocd::Vector& Vector2);
-
-		Quat FindBetweenVectors(const oocd::Vector& Vector1, const oocd::Vector& Vector2);
 		static  float Error(const Quat& Q1, const Quat& Q2);
 
-		//×Ô¶¯¹æ·¶»¯³ö´í¡£
+		//è‡ªåŠ¨è§„èŒƒåŒ–å‡ºé”™ã€‚
 		static  float ErrorAutoNormalize(const Quat& A, const Quat& B);
 
-		//¿ìËÙÏßĞÔËÄÔªÊı²åÖµ¡£
+		//å¿«é€Ÿçº¿æ€§å››å…ƒæ•°æ’å€¼ã€‚
 		static  Quat FastLerp(const Quat& A, const Quat& B, const float Alpha);
 
-		//Ë«ÏßĞÔËÄÔªÊı²åÖµ¡£
+		//åŒçº¿æ€§å››å…ƒæ•°æ’å€¼ã€‚
 		static  Quat FastBilerp(const Quat& P00, const Quat& P10, const Quat& P01, const Quat& P11, float FracX, float FracY);
 
-		/**ÇòÃæ²åÖµ¡£ ½«ÕıÈ·¶ÔÆë¡£ ½á¹û²»±ê×¼»°¡£*/
+		/**çƒé¢æ’å€¼ã€‚ å°†æ­£ç¡®å¯¹é½ã€‚ ç»“æœä¸æ ‡å‡†è¯ã€‚*/
 		static  Quat Slerp_NotNormalized(const Quat &Quat1, const Quat &Quat2, float Slerp);
-		/**ÇòÃæ²åÖµ¡£ ½«ÕıÈ·¶ÔÆë¡£ ½á¹û¹éÒ»»¯¡£*/
+		/**çƒé¢æ’å€¼ã€‚ å°†æ­£ç¡®å¯¹é½ã€‚ ç»“æœå½’ä¸€åŒ–ã€‚*/
 		static  Quat Slerp(const Quat &Quat1, const Quat &Quat2, float Slerp)
 		{
 			return Slerp_NotNormalized(Quat1, Quat2, Slerp).GetNormalized();
 		}
 
-		//¸ü¼òµ¥µÄSlerp£¬²»»á¼ì²é¡°×î¶Ì¾àÀë¡±µÈ¡£
+		//æ›´ç®€å•çš„Slerpï¼Œä¸ä¼šæ£€æŸ¥â€œæœ€çŸ­è·ç¦»â€ç­‰ã€‚
 
 		static  Quat SlerpFullPath_NotNormalized(const Quat &quat1, const Quat &quat2, float Alpha);
 
-		//¸ü¼òµ¥µÄSlerp£¬²»»á¼ì²é¡°×î¶Ì¾àÀë¡±µÈ¡£
+		//æ›´ç®€å•çš„Slerpï¼Œä¸ä¼šæ£€æŸ¥â€œæœ€çŸ­è·ç¦»â€ç­‰ã€‚
 		static  Quat SlerpFullPath(const Quat &quat1, const Quat &quat2, float Alpha)
 		{
 			return SlerpFullPath_NotNormalized(quat1, quat2, Alpha).GetNormalized();
@@ -317,6 +175,5 @@ namespace oocd
 		static  Quat SquadFullPath(const Quat& quat1, const Quat& tang1, const Quat& quat2, const Quat& tang2, float Alpha);
 
 		static  void CalcTangents(const Quat& PrevP, const Quat& P, const Quat& NextP, float Tension, Quat& OutTan);
-
 	};
 }

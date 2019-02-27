@@ -53,8 +53,8 @@ void Render::LoadMesh(OCMesh* one)
 	Vector posVec = one->MTransform.Position;
 	Transform  Tra(posVec);
 	oocd::Matrix tmpMat = Tra.ToMatrixWithScale();
-	one->MTransform.RotMat= oocd::Matrix::Identity;
-	one->MTransform.WorldMat=tmpMat;
+	one->MTransform.RotMat = oocd::Matrix::Identity;
+	one->MTransform.WorldMat = tmpMat;
 
 	//进行顶点索引注册
 
@@ -104,13 +104,12 @@ void Render::Update(const GameTimer& gt)
 		//XMMATRIX wvpMat = XMLoadFloat4x4(&renderMesh[i]->MTransform.WorldMat) * viewMat * projMat; // create wvp matrix
 		//XMMATRIX transposed = XMMatrixTranspose(wvpMat); // must transpose wvp matrix for the gpu
 
-
 		oocd::Matrix viewMat = mCamera.GetView();
 		oocd::Matrix projMat = mCamera.GetProj();
 
 		oocd::Matrix wvpMat = renderMesh[i]->MTransform.WorldMat * viewMat * projMat; // create wvp matrix
-	
-		cbPerObject.wvpMat=wvpMat.GetTransposed(); // store transposed wvp matrix in constant buffer
+
+		cbPerObject.wvpMat = wvpMat.GetTransposed(); // store transposed wvp matrix in constant buffer
 		memcpy(cbvGPUAddress[frameIndex] + ConstantBufferPerObjectAlignedSize * i, &cbPerObject, sizeof(cbPerObject));
 	}
 }
