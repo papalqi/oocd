@@ -33,12 +33,6 @@ namespace oocd
 		
 		explicit Quat(const Rotator& R);
 
-		/**
-		 * Creates and initializes a new quaternion from the a rotation around the given axis.
-		 *
-		 * @param Axis assumed to be a normalized vector
-		 * @param Angle angle to rotate above the given axis (in radians)
-		 */
 		Quat(Vector Axis, float AngleRad);
 
 	public:
@@ -49,17 +43,47 @@ namespace oocd
 		 Quat operator+(const Quat& Q) const;
 
 		
-		 Quat operator+=(const Quat& Q);
+		 Quat operator+=(const Quat& Q)
+		 {
+			 this->X += Q.X;
+			 this->Y += Q.Y;
+			 this->Z += Q.Z;
+			 this->W += Q.W;
+
+
+			 return *this;
+		 }
 
 		
-		 Quat operator-(const Quat& Q) const;
+		 Quat operator-(const Quat& Q) const
+		 {
+			 return Quat(X - Q.X, Y - Q.Y, Z - Q.Z, W - Q.W);
 
-		 bool Equals(const Quat& Q, float Tolerance = KINDA_SMALL_NUMBER) const;
+		 }
+
+		 bool Equals(const Quat& Q, float Tolerance = KINDA_SMALL_NUMBER) const
+		 {
+			 return (Math::Abs(X - Q.X) <= Tolerance && Math::Abs(Y - Q.Y) <= Tolerance && Math::Abs(Z - Q.Z) <= Tolerance && Math::Abs(W - Q.W) <= Tolerance)
+				 || (Math::Abs(X + Q.X) <= Tolerance && Math::Abs(Y + Q.Y) <= Tolerance && Math::Abs(Z + Q.Z) <= Tolerance && Math::Abs(W + Q.W) <= Tolerance);
+		 }
 
 	
-		 bool IsIdentity(float Tolerance = SMALL_NUMBER) const;
+		 bool IsIdentity(float Tolerance = SMALL_NUMBER) const
+		 {
+			 return Equals(Quat::Identity, Tolerance);
 
-		 Quat operator-=(const Quat& Q);
+		 }
+
+		 Quat operator-=(const Quat& Q)
+		 {
+			 this->X -= Q.X;
+			 this->Y -= Q.Y;
+			 this->Z -= Q.Z;
+			 this->W -= Q.W;
+
+
+			 return *this;
+		 }
 
 		
 		 Quat operator*(const Quat& Q) const;
@@ -258,7 +282,7 @@ namespace oocd
 		 */
 		static  Quat FindBetweenVectors(const  oocd::Vector& Vector1, const  oocd::Vector& Vector2);
 
-		
+		Quat FindBetweenVectors(const oocd::Vector& Vector1, const oocd::Vector& Vector2);
 		static  float Error(const Quat& Q1, const Quat& Q2);
 
 		//自动规范化出错。
@@ -288,13 +312,10 @@ namespace oocd
 			return SlerpFullPath_NotNormalized(quat1, quat2, Alpha).GetNormalized();
 		}
 
-	
 		static  Quat Squad(const Quat& quat1, const Quat& tang1, const Quat& quat2, const Quat& tang2, float Alpha);
 
-		
 		static  Quat SquadFullPath(const Quat& quat1, const Quat& tang1, const Quat& quat2, const Quat& tang2, float Alpha);
 
-		//计算给定点之间的切线
 		static  void CalcTangents(const Quat& PrevP, const Quat& P, const Quat& NextP, float Tension, Quat& OutTan);
 
 	};

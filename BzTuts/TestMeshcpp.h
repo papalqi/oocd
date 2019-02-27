@@ -1,15 +1,16 @@
 ﻿#pragma once
 #include "OCMath.h"
 #include <vector>
+#include "Matrix.h"
 #include"stdafx.h"
 #include<memory>
 using namespace std;
-
+using namespace oocd;
 struct OCTranForm
 {
-	XMFLOAT4X4 WorldMat;//世界矩阵
-	XMFLOAT4X4 RotMat; //旋转矩阵
-	XMFLOAT4 Position = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f); //位置
+	Matrix WorldMat;//世界矩阵
+	Matrix RotMat; //旋转矩阵
+	Vector Position = Vector::ZeroVector; //位置
 };
 struct OCMesh
 {

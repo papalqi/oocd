@@ -19,7 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	mEngine.LoadMesh(mesh1);
 	auto mesh2 = OCMesh::CreateTestMesh();
 
-	mesh2->MTransform.Position = XMFLOAT4(3.0f, 0.0f, 0.0f, 0.0f);
+	mesh2->MTransform.Position = Vector(3.0f, 0.0f, 0.0f);
 	mEngine.LoadMesh(mesh2);
 	mEngine.EngineLoop();
 

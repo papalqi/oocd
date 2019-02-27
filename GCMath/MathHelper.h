@@ -47,7 +47,16 @@ namespace oocd
 		{
 			return (A >= B) ? A : B;
 		}
+		template<typename Type>
+		inline Type
+			Clamp(Type x, Type min, Type max)
+		{
+			return x > min ? x < max ? x : max : min;
+		}
 
+		static float Clamp(float v, float min, float max) {
+			return (v < min) ? min : (v > max) ? max : v;
+		}
 		/** Returns lower value in a generic way */
 		template< class T >
 		static   T Min(const T A, const T B)

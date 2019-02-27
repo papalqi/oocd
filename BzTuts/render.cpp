@@ -1,7 +1,8 @@
 ﻿#include "render.h"
 #include"Timer.h"
 #include"EngineMacro.h"
-#include"Matrix.h"
+#include "Transform.h"
+
 bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Running)
 {
 	this->width = Width;
@@ -49,11 +50,11 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 void Render::LoadMesh(OCMesh* one)
 {
 	renderMesh.push_back(one);
-	XMVECTOR posVec = XMLoadFloat4(&one->MTransform.Position);
-
-	auto tmpMat = XMMatrixTranslationFromVector(posVec);
-	XMStoreFloat4x4(&one->MTransform.RotMat, XMMatrixIdentity());
-	XMStoreFloat4x4(&one->MTransform.WorldMat, tmpMat);
+	Vector posVec = one->MTransform.Position;
+	Transform  Tra(posVec);
+	oocd::Matrix tmpMat = Tra.ToMatrixWithScale();
+	one->MTransform.RotMat= oocd::Matrix::Identity;
+	one->MTransform.WorldMat=tmpMat;
 
 	//进行顶点索引注册
 
