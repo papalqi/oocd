@@ -108,7 +108,7 @@ namespace oocd
 		Vector3<T> GetAbs() const;
 		Vector3<T> GetSignVector() const;
 		bool IsZero() const;
-		void Normalize(float Tolerance = SMALL_NUMBER);
+		bool Normalize(float Tolerance = SMALL_NUMBER);
 		Vector3<T> GetSafeNormal(float Tolerance = SMALL_NUMBER) const;
 		T Size() const;
 		T SizeSquared()const;
@@ -170,32 +170,34 @@ namespace oocd
 	}
 
 	template <typename T>
-	void oocd::Vector3<T>::Normalize(float Tolerance /*= SMALL_NUMBER*/)
+	bool oocd::Vector3<T>::Normalize(float Tolerance /*= SMALL_NUMBER*/)
 	{
 		const float SquareSum = X * X + Y * Y + Z * Z;
 		if (SquareSum > Tolerance)
 		{
-			const float Scale = sqrt(SquareSum);
-			X *= Scale;
-			Y *= Scale;
-			Z *= Scale;
-			return;
+			const float Scale = Math::InvSqrt(SquareSum);
+			X *= Scale; Y *= Scale; Z *= Scale;
+			return true;
 		}
-		X = 0.0f;
-		Y = 0.0f;
-		Z = 0.0f;
+		return false;
 	}
 
 	template <typename T>
 	oocd::Vector3<T> oocd::Vector3<T>::GetSafeNormal(float Tolerance /*= SMALL_NUMBER*/) const
 	{
-		const float SquareSum = X * X + Y * Y;
-		if (SquareSum > Tolerance)
+		const float SquareSum = X * X + Y * Y + Z * Z;
+
+		// Not sure if it's safe to add tolerance in there. Might introduce too many errors
+		if (SquareSum == 1.f)
 		{
-			const float Scale = sqrt(SquareSum);
-			return Vector3(X*Scale, Y*Scale, Z*Scale);
+			return *this;
 		}
-		return ZeroVector;
+		else if (SquareSum < Tolerance)
+		{
+			return Vector3<T>::ZeroVector;
+		}
+		const float Scale = Math::InvSqrt(SquareSum);
+		return Vector3<T>(X*Scale, Y*Scale, Z*Scale);
 	}
 
 	template <typename T>

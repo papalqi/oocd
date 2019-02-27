@@ -222,8 +222,9 @@ void Render::OnMouseMove(WPARAM btnState, int x, int y)
 {
 	if ((btnState & MK_LBUTTON) != 0)
 	{
-		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
-		float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
+		//不要在这里转换
+		float dx = (0.25f*static_cast<float>(x - mLastMousePos.x));
+		float dy = (0.25f*static_cast<float>(y - mLastMousePos.y));
 
 		mCamera.Pitch(dy);
 		mCamera.RotateY(dx);

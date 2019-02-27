@@ -208,19 +208,19 @@ public:
 	// Rotate the camera.
 	void Pitch(float angle)
 	{
-		RotationMatrix R(Rotator(mRight.X+angle, mRight.Y + angle, mRight.Z + angle));
-		mUp= R.TransformPosition(mUp);
-		mLook= R.TransformPosition(mLook);
 
+		RotationMatrix R(Rotator(0,0, angle));
+		mUp = R.TransformPosition(mUp);
+		mLook = R.TransformPosition(mLook);
 		mViewDirty = true;
 	}
 	void RotateY(float angle)
 	{
-		RotationMatrix Res{ Rotator(angle) };
+		RotationMatrix Res(Rotator(angle, 0, 0));
 
-		mRight= Res.TransformPosition(mRight);
-		mUp= Res.TransformPosition(mUp);
-		mLook= Res.TransformPosition(mLook);
+		mRight = Res.TransformPosition(mRight);
+		mUp = Res.TransformPosition(mUp);
+		mLook = Res.TransformPosition(mLook);
 
 		mViewDirty = true;
 	}
@@ -234,7 +234,7 @@ public:
 			mLook.Normalize();
 			mUp = (mLook ^ mRight).GetSafeNormal();
 			mRight = mUp ^ mLook;
-
+			mRight.Normalize();
 
 			float x = -((mPosition | mRight));
 			float y = -((mPosition | mUp));
@@ -261,7 +261,7 @@ public:
 			mView.M[1][ 3] = 0.0f;
 			mView.M[2][ 3] = 0.0f;
 			mView.M[3][ 3] = 1.0f;
-
+			//mView=mView.GetTransposed();
 			mViewDirty = false;
 		}
 	}
