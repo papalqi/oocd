@@ -3,7 +3,7 @@
 #include"render.h"
 #include"Engine.h"
 #include "TestMeshcpp.h"
-using namespace DirectX;
+#include"OdRegex.h"
 extern bool Running;
 
 int WINAPI WinMain(HINSTANCE hInstance,
@@ -12,13 +12,14 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	int nShowCmd)
 
 {
+	oocd::Retest();
 	Engine mEngine;
 	mEngine.EngineInit(hInstance, nShowCmd);
 
 	auto mesh1 = OCMesh::CreateTestMesh();
 	mEngine.LoadMesh(mesh1);
 	auto mesh2 = OCMesh::CreateTestMesh();
-
+	
 	mesh2->MTransform.Position = Vector(3.0f, 0.0f, 0.0f);
 	mEngine.LoadMesh(mesh2);
 	mEngine.EngineLoop();

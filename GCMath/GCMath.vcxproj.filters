@@ -16,39 +16,39 @@
     <Filter Include="头文件\Matrix">
       <UniqueIdentifier>{1a787472-fe37-4e6a-8ed4-ee93c9f6d74b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件\Vector">
-      <UniqueIdentifier>{f82dfa91-8f1a-4828-8629-5df9bd57f459}</UniqueIdentifier>
-    </Filter>
     <Filter Include="头文件\Macros">
       <UniqueIdentifier>{445fe913-0050-4045-9243-e27ef754fb26}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\Matrix">
       <UniqueIdentifier>{471bf48f-bd74-4441-9761-2959653ffba6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\shape">
+      <UniqueIdentifier>{64efa685-1318-455b-82cb-74e77a74656b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\shape">
+      <UniqueIdentifier>{0820ba92-bee3-45ab-a55c-6bf33aa77da0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Transform">
+      <UniqueIdentifier>{6dc6eaf0-bf6f-4787-889b-0e8b00cde98e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Transform">
+      <UniqueIdentifier>{9d47c498-80b7-4da4-a217-837a2629dcf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Transform\Vector">
+      <UniqueIdentifier>{4ca423cf-75f3-47ef-9e5d-bdfe86404bdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Transform\Vector">
+      <UniqueIdentifier>{f82dfa91-8f1a-4828-8629-5df9bd57f459}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Math">
+      <UniqueIdentifier>{0017dca6-7421-42bc-8f6a-be2a4d6b1976}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Math">
+      <UniqueIdentifier>{737a4250-6357-4a22-9a70-e48d75134ad2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\BzTuts\Bounds.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Geometry.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Plane.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MathHelper.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Rotator.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MathBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Matrix.h">
@@ -57,32 +57,23 @@
     <ClInclude Include="RotationMatrix.h">
       <Filter>头文件\Matrix</Filter>
     </ClInclude>
-    <ClInclude Include="Quat.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Sphere.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="OOCDVectorConstanst.h">
-      <Filter>头文件\Vector</Filter>
+      <Filter>头文件\Transform\Vector</Filter>
     </ClInclude>
     <ClInclude Include="Vector2.h">
-      <Filter>头文件\Vector</Filter>
+      <Filter>头文件\Transform\Vector</Filter>
     </ClInclude>
     <ClInclude Include="Vector3.h">
-      <Filter>头文件\Vector</Filter>
+      <Filter>头文件\Transform\Vector</Filter>
     </ClInclude>
     <ClInclude Include="VectorRegister.h">
-      <Filter>头文件\Vector</Filter>
+      <Filter>头文件\Transform\Vector</Filter>
     </ClInclude>
     <ClInclude Include="Vector4.h">
-      <Filter>头文件\Vector</Filter>
+      <Filter>头文件\Transform\Vector</Filter>
     </ClInclude>
     <ClInclude Include="VectorRegisterCommon.h">
-      <Filter>头文件\Vector</Filter>
+      <Filter>头文件\Transform\Vector</Filter>
     </ClInclude>
     <ClInclude Include="AssertionMacros.h">
       <Filter>头文件\Macros</Filter>
@@ -97,54 +88,75 @@
       <Filter>头文件\Macros</Filter>
     </ClInclude>
     <ClInclude Include="ScalarRegister.h">
-      <Filter>头文件\Vector</Filter>
+      <Filter>头文件\Transform\Vector</Filter>
     </ClInclude>
     <ClInclude Include="Vector.h">
-      <Filter>头文件\Vector</Filter>
+      <Filter>头文件\Transform\Vector</Filter>
     </ClInclude>
     <ClInclude Include="DirectxMath.h">
-      <Filter>头文件\Vector</Filter>
+      <Filter>头文件\Transform\Vector</Filter>
     </ClInclude>
     <ClInclude Include="GCMath.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>头文件\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>头文件\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>头文件\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="Quat.h">
+      <Filter>头文件\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Rotator.h">
+      <Filter>头文件\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>头文件\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="MathHelper.h">
+      <Filter>头文件\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathBase.h">
+      <Filter>头文件\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Plane.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector2.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector3.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector4.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MathHelper.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Rotator.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MathBase.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Quat.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Matrix.cpp">
       <Filter>源文件\Matrix</Filter>
     </ClCompile>
     <ClCompile Include="RotationMatrix.cpp">
       <Filter>源文件\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>源文件\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector2.cpp">
+      <Filter>源文件\Transform\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector3.cpp">
+      <Filter>源文件\Transform\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector4.cpp">
+      <Filter>源文件\Transform\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Quat.cpp">
+      <Filter>源文件\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Rotator.cpp">
+      <Filter>源文件\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>源文件\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="MathBase.cpp">
+      <Filter>源文件\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MathHelper.cpp">
+      <Filter>源文件\Math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

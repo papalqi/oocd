@@ -157,6 +157,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OCMath.cpp" />
+    <ClCompile Include="OdRegex.cpp" />
     <ClCompile Include="Pwindows.cpp" />
     <ClCompile Include="render.cpp" />
     <ClCompile Include="RenderDefine.h" />
@@ -164,6 +165,7 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Timer.h" />
+    <ClCompile Include="OdRegex.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />

@@ -66,6 +66,12 @@
     <ClCompile Include="RenderDefine.h">
       <Filter>Header Files\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="OdRegex.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OdRegex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dx12.h">
