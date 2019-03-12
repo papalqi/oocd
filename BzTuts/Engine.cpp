@@ -1,4 +1,14 @@
-﻿#include"Engine.h"
+﻿
+#define _CRTDBG_MAP_ALLOC 
+#include <stdlib.h>
+#include <crtdbg.h>
+
+inline void EnableMemLeakCheck()
+{
+	_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
+}
+
+#include"Engine.h"
 #include"ErrorException.h"
 #include<windowsx.h>
 
@@ -21,7 +31,7 @@ int Engine::EngineInit(HINSTANCE hInstance, int nShowCmd)
 	return 0;
 }
 
-void Engine::LoadMesh(OCMesh *one)
+void Engine::LoadMesh(shared_ptr<OCMesh>one)
 {
 	OnlyRender.LoadMesh(one);
 }
@@ -38,12 +48,14 @@ void Engine::StartLoop()
 	OnlyRender.Cleanup();
 }
 
+
+
 void Engine::EngineLoop()
 {
 	OnlyRender.CreateConstBuffer();
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
-
+	EnableMemLeakCheck();
 	while (Running)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -58,7 +70,10 @@ void Engine::EngineLoop()
 
 			// run game code
 			OnlyRender.Update(mtimer);
-			OnlyRender.run();
+			OnlyRender.run(); 
+			_CrtDumpMemoryLeaks();
+			
+			
 		}
 	}
 }

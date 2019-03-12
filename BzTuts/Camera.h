@@ -9,7 +9,6 @@ public:
 
 	NCamera() 
 	{
-	
 		SetLens(0.25f*PI, 1.0f, 1.0f, 1000.0f);
 	};
 	~NCamera() {};

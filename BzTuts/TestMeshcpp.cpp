@@ -1,18 +1,18 @@
 ﻿#include "TestMeshcpp.h"
 #include"stdafx.h"
-Vertex* OCMesh::GetVertex()
+shared_ptr <Vertex> OCMesh::GetVertex()
 {
 	return BeginVList;
 }
 
-DWORD *OCMesh::GetIndex()
+shared_ptr < DWORD >OCMesh::GetIndex()
 {
 	return BeginiList;
 }
 
-OCMesh *OCMesh::CreateTestMesh()
+shared_ptr < OCMesh> OCMesh::CreateTestMesh()
 {
-	OCMesh *out = new OCMesh;
+	shared_ptr < OCMesh>out ( new OCMesh);
 	out->vList = {
 		//前一个面
 		{ -0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f },
@@ -46,7 +46,7 @@ OCMesh *OCMesh::CreateTestMesh()
 		{ -0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f },
 	};
 	out->vBufferSize = out->vList.size() * sizeof(Vertex);
-	out->BeginVList = &out->vList[0];
+	out->BeginVList = shared_ptr<Vertex>( &out->vList[0]);
 	out->iList = {
 		// ffront face
 		0, 1, 2, // first triangle
@@ -72,7 +72,7 @@ OCMesh *OCMesh::CreateTestMesh()
 		20, 21, 22, // first triangle
 		20, 23, 21, // second triangle
 	};
-	out->BeginiList = &out->iList[0];
+	out->BeginiList = shared_ptr<DWORD>(&out->iList[0]);
 
 	out->iBufferSize = out->iList.size() * sizeof(DWORD);
 	return out;
@@ -103,15 +103,15 @@ void OCMesh::RegistereForRender(ID3D12Device* device, ID3D12GraphicsCommandList*
 	vBufferUploadHeap->SetName(L"Vertex Buffer Upload Resource Heap");
 
 	D3D12_SUBRESOURCE_DATA vertexData = {};
-	vertexData.pData = reinterpret_cast<BYTE*>(BeginVList);
+	vertexData.pData = reinterpret_cast<BYTE*>(BeginVList.get());
 	vertexData.RowPitch = vBufferSize;
 	vertexData.SlicePitch = vBufferSize;
 
 	//将UploadHeap传入默认堆
-	UpdateSubresources(commandList, vertexBuffer, vBufferUploadHeap, 0, 0, 1, &vertexData);
+	UpdateSubresources(commandList, vertexBuffer.Get(), vBufferUploadHeap, 0, 0, 1, &vertexData);
 
 	// 将顶点缓冲区数据从复制目标状态转换为顶点缓冲区状态
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(vertexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(vertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
 
 	device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
@@ -134,12 +134,12 @@ void OCMesh::RegistereForRender(ID3D12Device* device, ID3D12GraphicsCommandList*
 	iBufferUploadHeap->SetName(L"Index Buffer Upload Resource Heap");
 
 	D3D12_SUBRESOURCE_DATA indexData = {};
-	indexData.pData = reinterpret_cast<BYTE*>(BeginiList);
+	indexData.pData = reinterpret_cast<BYTE*>(BeginiList.get());
 	indexData.RowPitch = iBufferSize;
 	indexData.SlicePitch = iBufferSize;
 
-	UpdateSubresources(commandList, indexBuffer, iBufferUploadHeap, 0, 0, 1, &indexData);
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(indexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
+	UpdateSubresources(commandList, indexBuffer.Get(), iBufferUploadHeap, 0, 0, 1, &indexData);
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(indexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
 
 	//建立Vertexbufferview
 	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();

@@ -12,6 +12,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	int nShowCmd)
 
 {
+	
 	oocd::Retest();
 	Engine mEngine;
 	mEngine.EngineInit(hInstance, nShowCmd);

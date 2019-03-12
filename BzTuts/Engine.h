@@ -13,7 +13,7 @@ class Engine
 
 public:
 	int EngineInit(HINSTANCE hInstance, int nShowCmd);
-	void LoadMesh(OCMesh *one);
+	void LoadMesh(shared_ptr<OCMesh> one);
 	void StartLoop();
 	void EngineLoop();
 	static Engine* GetEngine();

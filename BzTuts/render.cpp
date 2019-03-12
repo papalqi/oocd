@@ -8,10 +8,10 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 	this->width = Width;
 	this->height = Height;
 
-	IDXGIFactory4* dxgiFactory;
+	ComPtr < IDXGIFactory4> dxgiFactory;
 	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory)));
 
-	IDXGIAdapter1* adapter = nullptr; // 显卡适配器
+	ComPtr < IDXGIAdapter1> adapter = nullptr; // 显卡适配器
 
 	IF_FALSE_RETURN_FALSE(SetAdapter(adapter, dxgiFactory));
 
@@ -19,12 +19,12 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 
 	IF_FALSE_RETURN_FALSE(setCommandqueue());
 
-	CreateSwapChain(hwnd, FullScreen, dxgiFactory);
+	CreateSwapChain(hwnd, FullScreen, dxgiFactory.Get());
 
 	CreateRtvDescriptor();
 
 	ThrowIfFailed(device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-		commandAllocator[frameIndex], NULL, IID_PPV_ARGS(&commandList)));
+		commandAllocator[frameIndex].Get(), NULL, IID_PPV_ARGS(commandList.GetAddressOf())));
 
 	IF_FALSE_RETURN_FALSE(CreateFenceAndRootSignature());
 	D3D12_SHADER_BYTECODE vertexShaderBytecode = {};
@@ -47,7 +47,7 @@ bool Render::InitD3D(int Width, int Height, HWND &hwnd, bool FullScreen, bool Ru
 	return true;
 }
 
-void Render::LoadMesh(OCMesh* one)
+void Render::LoadMesh(shared_ptr<OCMesh>  one)
 {
 	renderMesh.push_back(one);
 	Vector posVec = one->MTransform.Position;
@@ -58,7 +58,7 @@ void Render::LoadMesh(OCMesh* one)
 
 	//进行顶点索引注册
 
-	one->RegistereForRender(device, commandList);
+	one->RegistereForRender(device.Get(), commandList.Get());
 }
 
 void Render::CreateConstBuffer()
@@ -82,15 +82,15 @@ void Render::CreateConstBuffer()
 
 		for (int j = 0; j != renderMesh.size(); j++)
 		{
-			memcpy(cbvGPUAddress[i] + j * ConstantBufferPerObjectAlignedSize, &cbPerObject, sizeof(cbPerObject));
+			memcpy(cbvGPUAddress[i].get() + j * ConstantBufferPerObjectAlignedSize, &cbPerObject, sizeof(cbPerObject));
 		}
 	}
 
 	commandList->Close();
-	ID3D12CommandList* ppCommandLists[] = { commandList };
+	ID3D12CommandList* ppCommandLists[] = { commandList.Get() };
 	commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 	fenceValue[frameIndex]++;
-	CHECK_HR_RUN(commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]));
+	CHECK_HR_RUN(commandQueue->Signal(fence[frameIndex].Get(), fenceValue[frameIndex]));
 }
 
 void Render::Update(const GameTimer& gt)
@@ -110,7 +110,7 @@ void Render::Update(const GameTimer& gt)
 		oocd::Matrix wvpMat = renderMesh[i]->MTransform.WorldMat * viewMat * projMat; // create wvp matrix
 
 		cbPerObject.wvpMat = wvpMat.GetTransposed(); // store transposed wvp matrix in constant buffer
-		memcpy(cbvGPUAddress[frameIndex] + ConstantBufferPerObjectAlignedSize * i, &cbPerObject, sizeof(cbPerObject));
+		memcpy(cbvGPUAddress[frameIndex].get() + ConstantBufferPerObjectAlignedSize * i, &cbPerObject, sizeof(cbPerObject));
 	}
 }
 
@@ -144,7 +144,7 @@ void Render::SetdepthStencil()
 
 	dsDescriptorHeap->SetName(L"Depth/Stencil Resource Heap");
 
-	device->CreateDepthStencilView(depthStencilBuffer, &depthStencilDesc, dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+	device->CreateDepthStencilView(depthStencilBuffer.Get(), &depthStencilDesc, dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
 void Render::UpdatePipeline()
@@ -155,9 +155,10 @@ void Render::UpdatePipeline()
 
 	CHECK_HR_RUN(commandAllocator[frameIndex]->Reset());
 
-	CHECK_HR_RUN(commandList->Reset(commandAllocator[frameIndex], pipelineStateObject));
+	CHECK_HR_RUN(commandList->Reset(commandAllocator[frameIndex].Get(), pipelineStateObject.Get()));
 
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTargets[frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTargets[frameIndex].Get(), 
+		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), frameIndex, rtvDescriptorSize);
 
@@ -170,7 +171,7 @@ void Render::UpdatePipeline()
 
 	commandList->ClearDepthStencilView(dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	commandList->SetGraphicsRootSignature(rootSignature);
+	commandList->SetGraphicsRootSignature(rootSignature.Get());
 	commandList->RSSetViewports(1, &viewport);
 	commandList->RSSetScissorRects(1, &scissorRect);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -182,6 +183,7 @@ void Render::UpdatePipeline()
 		commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress() + i * ConstantBufferPerObjectAlignedSize);
 		commandList->DrawIndexedInstanced(renderMesh[i]->iList.size(), 1, 0, 0, 0);
 	}
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTargets[frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
 	CHECK_HR_RUN(commandList->Close());
 }
@@ -240,11 +242,11 @@ void Render::run()
 
 	UpdatePipeline();
 
-	ID3D12CommandList* ppCommandLists[] = { commandList };
+	ID3D12CommandList* ppCommandLists[] = { commandList.Get() };
 
 	commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
-	CHECK_HR_RUN(commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]));
+	CHECK_HR_RUN(commandQueue->Signal(fence[frameIndex].Get(), fenceValue[frameIndex]));
 
 	CHECK_HR_RUN(swapChain->Present(0, 0));
 }
@@ -261,27 +263,7 @@ void Render::Cleanup()
 	if (swapChain->GetFullscreenState(&fs, NULL))
 		swapChain->SetFullscreenState(false, NULL);
 
-	SAFE_RELEASE(device);
-	SAFE_RELEASE(swapChain);
-	SAFE_RELEASE(commandQueue);
-	SAFE_RELEASE(rtvDescriptorHeap);
-	SAFE_RELEASE(commandList);
 
-	for (int i = 0; i < frameBufferCount; ++i)
-	{
-		SAFE_RELEASE(renderTargets[i]);
-		SAFE_RELEASE(commandAllocator[i]);
-		SAFE_RELEASE(fence[i]);
-	};
-
-	SAFE_RELEASE(pipelineStateObject);
-	SAFE_RELEASE(rootSignature);
-
-	SAFE_RELEASE(dsDescriptorHeap);
-	for (int i = 0; i < frameBufferCount; ++i)
-	{
-		SAFE_RELEASE(constantBufferUploadHeaps[i]);
-	};
 }
 
 void Render::WaitForPreviousFrame()
@@ -300,7 +282,7 @@ void Render::WaitForPreviousFrame()
 	fenceValue[frameIndex]++;
 }
 
-bool Render::SetAdapter(IDXGIAdapter1* adapter, IDXGIFactory4* dxgiFactory)
+bool Render::SetAdapter(ComPtr < IDXGIAdapter1> adapter, ComPtr < IDXGIFactory4> dxgiFactory)
 {
 	int adapterIndex = 0;
 
@@ -318,7 +300,7 @@ bool Render::SetAdapter(IDXGIAdapter1* adapter, IDXGIFactory4* dxgiFactory)
 			continue;
 		}
 
-		auto hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr);
+		auto hr = D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr);
 		if (SUCCEEDED(hr))
 		{
 			adapterFound = true;
@@ -332,12 +314,12 @@ bool Render::SetAdapter(IDXGIAdapter1* adapter, IDXGIFactory4* dxgiFactory)
 	return true;
 }
 
-bool Render::SetDevice(IDXGIAdapter1* adapter)
+bool Render::SetDevice(ComPtr < IDXGIAdapter1> adapter)
 {
 	CHECK_HR_RETURN((D3D12CreateDevice(
-		adapter,
+		adapter.Get(),
 		D3D_FEATURE_LEVEL_11_0,
-		IID_PPV_ARGS(&device)
+		IID_PPV_ARGS(device.GetAddressOf())
 	)));
 	return true;
 }
@@ -384,7 +366,7 @@ void Render::CreateSwapChain(HWND &hwnd, bool FullScreen, IDXGIFactory4* dxgiFac
 	IDXGISwapChain* tempSwapChain;
 
 	dxgiFactory->CreateSwapChain(
-		commandQueue, // the queue will be flushed once the swap chain is created
+		commandQueue.Get(), // the queue will be flushed once the swap chain is created
 		&swapChainDesc, // give it the swap chain description we created above
 		&tempSwapChain // store the created swap chain in a temp IDXGISwapChain interface
 	);
@@ -411,7 +393,7 @@ void Render::CreateRtvDescriptor()
 	{
 		swapChain->GetBuffer(i, IID_PPV_ARGS(&renderTargets[i]));
 
-		device->CreateRenderTargetView(renderTargets[i], nullptr, rtvHandle);
+		device->CreateRenderTargetView(renderTargets[i].Get(), nullptr, rtvHandle);
 
 		rtvHandle.Offset(1, rtvDescriptorSize);
 	}
@@ -523,7 +505,7 @@ bool Render::CreatePsoAndInputLayout(D3D12_SHADER_BYTECODE &vertexShaderBytecode
 	//设置psoDesc
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
 	psoDesc.InputLayout = inputLayoutDesc; // IL描述
-	psoDesc.pRootSignature = rootSignature; // 设置root signature
+	psoDesc.pRootSignature = rootSignature.Get(); // 设置root signature
 	psoDesc.VS = vertexShaderBytecode; //编译过的Vs
 	psoDesc.PS = pixelShaderBytecode; //
 	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE; // draw的类型
