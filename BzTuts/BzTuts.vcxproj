@@ -156,6 +156,10 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineBase.cpp" />
+    <ClCompile Include="ErrorException.cpp" />
+    <ClCompile Include="FrameResource.cpp" />
+    <ClCompile Include="GeometryGenerator.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OCMath.cpp" />
     <ClCompile Include="OdRegex.cpp" />
@@ -163,7 +167,7 @@
     <ClCompile Include="render.cpp" />
     <ClCompile Include="RenderDefine.h" />
     <ClCompile Include="TestMeshcpp.cpp" />
-    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureLoad.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Timer.h" />
     <ClCompile Include="OdRegex.h" />
@@ -174,18 +178,24 @@
     <ClInclude Include="CameraType.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="CoreMinimal.h" />
+    <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineBase.h" />
     <ClInclude Include="EngineDefine.h" />
     <ClInclude Include="EngineMacro.h" />
     <ClInclude Include="ErrorException.h" />
+    <ClInclude Include="FrameResource.h" />
+    <ClInclude Include="GeometryGenerator.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="OCMath.h" />
     <ClInclude Include="Pwindows.h" />
     <ClInclude Include="render.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestMeshcpp.h" />
-    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureLoad.h" />
+    <ClInclude Include="UploadBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">

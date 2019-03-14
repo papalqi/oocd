@@ -75,37 +75,28 @@ namespace oocd
 
 		oocd::Vector Euler() const;
 
-	
 		void Normalize(float Tolerance = SMALL_NUMBER);
 
-	
 		Quat GetNormalized(float Tolerance = SMALL_NUMBER) const;
 
 		bool IsNormalized() const;
 
-	
 		float Size() const;
 
-	
 		float SizeSquared() const;
 
 		float GetAngle() const;
 
 		void ToAxisAndAngle(oocd::Vector& Axis, float& Angle) const;
 
-	
 		void ToSwingTwist(const oocd::Vector& InTwistAxis, Quat& OutSwing, Quat& OutTwist) const;
 
-	
 		oocd::Vector RotateVector(oocd::Vector V) const;
 
-	
 		oocd::Vector UnrotateVector(oocd::Vector V) const;
 
-		
 		Quat Inverse() const;
 
-	
 		void EnforceShortestArcWith(const Quat& OtherQuat);
 
 		/** Get the forward direction (X axis) after it has been rotated by this Quaternion. */
@@ -130,16 +121,13 @@ namespace oocd
 
 		oocd::Rotator Rotator() const;
 
-	
 		oocd::Vector GetRotationAxis() const;
 
 		float AngularDistance(const Quat& Q) const;
 
-	
 		bool ContainsNaN() const;
 
 	public:
-
 
 		static  float Error(const Quat& Q1, const Quat& Q2);
 

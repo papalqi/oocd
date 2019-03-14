@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include"MathHelper.h"
 #include<iostream>
+#include <DirectXMath.h>
 using namespace std;
 
 namespace oocd
@@ -19,6 +20,10 @@ namespace oocd
 		static const Vector3<T>OneVector;
 
 	public:
+		DirectX::XMFLOAT3 GetXMFLOAT3() {
+			DirectX::XMFLOAT3 out; out.x = X; out.y = Y;
+			out.z = Z; return out;
+		};
 		Vector3() { X = Y = Z = 0; }
 		Vector3(T zz) { X = Y = Z = zz; }
 		Vector3(T xx, T yy, T zz) : X(xx), Y(yy), Z(zz) { }
@@ -120,7 +125,19 @@ namespace oocd
 		static float Distance(const Vector3<T>& V1, const  Vector3<T>& V2);
 		static float DistSquared(const Vector3<T>& V1, const  Vector3<T>& V2);
 		static float DotProduct(const Vector3<T>& A, const Vector3<T>& B);
+		static  Vector3<T> Vector3dMin(Vector3<T> V1, Vector3<T> V2);
 	};
+
+	template <typename T>
+	oocd::Vector3<T> oocd::Vector3<T>::Vector3dMin(Vector3<T> V1, Vector3<T> V2)
+	{
+		Vector3<T> Result;
+		Result.X = (V1.X < V2.X) ? V1.X : V2.X;
+		Result.Y = (V1.Y < V2.Y) ? V1.Y : V2.Y;
+		Result.Z = (V1.Z < V2.Z) ? V1.Z : V2.Z;
+		
+		return Result;
+	}
 
 	 template <typename T>
 		const Vector3<T> oocd::Vector3<T>::ZeroVector(0.0f, 0.0f, 0.0f);

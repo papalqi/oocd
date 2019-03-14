@@ -55,7 +55,6 @@ Quat Quat::SquadFullPath(const Quat& quat1, const Quat& tang1, const Quat& quat2
 
 void Quat::CalcTangents(const Quat& PrevP, const Quat& P, const Quat& NextP, float Tension, Quat& OutTan)
 {
-
 }
 
 Quat::Quat(oocd::Vector Axis, float AngleRad)
@@ -225,7 +224,6 @@ float Quat::ErrorAutoNormalize(const Quat& A, const Quat& B)
 	return Quat::Error(Q1, Q2);
 }
 
-
 oocd::Quat oocd::Quat::operator+=(const Quat& Q)
 {
 	this->X += Q.X;
@@ -261,15 +259,12 @@ oocd::Quat oocd::Quat::operator*(const Quat& Q) const
 
 oocd::Quat oocd::Quat::operator*=(const Quat& Q)
 {
-
-
 	return *this;
 }
 
 oocd::Vector Quat::operator*(const oocd::Vector& V) const
 {
 	return RotateVector(V);
-
 }
 
 oocd::Matrix oocd::Quat::operator*(const Matrix& M) const
@@ -298,14 +293,12 @@ oocd::Quat oocd::Quat::operator*=(const float Scale)
 	Z *= Scale;
 	W *= Scale;
 
-
 	return *this;
 }
 
 oocd::Quat oocd::Quat::operator*(const float Scale) const
 {
 	return Quat(Scale * X, Scale * Y, Scale * Z, Scale * W);
-
 }
 
 oocd::Quat oocd::Quat::operator/=(const float Scale)
@@ -342,13 +335,11 @@ float oocd::Quat::operator|(const Quat& Q) const
 oocd::Quat oocd::Quat::MakeFromEuler(const oocd::Vector& Euler)
 {
 	return oocd::Rotator(Euler.Y, Euler.Z, Euler.X).Quaternion();
-
 }
 
 oocd::Vector oocd::Quat::Euler() const
 {
 	return Rotator().Euler();
-
 }
 
 void oocd::Quat::Normalize(float Tolerance /*= SMALL_NUMBER*/)
@@ -380,25 +371,21 @@ oocd::Quat oocd::Quat::GetNormalized(float Tolerance /*= SMALL_NUMBER*/) const
 bool oocd::Quat::IsNormalized() const
 {
 	return (Math::Abs(1.f - SizeSquared()) < THRESH_QUAT_NORMALIZED);
-
 }
 
 float oocd::Quat::Size() const
 {
 	return Math::Sqrt(X * X + Y * Y + Z * Z + W * W);
-
 }
 
 float oocd::Quat::SizeSquared() const
 {
 	return (X * X + Y * Y + Z * Z + W * W);
-
 }
 
 float oocd::Quat::GetAngle() const
 {
 	return 2.f * Math::Acos(W);
-
 }
 
 void oocd::Quat::ToAxisAndAngle(oocd::Vector& Axis, float& Angle) const
@@ -444,12 +431,9 @@ oocd::Vector oocd::Quat::UnrotateVector(oocd::Vector V) const
 	return Result;
 }
 
-
-
 oocd::Quat oocd::Quat::Inverse() const
 {
 	return Quat(-X, -Y, -Z, W);
-
 }
 
 void oocd::Quat::EnforceShortestArcWith(const Quat& OtherQuat)
@@ -473,52 +457,43 @@ oocd::Quat oocd::Quat::operator-=(const Quat& Q)
 	return *this;
 }
 
-
 oocd::Vector oocd::Quat::GetAxisX() const
 {
 	return RotateVector(oocd::Vector(1.f, 0.f, 0.f));
-
 }
 
 oocd::Vector oocd::Quat::GetAxisY() const
 {
 	return RotateVector(oocd::Vector(0.f, 1.f, 0.f));
-
 }
 
 oocd::Vector oocd::Quat::GetAxisZ() const
 {
 	return RotateVector(oocd::Vector(0.f, 0.f, 1.f));
-
 }
 
 oocd::Vector oocd::Quat::GetForwardVector() const
 {
-
 	return GetAxisX();
 }
 
 oocd::Vector oocd::Quat::GetRightVector() const
 {
 	return GetAxisY();
-
 }
 
 oocd::Vector oocd::Quat::GetUpVector() const
 {
 	return GetAxisZ();
-
 }
 
 oocd::Vector oocd::Quat::Vector() const
 {
 	return GetAxisX();
-
 }
 
 oocd::Rotator oocd::Quat::Rotator() const
 {
-
 	const float SingularityTest = Z * X - W * Y;
 	const float YawY = 2.f*(W*Z + X * Y);
 	const float YawX = (1.f - 2.f*(Math::Square(Y) + Math::Square(Z)));
@@ -545,8 +520,6 @@ oocd::Rotator oocd::Quat::Rotator() const
 		RotatorFromQuat.Yaw = Math::Atan2(YawY, YawX) * RAD_TO_DEG;
 		RotatorFromQuat.Roll = Math::Atan2(-2.f*(W*X + Y * Z), (1.f - 2.f*(Math::Square(X) + Math::Square(Y)))) * RAD_TO_DEG;
 	}
-
-
 
 	return RotatorFromQuat;
 }

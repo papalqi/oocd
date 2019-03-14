@@ -4,26 +4,27 @@
 #include"Engine.h"
 #include "TestMeshcpp.h"
 #include"OdRegex.h"
-extern bool Running;
 
-int WINAPI WinMain(HINSTANCE hInstance,
-	HINSTANCE hPrevInstance,
-	LPSTR lpCmdLine,
-	int nShowCmd)
 
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
+	PSTR cmdLine, int showCmd)
 {
-	
-	oocd::Retest();
-	Engine mEngine;
-	mEngine.EngineInit(hInstance, nShowCmd);
+	// Enable run-time memory check for debug builds.
+#if defined(DEBUG) | defined(_DEBUG)
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 
-	auto mesh1 = OCMesh::CreateTestMesh();
-	mEngine.LoadMesh(mesh1);
-	auto mesh2 = OCMesh::CreateTestMesh();
-	
-	mesh2->MTransform.Position = Vector(3.0f, 0.0f, 0.0f);
-	mEngine.LoadMesh(mesh2);
-	mEngine.EngineLoop();
+	try
+	{
+		Engine theApp(hInstance);
+		if (!theApp.Initialize())
+			return 0;
 
-	return 0;
+		return theApp.Run();
+	}
+	catch (DxException& e)
+	{
+		MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
+		return 0;
+	}
 }

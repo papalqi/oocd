@@ -1,17 +1,18 @@
 ﻿#include "d3dx12.h"
 #include"CameraType.h"
 #include"OCMath.h"
+
 using namespace oocd;
-class NCamera
+class Camera
 {
 public:
 	CameraProjectionMode::Type ProjectMode;
 
-	NCamera() 
+	Camera() 
 	{
 		SetLens(0.25f*PI, 1.0f, 1.0f, 1000.0f);
 	};
-	~NCamera() {};
+	~Camera() {};
 	
 	Vector GetPosition()const { return mPosition; }
 	void SetPosition(float x, float y, float z) { mPosition = { x,y,z }; }

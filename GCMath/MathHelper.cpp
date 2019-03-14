@@ -119,6 +119,8 @@ void oocd::VectorQuaternionMultiply(void *Result, const void* Quat1, const void*
 	R[3] = T0 + T9 - T5;
 }
 
+const float oocd::Math::Infinity = FLT_MAX;
+
 float oocd::Math::InvSqrt(float F)
 {
 	const __m128 fOneHalf = _mm_set_ss(0.5f);

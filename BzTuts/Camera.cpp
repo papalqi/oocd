@@ -5,7 +5,7 @@
 
 
 
-void NCamera::SetPerspectiveMatrix(float FovAngleY, float AspectRatio, float NearZ, float FarZ)
+void Camera::SetPerspectiveMatrix(float FovAngleY, float AspectRatio, float NearZ, float FarZ)
 {
 	float    SinFov;
 	float    CosFov;
@@ -36,7 +36,7 @@ void NCamera::SetPerspectiveMatrix(float FovAngleY, float AspectRatio, float Nea
 	mProj.M[3][3] = 0.0f;
 }
 
-void NCamera::SetLens(float fovY, float aspect, float zn, float zf)
+void Camera::SetLens(float fovY, float aspect, float zn, float zf)
 {
 	mFovY = fovY;
 	mAspect = aspect;
@@ -48,7 +48,7 @@ void NCamera::SetLens(float fovY, float aspect, float zn, float zf)
 	SetPerspectiveMatrix(mFovY, mAspect, mNearZ, mFarZ);
 }
 
-void NCamera::LookAt(const Vector& pos, const Vector& target, const Vector& up)
+void Camera::LookAt(const Vector& pos, const Vector& target, const Vector& up)
 {
 	mLook = (target - pos).GetSafeNormal();
 	mRight = (up^mLook).GetSafeNormal();
@@ -57,13 +57,13 @@ void NCamera::LookAt(const Vector& pos, const Vector& target, const Vector& up)
 	mViewDirty = true;
 }
 
-void NCamera::Strafe(float d)
+void Camera::Strafe(float d)
 {
 	mPosition = d * mRight + mPosition;
 	mViewDirty = true;
 }
 
-void NCamera::Walk(float d)
+void Camera::Walk(float d)
 {
 
 	mPosition = d * mLook + mPosition;
@@ -71,7 +71,7 @@ void NCamera::Walk(float d)
 	mViewDirty = true;
 }
 
-void NCamera::Pitch(float angle)
+void Camera::Pitch(float angle)
 {
 	RotationMatrix R(Rotator(0, 0, angle));
 	mUp = R.TransformPosition(mUp);
@@ -79,7 +79,7 @@ void NCamera::Pitch(float angle)
 	mViewDirty = true;
 }
 
-void NCamera::RotateY(float angle)
+void Camera::RotateY(float angle)
 {
 	RotationMatrix Res(Rotator(angle, 0, 0));
 
@@ -90,7 +90,7 @@ void NCamera::RotateY(float angle)
 	mViewDirty = true;
 }
 
-void NCamera::UpdateViewMatrix()
+void Camera::UpdateViewMatrix()
 {
 	if (mViewDirty)
 	{

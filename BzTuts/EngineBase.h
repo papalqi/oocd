@@ -7,7 +7,6 @@
 using namespace DirectX;
 class EngineBase
 {
-
 protected:
 
 	EngineBase(HINSTANCE hInstance);
@@ -65,18 +64,16 @@ protected:
 
 	static EngineBase* mEngine;
 
-	HINSTANCE mhWindowsInst = nullptr; 
-	HWND      mhMainWnd = nullptr; 
-	bool      mEnginePaused = false; 
-	bool      mMinimized = false; 
-	bool      mMaximized = false;  
-	bool      mResizing = false;   
+	HINSTANCE mhWindowsInst = nullptr;
+	HWND      mhMainWnd = nullptr;
+	bool      mEnginePaused = false;
+	bool      mMinimized = false;
+	bool      mMaximized = false;
+	bool      mResizing = false;
 	bool      mFullscreenState = false;
 
-	
-	bool      m4xMsaaState = false;    
-	UINT      m4xMsaaQuality = 0;     
-
+	bool      m4xMsaaState = false;
+	UINT      m4xMsaaQuality = 0;
 
 	GameTimer mTimer;
 
@@ -113,4 +110,3 @@ protected:
 	int mClientWidth = 800;
 	int mClientHeight = 600;
 };
-

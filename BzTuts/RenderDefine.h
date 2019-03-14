@@ -6,6 +6,12 @@ struct ConstantBufferPerObject
 	oocd::Matrix wvpMat;
 };
 
+enum class RenderLayer : int
+{
+	Opaque = 0,
+	Sky,
+	Count
+};
 
 #define ConstantBufferPerObjectAlignedSize ((sizeof(ConstantBufferPerObject) + 255) & ~255)
 #define  frameBufferCount 3

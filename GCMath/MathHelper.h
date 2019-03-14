@@ -15,13 +15,16 @@
 #define HALF_PI			(1.57079632679f)
 
 #define THRESH_VECTOR_NORMALIZED		(0.01f)		/** Allowed error for a normalized vector (against squared magnitude) */
-#define THRESH_QUAT_NORMALIZED			(0.01f)	
+#define THRESH_QUAT_NORMALIZED			(0.01f)
 #define DELTA			(0.00001f)
 using namespace std;
 using namespace DirectX;
 namespace oocd
 {
+
+
 	class Vector4;
+	
 	class Plane;
 	class Matrix;
 	//如果Comparand>0，我们选择ValueGEZero，否则ValueLTZero
@@ -42,6 +45,8 @@ namespace oocd
 	class Math :public MathBase
 	{
 	public:
+		static const float Infinity;
+		
 		template< class T >
 		static   T Max(const T A, const T B)
 		{

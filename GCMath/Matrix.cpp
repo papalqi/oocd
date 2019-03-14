@@ -23,6 +23,40 @@ oocd::Matrix oocd::Matrix::operator*(const Matrix& Other) const
 	return Result;
 }
 
+oocd::Matrix oocd::Matrix::MatrixTranslation(float OffsetX, float OffsetY, float OffsetZ)
+{
+	Matrix M;
+	M.M[0][0] = 1.0f;
+	M.M[0][1] = 0.0f;
+	M.M[0][2] = 0.0f;
+	M.M[0][3] = 0.0f;
+
+	M.M[1][0] = 0.0f;
+	M.M[1][1] = 1.0f;
+	M.M[1][2] = 0.0f;
+	M.M[1][3] = 0.0f;
+
+	M.M[2][0] = 0.0f;
+	M.M[2][1] = 0.0f;
+	M.M[2][2] = 1.0f;
+	M.M[2][3] = 0.0f;
+
+	M.M[3][0] = OffsetX;
+	M.M[3][1] = OffsetY;
+	M.M[3][2] = OffsetZ;
+	M.M[3][3] = 1.0f;
+	return M;
+}
+
+oocd::Matrix oocd::Matrix::MatrixScale(float OffsetX, float OffsetY, float OffsetZ)
+{
+	Matrix M= Matrix::Identity;
+	M.M[0][0] = OffsetX;
+	M.M[1][1] = OffsetY;
+	M.M[2][2] = OffsetZ;
+	return M;
+}
+
 bool oocd::Matrix::Equals(const Matrix& Other, float Tolerance /*= KINDA_SMALL_NUMBER*/) const
 {
 	for (int X = 0; X < 4; X++)
