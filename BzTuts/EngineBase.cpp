@@ -3,7 +3,6 @@
 #include<vector>
 using namespace DirectX;
 
-
 using Microsoft::WRL::ComPtr;
 using namespace std;
 using namespace DirectX;
@@ -11,8 +10,6 @@ using namespace DirectX;
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	// Forward hwnd on because we can get messages (e.g., WM_CREATE)
-	// before CreateWindow returns, and thus before mhMainWnd is valid.
 	return EngineBase::GetEngine()->MsgProc(hwnd, msg, wParam, lParam);
 }
 
@@ -75,17 +72,14 @@ int EngineBase::Run()
 
 	while (msg.message != WM_QUIT)
 	{
-		// If there are Window messages then process them.
 		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		// Otherwise, do animation/game stuff.
 		else
 		{
 			mTimer.Tick();
-
 			if (!mEnginePaused)
 			{
 				CalculateFrameStats();
@@ -110,7 +104,6 @@ bool EngineBase::Initialize()
 	if (!InitDirect3D())
 		return false;
 
-	// Do the initial resize code.
 	OnResize();
 
 	return true;
@@ -125,7 +118,6 @@ void EngineBase::CreateRtvAndDsvDescriptorHeaps()
 	rtvHeapDesc.NodeMask = 0;
 	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
 		&rtvHeapDesc, IID_PPV_ARGS(mRtvHeap.GetAddressOf())));
-
 
 	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
 	dsvHeapDesc.NumDescriptors = 1;
@@ -178,11 +170,11 @@ void EngineBase::OnResize()
 	depthStencilDesc.DepthOrArraySize = 1;
 	depthStencilDesc.MipLevels = 1;
 
-	// Correction 11/12/2016: SSAO chapter requires an SRV to the depth buffer to read from 
+	// Correction 11/12/2016: SSAO chapter requires an SRV to the depth buffer to read from
 	// the depth buffer.  Therefore, because we need to create two views to the same resource:
 	//   1. SRV format: DXGI_FORMAT_R24_UNORM_X8_TYPELESS
 	//   2. DSV Format: DXGI_FORMAT_D24_UNORM_S8_UINT
-	// we need to create the depth buffer resource with a typeless format.  
+	// we need to create the depth buffer resource with a typeless format.
 	depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 
 	depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
@@ -237,9 +229,9 @@ LRESULT EngineBase::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
-		// WM_ACTIVATE is sent when the window is activated or deactivated.  
-		// We pause the game when the window is deactivated and unpause it 
-		// when it becomes active.  
+		// WM_ACTIVATE is sent when the window is activated or deactivated.
+		// We pause the game when the window is deactivated and unpause it
+		// when it becomes active.
 	case WM_ACTIVATE:
 		if (LOWORD(wParam) == WA_INACTIVE)
 		{
@@ -253,8 +245,9 @@ LRESULT EngineBase::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		return 0;
 
-		// WM_SIZE is sent when the user resizes the window.  
+		// WM_SIZE is sent when the user resizes the window.
 	case WM_SIZE:
+
 		// Save the new client area dimensions.
 		mClientWidth = LOWORD(lParam);
 		mClientHeight = HIWORD(lParam);
@@ -275,7 +268,6 @@ LRESULT EngineBase::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 			else if (wParam == SIZE_RESTORED)
 			{
-
 				// Restoring from minimized state?
 				if (mMinimized)
 				{
@@ -293,13 +285,13 @@ LRESULT EngineBase::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				}
 				else if (mResizing)
 				{
-					// If user is dragging the resize bars, we do not resize 
-					// the buffers here because as the user continuously 
+					// If user is dragging the resize bars, we do not resize
+					// the buffers here because as the user continuously
 					// drags the resize bars, a stream of WM_SIZE messages are
 					// sent to the window, and it would be pointless (and slow)
 					// to resize for each WM_SIZE message received from dragging
-					// the resize bars.  So instead, we reset after the user is 
-					// done resizing the window and releases the resize bars, which 
+					// the resize bars.  So instead, we reset after the user is
+					// done resizing the window and releases the resize bars, which
 					// sends a WM_EXITSIZEMOVE message.
 				}
 				else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
@@ -331,9 +323,10 @@ LRESULT EngineBase::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 
-		// The WM_MENUCHAR message is sent when a menu is active and the user presses 
-		// a key that does not correspond to any mnemonic or accelerator key. 
+		// The WM_MENUCHAR message is sent when a menu is active and the user presses
+		// a key that does not correspond to any mnemonic or accelerator key.
 	case WM_MENUCHAR:
+
 		// Don't beep when we alt-enter.
 		return MAKELRESULT(0, MNC_CLOSE);
 
@@ -390,13 +383,12 @@ bool EngineBase::InitMainWindow()
 		return false;
 	}
 
-	// Compute window rectangle dimensions based on requested client area dimensions.
 	RECT R = { 0, 0, mClientWidth, mClientHeight };
 	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
 	int width = R.right - R.left;
 	int height = R.bottom - R.top;
 
-	mhMainWnd = CreateWindow(L"MainWnd", mMainWndCaption.c_str(),
+	mhMainWnd = CreateWindow(L"OOCD", mMainWndCaption.c_str(),
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, mhWindowsInst, 0);
 	if (!mhMainWnd)
 	{
@@ -412,8 +404,9 @@ bool EngineBase::InitMainWindow()
 
 bool EngineBase::InitDirect3D()
 {
-#if defined(DEBUG) || defined(_DEBUG) 
-	// Enable the D3D12 debug layer.
+#if defined(DEBUG) || defined(_DEBUG)
+
+	// 启动DX12的DebugLayer
 	{
 		ComPtr<ID3D12Debug> debugController;
 		ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
@@ -423,13 +416,13 @@ bool EngineBase::InitDirect3D()
 
 	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&mdxgiFactory)));
 
-	// Try to create hardware device.
+	//建立设备，并使用默认设备
 	HRESULT hardwareResult = D3D12CreateDevice(
-		nullptr,             // default adapter
+		nullptr,           
 		D3D_FEATURE_LEVEL_11_0,
 		IID_PPV_ARGS(&md3dDevice));
 
-	// Fallback to WARP device.
+	// 如果失败启动软光栅
 	if (FAILED(hardwareResult))
 	{
 		ComPtr<IDXGIAdapter> pWarpAdapter;
@@ -440,18 +433,14 @@ bool EngineBase::InitDirect3D()
 			D3D_FEATURE_LEVEL_11_0,
 			IID_PPV_ARGS(&md3dDevice)));
 	}
-
+	//建立Fence
 	ThrowIfFailed(md3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE,
 		IID_PPV_ARGS(&mFence)));
-
+	//获得句柄大小
 	mRtvDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	mDsvDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	mCbvSrvUavDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-	// Check 4X MSAA quality support for our back buffer format.
-	// All Direct3D 11 capable devices support 4X MSAA for all render 
-	// target formats, so we only need to check quality support.
-
+	//检查是否支持4X MSAA
 	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS msQualityLevels;
 	msQualityLevels.Format = mBackBufferFormat;
 	msQualityLevels.SampleCount = 4;
@@ -493,18 +482,12 @@ void EngineBase::CreateCommandObjects()
 		mDirectCmdListAlloc.Get(), // Associated command allocator
 		nullptr,                   // Initial PipelineStateObject
 		IID_PPV_ARGS(mCommandList.GetAddressOf())));
-
-	// Start off in a closed state.  This is because the first time we refer 
-	// to the command list we will Reset it, and it needs to be closed before
-	// calling Reset.
 	mCommandList->Close();
 }
 
 void EngineBase::CreateSwapChain()
 {
-	// Release the previous swapchain we will be recreating.
 	mSwapChain.Reset();
-
 	DXGI_SWAP_CHAIN_DESC sd;
 	sd.BufferDesc.Width = mClientWidth;
 	sd.BufferDesc.Height = mClientHeight;
@@ -522,7 +505,6 @@ void EngineBase::CreateSwapChain()
 	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-	// Note: Swap chain uses queue to perform flush.
 	ThrowIfFailed(mdxgiFactory->CreateSwapChain(
 		mCommandQueue.Get(),
 		&sd,
@@ -531,23 +513,12 @@ void EngineBase::CreateSwapChain()
 
 void EngineBase::FlushCommandQueue()
 {
-	// Advance the fence value to mark commands up to this fence point.
 	mCurrentFence++;
-
-	// Add an instruction to the command queue to set a new fence point.  Because we 
-	// are on the GPU timeline, the new fence point won't be set until the GPU finishes
-	// processing all the commands prior to this Signal().
 	ThrowIfFailed(mCommandQueue->Signal(mFence.Get(), mCurrentFence));
-
-	// Wait until the GPU has completed commands up to this fence point.
 	if (mFence->GetCompletedValue() < mCurrentFence)
 	{
 		HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
-
-		// Fire event when GPU hits current fence.  
 		ThrowIfFailed(mFence->SetEventOnCompletion(mCurrentFence, eventHandle));
-
-		// Wait until the GPU hits current fence event is fired.
 		WaitForSingleObject(eventHandle, INFINITE);
 		CloseHandle(eventHandle);
 	}
@@ -573,16 +544,10 @@ D3D12_CPU_DESCRIPTOR_HANDLE EngineBase::DepthStencilView()const
 
 void EngineBase::CalculateFrameStats()
 {
-	// Code computes the average frames per second, and also the 
-	// average time it takes to render one frame.  These stats 
-	// are appended to the window caption bar.
 
 	static int frameCnt = 0;
 	static float timeElapsed = 0.0f;
-
 	frameCnt++;
-
-	// Compute averages over one second period.
 	if ((mTimer.TotalTime() - timeElapsed) >= 1.0f)
 	{
 		float fps = (float)frameCnt; // fps = frameCnt / 1
@@ -608,6 +573,7 @@ void EngineBase::LogAdapters()
 	UINT i = 0;
 	IDXGIAdapter* adapter = nullptr;
 	std::vector<IDXGIAdapter*> adapterList;
+	//如果adapterList没找到的化
 	while (mdxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
 	{
 		DXGI_ADAPTER_DESC desc;

@@ -15,12 +15,8 @@ bool Engine::Initialize()
 {
 	if (!EngineBase::Initialize())
 		return false;
-
-	// Reset the command list to prep for initialization commands.
+	//重置CmdListAlloc
 	ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
-
-	// Get the increment size of a descriptor in this heap type.  This is hardware specific,
-	// so we have to query this information.
 	mCbvSrvDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	mCamera.SetPosition(0.0f, 2.0f, -15.0f);
@@ -36,12 +32,10 @@ bool Engine::Initialize()
 	BuildFrameResources();
 	BuildPSOs();
 
-	// Execute the initialization commands.
 	ThrowIfFailed(mCommandList->Close());
 	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
 	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-	// Wait until initialization is complete.
 	FlushCommandQueue();
 
 	return true;
@@ -58,12 +52,9 @@ void Engine::Update(const GameTimer& gt)
 {
 	OnKeyboardInput(gt);
 
-	// Cycle through the circular frame resource array.
 	mCurrFrameResourceIndex = (mCurrFrameResourceIndex + 1) % gNumFrameResources;
-	mCurrFrameResource = mFrameResources[mCurrFrameResourceIndex].get();
+	mCurrFrameResource = mFrameResources[mCurrFrameResourceIndex].get();//得到当前帧的渲染资源
 
-	// Has the GPU finished processing the commands of the current frame resource?
-	// If not, wait until the GPU has completed commands up to this fence point.
 	if (mCurrFrameResource->Fence != 0 && mFence->GetCompletedValue() < mCurrFrameResource->Fence)
 	{
 		HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
@@ -81,32 +72,24 @@ void Engine::Update(const GameTimer& gt)
 void Engine::Draw(const GameTimer& gt)
 {
 	auto cmdListAlloc = mCurrFrameResource->CmdListAlloc;
-
-	// Reuse the memory associated with command recording.
-	// We can only reset when the associated command lists have finished execution on the GPU.
 	ThrowIfFailed(cmdListAlloc->Reset());
 
-	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
-	// Reusing the command list reuses memory.
 	ThrowIfFailed(mCommandList->Reset(cmdListAlloc.Get(), mPSOs["opaque"].Get()));
 
 	mCommandList->RSSetViewports(1, &mScreenViewport);
 	mCommandList->RSSetScissorRects(1, &mScissorRect);
 
-	// Indicate a state transition on the resource usage.
+
 	mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
-
-	// Clear the back buffer and depth buffer.
+	//清除
 	mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
 	mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-
-	// Specify the buffers we are going to render to.
+	//设置渲染对象
 	mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
-
+	//设置描述符堆
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mSrvDescriptorHeap.Get() };
 	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
 	mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 
 	auto passCB = mCurrFrameResource->PassCB->Resource();
@@ -140,23 +123,15 @@ void Engine::Draw(const GameTimer& gt)
 	mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
-	// Done recording commands.
-	ThrowIfFailed(mCommandList->Close());
 
-	// Add the command list to the queue for execution.
+	ThrowIfFailed(mCommandList->Close());
 	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
 	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-	// Swap the back and front buffers
+
 	ThrowIfFailed(mSwapChain->Present(0, 0));
 	mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
-
-	// Advance the fence value to mark commands up to this fence point.
 	mCurrFrameResource->Fence = ++mCurrentFence;
-
-	// Add an instruction to the command queue to set a new fence point.
-	// Because we are on the GPU timeline, the new fence point won't be
-	// set until the GPU finishes processing all the commands prior to this Signal().
 	mCommandQueue->Signal(mFence.Get(), mCurrentFence);
 }
 
@@ -217,21 +192,18 @@ void Engine::UpdateObjectCBs(const GameTimer& gt)
 	auto currObjectCB = mCurrFrameResource->ObjectCB.get();
 	for (auto& e : mAllRitems)
 	{
-		// Only update the cbuffer data if the constants have changed.
-		// This needs to be tracked per frame resource.
+		//只在脏的时候修改
 		if (e->NumFramesDirty > 0)
 		{
 			Matrix world = e->World;
 			Matrix texTransform = e->TexTransform;
 
 			ObjectConstants objConstants;
-			objConstants.World=world.GetTransposed();
+			objConstants.World = world.GetTransposed();
 			objConstants.TexTransform = texTransform.GetTransposed();
 			objConstants.MaterialIndex = e->Mat->MatCBIndex;
 
 			currObjectCB->CopyData(e->ObjCBIndex, objConstants);
-
-			// Next FrameResource need to be updated too.
 			e->NumFramesDirty--;
 		}
 	}
@@ -242,23 +214,19 @@ void Engine::UpdateMaterialBuffer(const GameTimer& gt)
 	auto currMaterialBuffer = mCurrFrameResource->MaterialBuffer.get();
 	for (auto& e : mMaterials)
 	{
-		// Only update the cbuffer data if the constants have changed.  If the cbuffer
-		// data changes, it needs to be updated for each FrameResource.
+
 		Material* mat = e.second.get();
 		if (mat->NumFramesDirty > 0)
 		{
-			Matrix matTransform =mat->MatTransform;
-
+			Matrix matTransform = mat->MatTransform;
 			MaterialData matData;
 			matData.DiffuseAlbedo = mat->DiffuseAlbedo;
 			matData.FresnelR0 = mat->FresnelR0;
 			matData.Roughness = mat->Roughness;
-			matData.MatTransform=matTransform.GetTransposed();
+			matData.MatTransform = matTransform.GetTransposed();
 			matData.DiffuseMapIndex = mat->DiffuseSrvHeapIndex;
 
 			currMaterialBuffer->CopyData(mat->MatCBIndex, matData);
-
-			// Next FrameResource need to be updated too.
 			mat->NumFramesDirty--;
 		}
 	}
@@ -269,17 +237,17 @@ void Engine::UpdateMainPassCB(const GameTimer& gt)
 	Matrix view = mCamera.GetView();
 	Matrix proj = mCamera.GetProj();
 
-	Matrix viewProj = view* proj;
-	Matrix invView =  view.Inverse();
-	Matrix invProj =  proj.Inverse();
+	Matrix viewProj = view * proj;
+	Matrix invView = view.Inverse();
+	Matrix invProj = proj.Inverse();
 	Matrix invViewProj = viewProj.Inverse();
 
-	mMainPassCB.View=view.GetTransposed();
-	mMainPassCB.InvView=(invView).GetTransposed();
-	mMainPassCB.Proj= (proj).GetTransposed();
-	mMainPassCB.InvProj= (invProj).GetTransposed();
-	mMainPassCB.ViewProj= (viewProj).GetTransposed();
-	mMainPassCB.InvViewProj= (invViewProj).GetTransposed();
+	mMainPassCB.View = view.GetTransposed();
+	mMainPassCB.InvView = (invView).GetTransposed();
+	mMainPassCB.Proj = (proj).GetTransposed();
+	mMainPassCB.InvProj = (invProj).GetTransposed();
+	mMainPassCB.ViewProj = (viewProj).GetTransposed();
+	mMainPassCB.InvViewProj = (invViewProj).GetTransposed();
 	mMainPassCB.EyePosW = mCamera.GetPosition();
 	mMainPassCB.RenderTargetSize = Vector2D((float)mClientWidth, (float)mClientHeight);
 	mMainPassCB.InvRenderTargetSize = Vector2D(1.0f / mClientWidth, 1.0f / mClientHeight);
@@ -287,7 +255,7 @@ void Engine::UpdateMainPassCB(const GameTimer& gt)
 	mMainPassCB.FarZ = 1000.0f;
 	mMainPassCB.TotalTime = gt.TotalTime();
 	mMainPassCB.DeltaTime = gt.DeltaTime();
-	mMainPassCB.AmbientLight =Vector4{ 0.25f, 0.25f, 0.35f, 1.0f };
+	mMainPassCB.AmbientLight = Vector4{ 0.25f, 0.25f, 0.35f, 1.0f };
 	mMainPassCB.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
 	mMainPassCB.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
 	mMainPassCB.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
@@ -337,11 +305,9 @@ void Engine::BuildRootSignature()
 
 	CD3DX12_DESCRIPTOR_RANGE texTable1;
 	texTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 5, 1, 0);
-
-	// Root parameter can be a table, root descriptor or root constants.
+	//参数
 	CD3DX12_ROOT_PARAMETER slotRootParameter[5];
 
-	// Perfomance TIP: Order from most frequent to least frequent.
 	slotRootParameter[0].InitAsConstantBufferView(0);
 	slotRootParameter[1].InitAsConstantBufferView(1);
 	slotRootParameter[2].InitAsShaderResourceView(0, 1);
@@ -350,12 +316,10 @@ void Engine::BuildRootSignature()
 
 	auto staticSamplers = GetStaticSamplers();
 
-	// A root signature is an array of root parameters.
 	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(5, slotRootParameter,
 		(UINT)staticSamplers.size(), staticSamplers.data(),
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-	// create a root signature with a single slot which points to a descriptor range consisting of a single constant buffer
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
 	ComPtr<ID3DBlob> errorBlob = nullptr;
 	HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
@@ -376,20 +340,15 @@ void Engine::BuildRootSignature()
 
 void Engine::BuildDescriptorHeaps()
 {
-	//
-	// Create the SRV heap.
-	//
+	//srvHeap
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
 	srvHeapDesc.NumDescriptors = 5;
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&mSrvDescriptorHeap)));
 
-	//
-	// Fill out the heap with actual descriptors.
-	//
 	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(mSrvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-
+	//填充
 	auto bricksTex = mTextures["bricksDiffuseMap"]->Resource;
 	auto tileTex = mTextures["tileDiffuseMap"]->Resource;
 	auto whiteTex = mTextures["defaultDiffuseMap"]->Resource;
@@ -406,21 +365,18 @@ void Engine::BuildDescriptorHeaps()
 
 	// next descriptor
 	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
-
 	srvDesc.Format = tileTex->GetDesc().Format;
 	srvDesc.Texture2D.MipLevels = tileTex->GetDesc().MipLevels;
 	md3dDevice->CreateShaderResourceView(tileTex.Get(), &srvDesc, hDescriptor);
 
 	// next descriptor
 	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
-
 	srvDesc.Format = whiteTex->GetDesc().Format;
 	srvDesc.Texture2D.MipLevels = whiteTex->GetDesc().MipLevels;
 	md3dDevice->CreateShaderResourceView(whiteTex.Get(), &srvDesc, hDescriptor);
 
 	// next descriptor
 	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
-
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
 	srvDesc.TextureCube.MostDetailedMip = 0;
 	srvDesc.TextureCube.MipLevels = skyTex->GetDesc().MipLevels;
@@ -461,12 +417,7 @@ void Engine::BuildShapeGeometry()
 	GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
 	GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(0.5f, 0.3f, 3.0f, 20, 20);
 
-	//
-	// We are concatenating all the geometry into one big vertex/index buffer.  So
-	// define the regions in the buffer each submesh covers.
-	//
-
-	// Cache the vertex offsets to each object in the concatenated vertex buffer.
+	
 	UINT boxVertexOffset = 0;
 	UINT gridVertexOffset = (UINT)box.Vertices.size();
 	UINT sphereVertexOffset = gridVertexOffset + (UINT)grid.Vertices.size();
@@ -497,11 +448,6 @@ void Engine::BuildShapeGeometry()
 	cylinderSubmesh.IndexCount = (UINT)cylinder.Indices32.size();
 	cylinderSubmesh.StartIndexLocation = cylinderIndexOffset;
 	cylinderSubmesh.BaseVertexLocation = cylinderVertexOffset;
-
-	//
-	// Extract the vertex elements we are interested in and pack the
-	// vertices of all the meshes into one vertex buffer.
-	//
 
 	auto totalVertexCount =
 		box.Vertices.size() +
@@ -609,16 +555,16 @@ void Engine::BuildSkullGeometry()
 
 		vertices[i].TexC = { 0.0f, 0.0f };
 
-		Vector P =vertices[i].Pos;
+		Vector P = vertices[i].Pos;
 
 		vMin = Vector::Vector3dMin(vMin, P);
 		vMax = Vector::Vector3dMin(vMax, P);
 	}
 
 	BoundingBox bounds;
-	
-	bounds.Center=( 0.5f*(vMin + vMax)).GetXMFLOAT3();
-	bounds.Extents= (0.5f*(vMax - vMin)).GetXMFLOAT3();
+
+	bounds.Center = (0.5f*(vMin + vMax)).GetXMFLOAT3();
+	bounds.Extents = (0.5f*(vMax - vMin)).GetXMFLOAT3();
 
 	fin >> ignore;
 	fin >> ignore;
@@ -675,9 +621,7 @@ void Engine::BuildPSOs()
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaquePsoDesc;
 
-	//
-	// PSO for opaque objects.
-	//
+	//对于不透明的物体
 	ZeroMemory(&opaquePsoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 	opaquePsoDesc.InputLayout = { mInputLayout.data(), (UINT)mInputLayout.size() };
 	opaquePsoDesc.pRootSignature = mRootSignature.Get();
@@ -702,18 +646,10 @@ void Engine::BuildPSOs()
 	opaquePsoDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
 	opaquePsoDesc.DSVFormat = mDepthStencilFormat;
 	ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&opaquePsoDesc, IID_PPV_ARGS(&mPSOs["opaque"])));
-
-	//
-	// PSO for sky.
-	//
+	//对于天空
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC skyPsoDesc = opaquePsoDesc;
-
-	// The camera is inside the sky sphere, so just turn off culling.
+	//关闭剔除
 	skyPsoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-
-	// Make sure the depth function is LESS_EQUAL and not just LESS.
-	// Otherwise, the normalized depth values at z = 1 (NDC) will
-	// fail the depth test if the depth buffer was cleared to 1.
 	skyPsoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 	skyPsoDesc.pRootSignature = mRootSignature.Get();
 	skyPsoDesc.VS =
@@ -790,7 +726,7 @@ void Engine::BuildMaterials()
 void Engine::BuildRenderItems()
 {
 	auto skyRitem = std::make_unique<RenderItem>();
-	skyRitem->World.ScaleTranslation(Vector( 5000.0f, 5000.0f, 5000.0f));
+	skyRitem->World.ScaleTranslation(Vector(5000.0f, 5000.0f, 5000.0f));
 	skyRitem->TexTransform = Matrix::Identity;
 	skyRitem->ObjCBIndex = 0;
 	skyRitem->Mat = mMaterials["sky"].get();
@@ -804,8 +740,8 @@ void Engine::BuildRenderItems()
 	mAllRitems.push_back(std::move(skyRitem));
 
 	auto boxRitem = std::make_unique<RenderItem>();
-	boxRitem->World= Matrix::MatrixScale(2.0f, 1.0f, 2.0f)*Matrix::MatrixTranslation(0.0f, 0.5f, 0.0f);
-	boxRitem->TexTransform= Matrix::MatrixScale(1.0f, 1.0f, 1.0f);
+	boxRitem->World = Matrix::MatrixScale(2.0f, 1.0f, 2.0f)*Matrix::MatrixTranslation(0.0f, 0.5f, 0.0f);
+	boxRitem->TexTransform = Matrix::MatrixScale(1.0f, 1.0f, 1.0f);
 	boxRitem->ObjCBIndex = 1;
 	boxRitem->Mat = mMaterials["bricks0"].get();
 	boxRitem->Geo = mGeometries["shapeGeo"].get();
@@ -818,7 +754,7 @@ void Engine::BuildRenderItems()
 	mAllRitems.push_back(std::move(boxRitem));
 
 	auto skullRitem = std::make_unique<RenderItem>();
-	skullRitem->World= Matrix::MatrixScale(0.4f, 0.4f, 0.4f)*Matrix::MatrixTranslation(0.0f, 1.0f, 0.0f);
+	skullRitem->World = Matrix::MatrixScale(0.4f, 0.4f, 0.4f)*Matrix::MatrixTranslation(0.0f, 1.0f, 0.0f);
 	skullRitem->TexTransform = Matrix::Identity;
 	skullRitem->ObjCBIndex = 2;
 	skullRitem->Mat = mMaterials["skullMat"].get();
@@ -861,9 +797,9 @@ void Engine::BuildRenderItems()
 
 		Matrix leftSphereWorld = Matrix::MatrixTranslation(-5.0f, 3.5f, -10.0f + i * 5.0f);
 		Matrix rightSphereWorld = Matrix::MatrixTranslation(+5.0f, 3.5f, -10.0f + i * 5.0f);
-		
-		leftCylRitem->World= rightCylWorld;
-		leftCylRitem->TexTransform= brickTexTransform;
+
+		leftCylRitem->World = rightCylWorld;
+		leftCylRitem->TexTransform = brickTexTransform;
 		leftCylRitem->ObjCBIndex = objCBIndex++;
 		leftCylRitem->Mat = mMaterials["bricks0"].get();
 		leftCylRitem->Geo = mGeometries["shapeGeo"].get();
@@ -872,8 +808,8 @@ void Engine::BuildRenderItems()
 		leftCylRitem->StartIndexLocation = leftCylRitem->Geo->DrawArgs["cylinder"].StartIndexLocation;
 		leftCylRitem->BaseVertexLocation = leftCylRitem->Geo->DrawArgs["cylinder"].BaseVertexLocation;
 
-		rightCylRitem->World=leftCylWorld;
-		rightCylRitem->TexTransform=brickTexTransform;
+		rightCylRitem->World = leftCylWorld;
+		rightCylRitem->TexTransform = brickTexTransform;
 		rightCylRitem->ObjCBIndex = objCBIndex++;
 		rightCylRitem->Mat = mMaterials["bricks0"].get();
 		rightCylRitem->Geo = mGeometries["shapeGeo"].get();
@@ -882,7 +818,7 @@ void Engine::BuildRenderItems()
 		rightCylRitem->StartIndexLocation = rightCylRitem->Geo->DrawArgs["cylinder"].StartIndexLocation;
 		rightCylRitem->BaseVertexLocation = rightCylRitem->Geo->DrawArgs["cylinder"].BaseVertexLocation;
 
-		leftSphereRitem->World= leftSphereWorld;
+		leftSphereRitem->World = leftSphereWorld;
 		leftSphereRitem->TexTransform = Matrix::Identity;
 		leftSphereRitem->ObjCBIndex = objCBIndex++;
 		leftSphereRitem->Mat = mMaterials["mirror0"].get();
@@ -892,7 +828,7 @@ void Engine::BuildRenderItems()
 		leftSphereRitem->StartIndexLocation = leftSphereRitem->Geo->DrawArgs["sphere"].StartIndexLocation;
 		leftSphereRitem->BaseVertexLocation = leftSphereRitem->Geo->DrawArgs["sphere"].BaseVertexLocation;
 
-		rightSphereRitem->World=rightSphereWorld;
+		rightSphereRitem->World = rightSphereWorld;
 		rightSphereRitem->TexTransform = Matrix::Identity;
 		rightSphereRitem->ObjCBIndex = objCBIndex++;
 		rightSphereRitem->Mat = mMaterials["mirror0"].get();
