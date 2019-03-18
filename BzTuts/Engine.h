@@ -74,6 +74,7 @@ private:
 	void						BuildShadersAndInputLayout();//创建shader和InputLayout
 	void						BuildShapeGeometry();		//建立几何数据
 	void						BuildSkullGeometry();		//头骨信息
+	void						BuildOBJMesh(string File, string FliePath);				//建立OBJ物体
 	void						BuildPSOs();				//建立PSO
 	void						BuildFrameResources();
 	void						BuildMaterials();			//建立材质

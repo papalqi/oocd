@@ -1,5 +1,5 @@
 ﻿#include "Engine.h"
-
+#include"OString.h"
 const int gNumFrameResources = 3;
 
 Engine::Engine(HINSTANCE hInstance)
@@ -615,6 +615,20 @@ void Engine::BuildSkullGeometry()
 	geo->DrawArgs["skull"] = submesh;
 
 	mGeometries[geo->Name] = std::move(geo);
+}
+
+
+void Engine::BuildOBJMesh(string Flie, string FliePath)
+{
+	std::ifstream fin(FliePath+Flie);
+	string ErrorMessage = Flie + string("Not find");
+	if (!fin)
+	{
+		MessageBox(0, OString::multi_Byte_To_Wide_Char(ErrorMessage), 0, 0);
+		return;
+	}
+
+
 }
 
 void Engine::BuildPSOs()

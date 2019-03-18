@@ -1,4 +1,8 @@
-﻿
+//***************************************************************************************
+// Default.hlsl by Frank Luna (C) 2015 All Rights Reserved.
+//***************************************************************************************
+
+// Defaults for number of lights.
 #ifndef NUM_DIR_LIGHTS
     #define NUM_DIR_LIGHTS 3
 #endif
@@ -11,6 +15,7 @@
     #define NUM_SPOT_LIGHTS 0
 #endif
 
+// Include common HLSL code.
 #include "Common.hlsl"
 
 struct VertexIn
@@ -32,15 +37,20 @@ VertexOut VS(VertexIn vin)
 {
 	VertexOut vout = (VertexOut)0.0f;
 
+	// Fetch the material data.
 	MaterialData matData = gMaterialData[gMaterialIndex];
 	
+    // Transform to world space.
     float4 posW = mul(float4(vin.PosL, 1.0f), gWorld);
     vout.PosW = posW.xyz;
 
+    // Assumes nonuniform scaling; otherwise, need to use inverse-transpose of world matrix.
     vout.NormalW = mul(vin.NormalL, (float3x3)gWorld);
 
+    // Transform to homogeneous clip space.
     vout.PosH = mul(posW, gViewProj);
 	
+	// Output vertex attributes for interpolation across triangle.
 	float4 texC = mul(float4(vin.TexC, 0.0f, 1.0f), gTexTransform);
 	vout.TexC = mul(texC, matData.MatTransform).xy;
 	
