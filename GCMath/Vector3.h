@@ -126,7 +126,19 @@ namespace oocd
 		static float DistSquared(const Vector3<T>& V1, const  Vector3<T>& V2);
 		static float DotProduct(const Vector3<T>& A, const Vector3<T>& B);
 		static  Vector3<T> Vector3dMin(Vector3<T> V1, Vector3<T> V2);
+		static  Vector3<T> Vector3dMax(Vector3<T> V1, Vector3<T> V2);
 	};
+
+	template <typename T>
+	oocd::Vector3<T> oocd::Vector3<T>::Vector3dMax(Vector3<T> V1, Vector3<T> V2)
+	{
+		Vector3<T> Result;
+		Result.X = (V1.X > V2.X) ? V1.X : V2.X;
+		Result.Y = (V1.Y > V2.Y) ? V1.Y : V2.Y;
+		Result.Z = (V1.Z > V2.Z) ? V1.Z : V2.Z;
+
+		return Result;
+	}
 
 	template <typename T>
 	oocd::Vector3<T> oocd::Vector3<T>::Vector3dMin(Vector3<T> V1, Vector3<T> V2)

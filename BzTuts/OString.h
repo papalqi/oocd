@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include<string>
 #include <windows.h>
+#include <sstream>  
 using namespace std;
 namespace OString
 {
