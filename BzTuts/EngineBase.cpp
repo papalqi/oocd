@@ -395,7 +395,7 @@ bool EngineBase::InitMainWindow()
 		MessageBox(0, L"CreateWindow Failed.", 0, 0);
 		return false;
 	}
-
+	//ShowCursor(false);
 	ShowWindow(mhMainWnd, SW_SHOW);
 	UpdateWindow(mhMainWnd);
 
