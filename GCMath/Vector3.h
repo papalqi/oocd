@@ -41,7 +41,7 @@ namespace oocd
 		Vector3<T>  operator*(const Vector3<T>& V) const;
 		template <typename U>Vector3<T> operator/(U f) const
 		{
-			return Vector3<T>(X / f, Y / f, Z*f);
+			return Vector3<T>(X / f, Y / f, Z/f);
 		}
 
 		Vector3<T> operator*=(const Vector3<T>& V)

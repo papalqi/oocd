@@ -27,7 +27,7 @@ bool Engine::Initialize()
 	BuildShadersAndInputLayout();
 	BuildShapeGeometry();
 	BuildSkullGeometry();
-	BuildOBJMesh("ssf.obj",R"(C:\Users\papalqi\Desktop\)");
+	BuildOBJMesh("111.obj",R"(C:\Users\Administrator\Desktop\)");
 	BuildMaterials();
 	BuildRenderItems();
 	BuildFrameResources();
@@ -46,7 +46,7 @@ void Engine::OnResize()
 {
 	EngineBase::OnResize();
 
-	mCamera.SetLens(0.25f*PI, AspectRatio(), 1.0f, 1000.0f);
+	mCamera.SetLens(0.25f*PI, AspectRatio(), 1.0f, 5000.0f);
 }
 
 void Engine::Update(const GameTimer& gt)
@@ -163,7 +163,7 @@ void Engine::OnMouseMove(WPARAM btnState, int x, int y)
 	
 
 		float dx = XMConvertToRadians(static_cast<float>(PointX-x  ));
-		float dy = XMConvertToRadians(static_cast<float>(Pointy-y));
+		float dy = XMConvertToRadians(static_cast<float>(y- Pointy));
 		
 		if (dx > 89.0f)
 			dx = 89.0f;
@@ -651,44 +651,48 @@ void Engine::BuildOBJMesh(string Flie, string FliePath)
 	Vector vMinf3(+Math::Infinity, +Math::Infinity, +Math::Infinity);
 	Vector vMaxf3(-Math::Infinity, -Math::Infinity, -Math::Infinity);
 
-	Vector vMin = vMinf3;
-	Vector vMax = vMaxf3;
+
 	BoundingBox bounds;
 
 	string s;
-	vector<Vector>Vetexs;
+	vector<Vector>Vetexs;//顶点
+	vector<Vector>Normals;//顶点
+	vector<Vector>Textures;//
+	vector<Vertex>Points;//
+	std::vector<std::int32_t>ALLIndexs;
 	std::vector<std::int32_t>Indexs;
-	//std::vector<int[3]>NormalIndexs;
-	//std::vector<int[3]>TextureIndexs;
-	vector<Vector>Normals;
-	while (getline(fin,s))
+	while (getline(fin, s))
 	{
-		if(s.length() < 2)continue;
-		if(s[0]=='v'){
-            if(s[1]=='t'){//vt  纹理
-             
-            }
-			else if(s[1]=='n'){//vn法向量
-			 /*   istringstream in(s);
+		if (s.length() < 2)continue;
+		if (s[0] == 'v') {
+			if (s[1] == 't')
+			{//vt  纹理
+				istringstream in(s);
+				Vector tex;
+				string head;
+				in >> head >> tex.X >> tex.Y >> tex.Z;
+				Textures.push_back(tex);
+			}
+			else if (s[1] == 'n') {//vn法向量
+				istringstream in(s);
 				Vector normal;
 				string head;
-				in>>head>> normal.X>> normal.Y>> normal.Z;
-				Normals.push_back(normal);*/
-            }
-			else{//v  点
-                istringstream in(s);
+				in >> head >> normal.X >> normal.Y >> normal.Z;
+				Normals.push_back(normal);
+			}
+			else {//v  点
+				istringstream in(s);
 				Vector Vetex;
-                string head;
+				string head;
 
-			
-                in>>head>> Vetex.X >> Vetex.Y >> Vetex.Z;
-				//Vetex *= 0.01;
-				vMin = Vector::Vector3dMin(vMin, Vetex);
-				vMax = Vector::Vector3dMax(vMax, Vetex);
+				in >> head >> Vetex.X >> Vetex.Y >> Vetex.Z;
+				Vetex = Vetex / 10;
+				vMinf3 = Vector::Vector3dMin(vMinf3, Vetex);
+				vMaxf3= Vector::Vector3dMax(vMinf3, Vetex);
 				Vetexs.push_back(Vetex);
-            }
-        }
-		else if(s[0]=='f'){//f 2443//2656 2442//2656 2444//2656 面
+			}
+		}
+		else if (s[0] == 'f') {//f 2443//2656 2442//2656 2444//2656 面
 			for (int k = s.size() - 1; k >= 0; k--) {
 				if (s[k] == '/')s[k] = ' ';
 			}
@@ -696,34 +700,57 @@ void Engine::BuildOBJMesh(string Flie, string FliePath)
 			string head;
 			in >> head;
 			int i = 0;
-		
+
 			while (i < 3) {
 				std::int32_t ttt;
+				//Vertex tempx;
 				in >> ttt;
 				ttt -= 1;
-				Indexs.push_back(ttt);
+				
+				ALLIndexs.push_back(ttt);
+				//tempx.Pos = Vetexs[ttt];
 				in >> ttt;
+				ttt -= 1;
+				ALLIndexs.push_back(ttt);
+				//tempx.TexC = { Textures[ttt].X, Textures[ttt].Y };
 				in >> ttt;
-				i++;
-			}
+				ttt -= 1;
+				ALLIndexs.push_back(ttt);
+				//tempx.Normal = Normals[ttt];
 			
-        }
+				i++;
+				//Points.push_back(tempx);
+			}
+
+		}
 
 	}
+
+	for (int i = 0; i != ALLIndexs.size()/3; i++)
+	{
+		Vertex tempx;
+		tempx.Pos = Vetexs[ALLIndexs[i*3]];
+		//tempx.TexC = { Textures[ALLIndexs[i * 3 + 1]].X, Textures[ALLIndexs[i * 3 + 1]].Y };
+		tempx.TexC = {0,0 };
+		tempx.Normal = Normals[ALLIndexs[i * 3 + 2]];
+		Points.push_back(tempx);
+		Indexs.push_back(i);
+	}
+
 	fin.close();
-	const UINT vbByteSize = (UINT)Vetexs.size() * sizeof(Vertex);
+	const UINT vbByteSize = (UINT)Points.size() * sizeof(Vertex);
 
 	const UINT ibByteSize = (UINT)Indexs.size() * sizeof(std::int32_t);
 	auto geo = std::make_unique<MeshGeometry>();
-	geo->Name = "ssf";
+	geo->Name = "ssfOBJ";
 	ThrowIfFailed(D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU));
-	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), Vetexs.data(), vbByteSize);
+	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), Points.data(), vbByteSize);
 
 	ThrowIfFailed(D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU));
 	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), Indexs.data(), ibByteSize);
 
 	geo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), Vetexs.data(), vbByteSize, geo->VertexBufferUploader);
+		mCommandList.Get(), Points.data(), vbByteSize, geo->VertexBufferUploader);
 
 	geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
 		mCommandList.Get(), Indexs.data(), ibByteSize, geo->IndexBufferUploader);
@@ -733,8 +760,8 @@ void Engine::BuildOBJMesh(string Flie, string FliePath)
 	geo->IndexFormat = DXGI_FORMAT_R32_UINT;
 	geo->IndexBufferByteSize = ibByteSize;
 
-	bounds.Center = (0.5f*(vMin + vMax)).GetXMFLOAT3();
-	bounds.Extents = (0.5f*(vMax - vMin)).GetXMFLOAT3();
+	bounds.Center = (0.5f*(vMinf3 + vMaxf3)).GetXMFLOAT3();
+	bounds.Extents = (0.5f*(vMaxf3 - vMinf3)).GetXMFLOAT3();
 	SubmeshGeometry submesh;
 	submesh.IndexCount = (UINT)Indexs.size();
 	submesh.StartIndexLocation = 0;
@@ -743,7 +770,7 @@ void Engine::BuildOBJMesh(string Flie, string FliePath)
 
 	geo->DrawArgs["ssf"] = submesh;
 
-	mGeometries["ssf"] = std::move(geo);
+	mGeometries[geo->Name] = std::move(geo);
 
 }
 
@@ -855,37 +882,38 @@ void Engine::BuildMaterials()
 
 void Engine::BuildRenderItems()
 {
-	auto skyRitem = std::make_unique<RenderItem>();
-	skyRitem->World.ScaleTranslation(Vector(5000.0f, 5000.0f, 5000.0f));
-	skyRitem->TexTransform = Matrix::Identity;
-	skyRitem->ObjCBIndex = 0;
-	skyRitem->Mat = mMaterials["sky"].get();
-	skyRitem->Geo = mGeometries["shapeGeo"].get();
-	skyRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	skyRitem->IndexCount = skyRitem->Geo->DrawArgs["sphere"].IndexCount;
-	skyRitem->StartIndexLocation = skyRitem->Geo->DrawArgs["sphere"].StartIndexLocation;
-	skyRitem->BaseVertexLocation = skyRitem->Geo->DrawArgs["sphere"].BaseVertexLocation;
+	//auto skyRitem = std::make_unique<RenderItem>();
+	//skyRitem->World.ScaleTranslation(Vector(5000.0f, 5000.0f, 5000.0f));
+	//skyRitem->TexTransform = Matrix::Identity;
+	//skyRitem->ObjCBIndex = 0;
+	//skyRitem->Mat = mMaterials["sky"].get();
+	//skyRitem->Geo = mGeometries["shapeGeo"].get();
+	//skyRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	//skyRitem->IndexCount = skyRitem->Geo->DrawArgs["sphere"].IndexCount;
+	//skyRitem->StartIndexLocation = skyRitem->Geo->DrawArgs["sphere"].StartIndexLocation;
+	//skyRitem->BaseVertexLocation = skyRitem->Geo->DrawArgs["sphere"].BaseVertexLocation;
 
-	mRitemLayer[(int)RenderLayer::Sky].push_back(skyRitem.get());
-	mAllRitems.push_back(std::move(skyRitem));
+	//mRitemLayer[(int)RenderLayer::Sky].push_back(skyRitem.get());
+	//mAllRitems.push_back(std::move(skyRitem));
 	//////////////
 
 
-	//auto SOFAr = std::make_unique<RenderItem>();
-	//SOFAr->World= Matrix::MatrixScale(0.4f, 0.4f, 0.4f)*Matrix::MatrixTranslation(0.0f, 1.0f, 0.0f);
-	//SOFAr->TexTransform = Matrix::Identity;
-	//SOFAr->ObjCBIndex = 0;
-	//SOFAr->Mat = mMaterials["skullMat"].get();
-	//SOFAr->Geo = mGeometries["ssf"].get();
-	//SOFAr->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	//SOFAr->IndexCount = SOFAr->Geo->DrawArgs["ssf"].IndexCount;
-	//SOFAr->StartIndexLocation = SOFAr->Geo->DrawArgs["ssf"].StartIndexLocation;
-	//SOFAr->BaseVertexLocation = SOFAr->Geo->DrawArgs["ssf"].BaseVertexLocation;
+	auto SOFAr = std::make_unique<RenderItem>();
+	SOFAr->World= Matrix::Identity;
+		//Matrix::MatrixScale(0.4f, 0.4f, 0.4f)*Matrix::MatrixTranslation(0.0f, 1.0f, 0.0f);
+	SOFAr->TexTransform = Matrix::Identity;
+	SOFAr->ObjCBIndex = 0;
+	SOFAr->Mat = mMaterials["skullMat"].get();
+	SOFAr->Geo = mGeometries["ssfOBJ"].get();
+	SOFAr->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	SOFAr->IndexCount = SOFAr->Geo->DrawArgs["ssf"].IndexCount;
+	SOFAr->StartIndexLocation = SOFAr->Geo->DrawArgs["ssf"].StartIndexLocation;
+	SOFAr->BaseVertexLocation = SOFAr->Geo->DrawArgs["ssf"].BaseVertexLocation;
 
-	//mRitemLayer[(int)RenderLayer::Opaque].push_back(SOFAr.get());
-	//mAllRitems.push_back(std::move(SOFAr));
-	///////////////////////////
-	auto boxRitem = std::make_unique<RenderItem>();
+	mRitemLayer[(int)RenderLayer::Opaque].push_back(SOFAr.get());
+	mAllRitems.push_back(std::move(SOFAr));
+	/////////////////////////
+	/*auto boxRitem = std::make_unique<RenderItem>();
 	boxRitem->World = Matrix::MatrixScale(2.0f, 1.0f, 2.0f)*Matrix::MatrixTranslation(0.0f, 0.5f, 0.0f);
 	boxRitem->TexTransform = Matrix::MatrixScale(1.0f, 1.0f, 1.0f);
 	boxRitem->ObjCBIndex = 1;
@@ -993,7 +1021,7 @@ void Engine::BuildRenderItems()
 		mAllRitems.push_back(std::move(rightCylRitem));
 		mAllRitems.push_back(std::move(leftSphereRitem));
 		mAllRitems.push_back(std::move(rightSphereRitem));
-	}
+	}*/
 
 }
 
