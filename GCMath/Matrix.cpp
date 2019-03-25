@@ -6,7 +6,26 @@ const Matrix Matrix::Identity(Plane(1, 0, 0, 0), Plane(0, 1, 0, 0),
 
 oocd::Matrix::Matrix()
 {
+	SetIdentity();
 }
+
+oocd::Matrix::Matrix(
+	float m00, float m01, float m02, float m03,
+	float m10, float m11, float m12, float m13,
+	float m20, float m21, float m22, float m23,
+	float m30, float m31, float m32, float m33)
+
+{
+	float A1[4]{ m00, m01, m02, m03 };
+	float A2[4]{ m10, m11, m12, m13 };
+	float A3[4]{ m20, m21, m22, m23 };
+	float A4[4]{ m30, m31, m32, m33 };
+	 memcpy(M[0], A1,sizeof(A1));
+	 memcpy(M[1], A1, sizeof(A2));
+	 memcpy(M[2], A1, sizeof(A3));
+	 memcpy(M[3], A1, sizeof(A4));
+
+}								   
 
 void oocd::Matrix::SetIdentity()
 {
@@ -54,6 +73,81 @@ oocd::Matrix oocd::Matrix::MatrixScale(float OffsetX, float OffsetY, float Offse
 	M.M[0][0] = OffsetX;
 	M.M[1][1] = OffsetY;
 	M.M[2][2] = OffsetZ;
+	return M;
+}
+
+oocd::Matrix oocd::Matrix::MatrixLookAtP(Vector EyePosition, Vector FocusPosition, Vector UpDirection)
+{
+	Vector EyeDirection = FocusPosition- EyePosition;
+	return MatrixLookAtD(EyePosition, EyeDirection, UpDirection);
+}
+
+oocd::Matrix oocd::Matrix::MatrixLookAtD(Vector EyePosition, Vector EyeDirection, Vector UpDirection)
+{
+	Matrix out;
+	auto mLook=EyeDirection.GetSafeNormal();
+	auto mRight = (UpDirection^mLook).GetSafeNormal();
+	auto mUp = EyeDirection ^ mRight;
+	auto mPosition = EyePosition;
+
+
+	float x = -((mPosition | mRight));
+	float y = -((mPosition | mUp));
+	float z = -((mPosition | mLook));
+
+
+
+	out.M[0][0] = mRight.X;
+	out.M[1][0] = mRight.Y;
+	out.M[2][0] = mRight.Z;
+	out.M[3][0] = x;
+	out.M[0][1] = mUp.X;
+	out.M[1][1] = mUp.Y;
+	out.M[2][1] = mUp.Z;
+	out.M[3][1] = y;
+	out.M[0][2] = mLook.X;
+	out.M[1][2] = mLook.Y;
+	out.M[2][2] = mLook.Z;
+	out.M[3][2] = z;
+	out.M[0][3] = 0.0f;
+	out.M[1][3] = 0.0f;
+	out.M[2][3] = 0.0f;
+	out.M[3][3] = 1.0f;
+	return out;
+}
+
+oocd::Matrix oocd::Matrix::MatrixOrtho(
+	float ViewLeft,
+	float ViewRight,
+	float ViewBottom,
+	float ViewTop,
+	float NearZ,
+	float FarZ)
+{
+	float ReciprocalWidth = 1.0f / (ViewRight - ViewLeft);
+	float ReciprocalHeight = 1.0f / (ViewTop - ViewBottom);
+	float fRange = 1.0f / (FarZ - NearZ);
+
+	Matrix M;
+	M.M[0][0] = ReciprocalWidth + ReciprocalWidth;
+	M.M[0][1] = 0.0f;
+	M.M[0][2] = 0.0f;
+	M.M[0][3] = 0.0f;
+
+	M.M[1][0] = 0.0f;
+	M.M[1][1] = ReciprocalHeight + ReciprocalHeight;
+	M.M[1][2] = 0.0f;
+	M.M[1][3] = 0.0f;
+
+	M.M[2][0] = 0.0f;
+	M.M[2][1] = 0.0f;
+	M.M[2][2] = fRange;
+	M.M[2][3] = 0.0f;
+
+	M.M[3][0] = -(ViewLeft + ViewRight) * ReciprocalWidth;
+	M.M[3][1] = -(ViewTop + ViewBottom) * ReciprocalHeight;
+	M.M[3][2] = -fRange * NearZ;
+	M.M[3][3] = 1.0f;
 	return M;
 }
 

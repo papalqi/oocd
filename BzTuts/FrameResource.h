@@ -25,6 +25,7 @@ struct PassConstants
 	Matrix InvProj = Matrix::Identity;
 	Matrix ViewProj = Matrix::Identity;
 	Matrix InvViewProj = Matrix::Identity;
+	Matrix ShadowTransform = Matrix::Identity;
 	Vector EyePosW = { 0.0f, 0.0f, 0.0f };
 	float cbPerObjectPad1 = 0.0f;
 	Vector2D RenderTargetSize = { 0.0f, 0.0f };
@@ -45,9 +46,8 @@ struct MaterialData
 
 	
 	Matrix MatTransform = Matrix::Identity;
-
 	UINT DiffuseMapIndex = 0;
-	UINT MaterialPad0;
+	UINT NormalMapIndex = 0;
 	UINT MaterialPad1;
 	UINT MaterialPad2;
 };
@@ -57,6 +57,7 @@ struct Vertex
 	Vector Pos;
 	Vector Normal;
 	Vector2D TexC;
+	Vector TangentU;
 };
 
 //每一帧渲染的资源

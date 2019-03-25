@@ -168,8 +168,8 @@
     <ClCompile Include="OdRegex.cpp" />
     <ClCompile Include="OString.cpp" />
     <ClCompile Include="OString.h" />
-    <ClCompile Include="Pwindows.cpp" />
     <ClCompile Include="RenderDefine.h" />
+    <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="TestMeshcpp.cpp" />
     <ClCompile Include="TextureLoad.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -194,8 +194,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OCMath.h" />
-    <ClInclude Include="Pwindows.h" />
-    <ClInclude Include="render.h" />
+    <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestMeshcpp.h" />
     <ClInclude Include="TextureLoad.h" />

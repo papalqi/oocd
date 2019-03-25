@@ -25,6 +25,7 @@ namespace oocd
 			out.z = Z; return out;
 		};
 		Vector3() { X = Y = Z = 0; }
+		Vector3(DirectX::XMFLOAT3 DXM) { X = DXM.x; Y = DXM.y; Z = DXM.z; }
 		Vector3(T zz) { X = Y = Z = zz; }
 		Vector3(T xx, T yy, T zz) : X(xx), Y(yy), Z(zz) { }
 		Vector3(const Vector3<T> &p) :X(p.X), Y(p.Y), Z(p.Z) {};

@@ -188,7 +188,7 @@ namespace oocd
 
 	//使用的是DirectXMath的计算方法，并不要知道我自己，并没有进行检测
 	void VectorMatrixMultiply(Matrix* Result, const Matrix* Matrix1, const Matrix* Matrix2);
-	//
+	//计算逆矩阵
 	void VectorMatrixInverse(void* DstMatrix, const void* SrcMatrix);
 	void VectorQuaternionMultiply(void *Result, const void* Quat1, const void* Quat2);
 }

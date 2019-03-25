@@ -12,6 +12,7 @@
 #include<DirectXColors.h>
 #include "GeometryGenerator.h"
 #include "Camera.h"
+#include"ShadowMap.h"
 using namespace std;
 using namespace oocd;
 using namespace DirectX;
@@ -80,11 +81,15 @@ private:
 	void						BuildMaterials();			//建立材质
 	void						BuildRenderItems();			//设置渲染对象
 	void						DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const vector<RenderItem*>& ritems);
+	void						UpdateShadowTransform(const GameTimer& gt);
+	void						UpdateShadowPassCB(const GameTimer& gt);
+	void						DrawSceneToShadowMap();
+	void						CreateRtvAndDsvDescriptorHeaps();
 
-	array<const CD3DX12_STATIC_SAMPLER_DESC, 6>					GetStaticSamplers();//获取静态采样器
+	array<const CD3DX12_STATIC_SAMPLER_DESC, 7>					GetStaticSamplers();//获取静态采样器
 
 private:
-
+	std::unique_ptr<ShadowMap>									mShadowMap;
 	Camera														mCamera;
 	ComPtr<ID3D12DescriptorHeap>								mSrvDescriptorHeap = nullptr;	//SRV描述符堆
 	ComPtr<ID3D12RootSignature>									mRootSignature = nullptr;		//根描述符
@@ -103,4 +108,30 @@ private:
 	vector<RenderItem*>											mRitemLayer[(int)RenderLayer::Count];
 	vector<unique_ptr<FrameResource>>						    mFrameResources;
 	vector<unique_ptr<RenderItem>>								mAllRitems;
+private:
+	CD3DX12_GPU_DESCRIPTOR_HANDLE mNullSrv;
+	DirectX::BoundingSphere mSceneBounds;
+	float mLightNearZ = 0.0f;
+	float mLightFarZ = 0.0f;
+	Vector mLightPosW;
+	Matrix mLightView = Matrix::Identity;
+	Matrix mLightProj = Matrix::Identity;
+	Matrix mShadowTransform = Matrix::Identity;
+
+
+
+	UINT mShadowMapHeapIndex = 0;
+
+	UINT mNullCubeSrvIndex = 0;
+	UINT mNullTexSrvIndex = 0;
+
+
+	float mLightRotationAngle = 0.0f;
+	Vector mBaseLightDirections[3] = {
+		Vector(0.57735f, -0.57735f, 0.57735f),
+		Vector(-0.57735f, -0.57735f, 0.57735f),
+		Vector(0.0f, -0.707f, -0.707f)
+	};
+	Vector mRotatedLightDirections[3];
+
 };
