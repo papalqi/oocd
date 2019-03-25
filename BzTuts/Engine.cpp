@@ -723,8 +723,8 @@ void Engine::BuildOBJMesh(string Flie, string FliePath)
 	{
 		Vertex tempx;
 		tempx.Pos = Vetexs[ALLIndexs[i*3]];
-		//tempx.TexC = { Textures[ALLIndexs[i * 3 + 1]].X, Textures[ALLIndexs[i * 3 + 1]].Y };
-		tempx.TexC = {0,0 };
+		tempx.TexC = { Textures[ALLIndexs[i * 3 + 1]].X, Textures[ALLIndexs[i * 3 + 1]].Y };
+		//tempx.TexC = {0,0 };
 		tempx.Normal = Normals[ALLIndexs[i * 3 + 2]];
 		Points.push_back(tempx);
 		Indexs.push_back(i);

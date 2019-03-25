@@ -74,30 +74,27 @@ void Camera::Walk(float d)
 void Camera::Pitch(float angle)
 {
 
-	if (NowPitch + angle > 89.0f)
-		return;
+	if (NowPitch+ angle > 89.0f)
+		NowPitch = 89;
 	else if (NowPitch + angle < -89.0f)
-		return;
+		NowPitch = -89;
 	else	NowPitch += angle;
-	Rotator tems(0, 0, angle);
-	mUp = tems.RotateVector(mUp);
-	mLook = tems.RotateVector(mLook);
+	Rotator tems(NowRotateY, 0, NowPitch);
+	mUp = tems.RotateVector(OrimUp);
+	mLook = tems.RotateVector(OrimLook);
 	mViewDirty = true;
 }
 
 void Camera::RotateY(float angle)
 {
 
-	if (NowRotateY + angle > 89.0f)
-		return;
-	else if (NowRotateY + angle < -89.0f)
-		return;
-	else	NowRotateY += angle;
-	Rotator Res(angle, 0, 0);
+	
+	NowRotateY += angle;
+	Rotator Res(NowRotateY, 0, NowPitch);
 
-	mRight = Res.RotateVector(mRight);
-	mUp = Res.RotateVector(mUp);
-	mLook = Res.RotateVector(mLook);
+	mRight = Res.RotateVector(OrimRight);
+	mUp = Res.RotateVector(OrimUp);
+	mLook = Res.RotateVector(OrimLook);
 
 	mViewDirty = true;
 }

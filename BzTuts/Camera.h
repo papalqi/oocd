@@ -58,8 +58,10 @@ private:
 	Vector mPosition = { 0.0f, 0.0f, 0.0f };
 	Vector mRight = { 1.0f, 0.0f, 0.0f };
 	Vector mUp = { 0.0f, 1.0f, 0.0f };
-	Vector mLook = { 0.0f, 0.0f, 1.0f };
-
+	 Vector mLook = { 0.0f, 0.0f, 1.0f };
+	const Vector OrimRight = { 1.0f, 0.0f, 0.0f };
+	const Vector OrimUp = { 0.0f, 1.0f, 0.0f };
+	const Vector OrimLook = { 0.0f, 0.0f, 1.0f };
 	float mNearZ = 0.0f;
 	float mFarZ = 0.0f;
 	float mAspect = 0.0f;
