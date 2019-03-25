@@ -68,7 +68,8 @@ private:
 	float mFarWindowHeight = 0.0f;
 
 	bool mViewDirty = true;
-
+	float NowPitch = 0;
+	float NowRotateY = 0;
 	Matrix mView = Matrix::Identity;
 	Matrix mProj = Matrix::Identity;
 };

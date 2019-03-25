@@ -163,17 +163,10 @@ void Engine::OnMouseMove(WPARAM btnState, int x, int y)
 	
 
 		float dx = XMConvertToRadians(static_cast<float>(PointX-x  ));
-		float dy = XMConvertToRadians(static_cast<float>(y- Pointy));
+		float dy = XMConvertToRadians(static_cast<float>( Pointy-y));
 		
-		if (dx > 89.0f)
-			dx = 89.0f;
-		if (dx < -89.0f)
-			dx = -89.0f;
 
-		if (dy > 89.0f)
-			dy = 89.0f;
-		if (dy < -89.0f)
-			dy = -89.0f;
+
 		mCamera.Pitch(dy);
 		mCamera.RotateY(dx);
 	//}
