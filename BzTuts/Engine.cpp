@@ -6,10 +6,14 @@ const int gNumFrameResources = 3;
 Engine::Engine(HINSTANCE hInstance)
 	: EngineBase(hInstance)
 {
+	mSceneBounds.Center = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	mSceneBounds.Radius = sqrtf(10.0f*10.0f + 15.0f*15.0f);
 }
 
 Engine::~Engine()
 {
+	if (md3dDevice != nullptr)
+		FlushCommandQueue();
 }
 
 bool Engine::Initialize()
@@ -80,8 +84,8 @@ void Engine::Update(const GameTimer& gt)
 
 	AnimateMaterials(gt);
 	UpdateObjectCBs(gt);
-	UpdateShadowTransform(gt);
 	UpdateMaterialBuffer(gt);
+	UpdateShadowTransform(gt);
 	UpdateMainPassCB(gt);
 	UpdateShadowPassCB(gt);
 }
@@ -1286,32 +1290,28 @@ void Engine::UpdateShadowPassCB(const GameTimer& gt)
 	Matrix invProj = proj.Inverse();
 	Matrix invViewProj = viewProj.Inverse();
 
-	Matrix shadowTransform = mShadowTransform;
+	UINT w = mShadowMap->Width();
+	UINT h = mShadowMap->Height();
 
-	mMainPassCB.View=(view);
-	mMainPassCB.InvView= (invView);
-	mMainPassCB.Proj=(proj);
-	mMainPassCB.InvProj= (invProj);
-	mMainPassCB.ViewProj= (viewProj);
-	mMainPassCB.InvViewProj= (invViewProj);
-	mMainPassCB.ShadowTransform= (shadowTransform);
-	mMainPassCB.EyePosW = mCamera.GetPosition();
-	mMainPassCB.RenderTargetSize = Vector2D((float)mClientWidth, (float)mClientHeight);
-	mMainPassCB.InvRenderTargetSize = Vector2D(1.0f / mClientWidth, 1.0f / mClientHeight);
-	mMainPassCB.NearZ = 1.0f;
-	mMainPassCB.FarZ = 1000.0f;
-	mMainPassCB.TotalTime = gt.TotalTime();
-	mMainPassCB.DeltaTime = gt.DeltaTime();
-	mMainPassCB.AmbientLight = Vector4{ 0.25f, 0.25f, 0.35f, 1.0f };
-	mMainPassCB.Lights[0].Direction = mRotatedLightDirections[0];
-	mMainPassCB.Lights[0].Strength = { 0.9f, 0.8f, 0.7f };
-	mMainPassCB.Lights[1].Direction = mRotatedLightDirections[1];
-	mMainPassCB.Lights[1].Strength = { 0.4f, 0.4f, 0.4f };
-	mMainPassCB.Lights[2].Direction = mRotatedLightDirections[2];
-	mMainPassCB.Lights[2].Strength = { 0.2f, 0.2f, 0.2f };
+
+	mShadowPassCB.View=(view);
+	mShadowPassCB.InvView= (invView);
+	mShadowPassCB.Proj=(proj);
+	mShadowPassCB.InvProj= (invProj);
+	mShadowPassCB.ViewProj= (viewProj);
+	mShadowPassCB.InvViewProj= (invViewProj);
+
+
+
+	mShadowPassCB.EyePosW = mLightPosW;
+	mShadowPassCB.RenderTargetSize = Vector2D((float)w, (float)h);
+	mShadowPassCB.InvRenderTargetSize = Vector2D(1.0f / w, 1.0f / h);
+	mMainPassCB.NearZ = mLightNearZ;
+	mMainPassCB.FarZ = mLightFarZ;
+
 
 	auto currPassCB = mCurrFrameResource->PassCB.get();
-	currPassCB->CopyData(0, mMainPassCB);
+	currPassCB->CopyData(1, mShadowPassCB);
 }
 
 void Engine::DrawSceneToShadowMap()
@@ -1353,7 +1353,7 @@ void Engine::CreateRtvAndDsvDescriptorHeaps()
 		&rtvHeapDesc, IID_PPV_ARGS(mRtvHeap.GetAddressOf())));
 
 	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
-	dsvHeapDesc.NumDescriptors = 1;
+	dsvHeapDesc.NumDescriptors = 2;
 	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	dsvHeapDesc.NodeMask = 0;

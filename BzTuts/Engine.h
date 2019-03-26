@@ -68,7 +68,7 @@ private:
 	void						UpdateObjectCBs(const GameTimer& gt);		//更新物体的CBV
 	void						UpdateMaterialBuffer(const GameTimer& gt);
 	void						UpdateMainPassCB(const GameTimer& gt);
-
+	void						UpdateShadowPassCB(const GameTimer& gt);
 	void						LoadTextures();				//加载texture
 	void						BuildRootSignature();		//建立RootSignature
 	void						BuildDescriptorHeaps();		//建立描述符堆
@@ -82,7 +82,8 @@ private:
 	void						BuildRenderItems();			//设置渲染对象
 	void						DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const vector<RenderItem*>& ritems);
 	void						UpdateShadowTransform(const GameTimer& gt);
-	void						UpdateShadowPassCB(const GameTimer& gt);
+
+	
 	void						DrawSceneToShadowMap();
 	void						CreateRtvAndDsvDescriptorHeaps();
 
@@ -95,7 +96,8 @@ private:
 	ComPtr<ID3D12RootSignature>									mRootSignature = nullptr;		//根描述符
 	FrameResource*												mCurrFrameResource = nullptr;	
 	int															mCurrFrameResourceIndex = 0;	//当前的渲染帧索引
-	PassConstants												mMainPassCB;					//常量数据
+	PassConstants												mMainPassCB;		
+	PassConstants mShadowPassCB;
 	POINT														mLastMousePos;
 	UINT														mCbvSrvDescriptorSize = 0;		//cbv的增量大小
 	UINT														mSkyTexHeapIndex = 0;			//天空的索引
