@@ -16,15 +16,22 @@ oocd::Matrix::Matrix(
 	float m30, float m31, float m32, float m33)
 
 {
-	float A1[4]{ m00, m01, m02, m03 };
-	float A2[4]{ m10, m11, m12, m13 };
-	float A3[4]{ m20, m21, m22, m23 };
-	float A4[4]{ m30, m31, m32, m33 };
-	 memcpy(M[0], A1,sizeof(A1));
-	 memcpy(M[1], A1, sizeof(A2));
-	 memcpy(M[2], A1, sizeof(A3));
-	 memcpy(M[3], A1, sizeof(A4));
-
+	M[0][0] = m00;
+	M[0][1] = m01;
+	M[0][2] = m02;
+	M[0][3] = m03;
+	M[1][0] = m10;
+	M[1][1] = m11;
+	M[1][2] = m12;
+	M[1][3] = m13;
+	M[2][0] = m20;
+	M[2][1] = m21;
+	M[2][2] = m22;
+	M[2][3] = m23;
+	M[3][0] = m30;
+	M[3][1] = m31;
+	M[3][2] = m32;
+	M[3][3] = m33;
 }								   
 
 void oocd::Matrix::SetIdentity()
@@ -35,11 +42,29 @@ void oocd::Matrix::SetIdentity()
 	M[3][0] = 0; M[3][1] = 0;  M[3][2] = 0;  M[3][3] = 1;
 }
 
-oocd::Matrix oocd::Matrix::operator*(const Matrix& Other) const
+oocd::Matrix oocd::Matrix::operator*(const Matrix& B) const
 {
-	Matrix Result;
-	VectorMatrixMultiply(&Result, this, &Other);
-	return Result;
+	Matrix Temp;
+	Temp.M[0][0] = this->M[0][0] * B.M[0][0] + this->M[0][1] * B.M[1][0] + this->M[0][2] * B.M[2][0] + this->M[0][3] * B.M[3][0];
+	Temp.M[0][1] = this->M[0][0] * B.M[0][1] + this->M[0][1] * B.M[1][1] + this->M[0][2] * B.M[2][1] + this->M[0][3] * B.M[3][1];
+	Temp.M[0][2] = this->M[0][0] * B.M[0][2] + this->M[0][1] * B.M[1][2] + this->M[0][2] * B.M[2][2] + this->M[0][3] * B.M[3][2];
+	Temp.M[0][3] = this->M[0][0] * B.M[0][3] + this->M[0][1] * B.M[1][3] + this->M[0][2] * B.M[2][3] + this->M[0][3] * B.M[3][3];
+		
+	Temp.M[1][0] = this->M[1][0] * B.M[0][0] + this->M[1][1] * B.M[1][0] + this->M[1][2] * B.M[2][0] + this->M[1][3] * B.M[3][0];
+	Temp.M[1][1] = this->M[1][0] * B.M[0][1] + this->M[1][1] * B.M[1][1] + this->M[1][2] * B.M[2][1] + this->M[1][3] * B.M[3][1];
+	Temp.M[1][2] = this->M[1][0] * B.M[0][2] + this->M[1][1] * B.M[1][2] + this->M[1][2] * B.M[2][2] + this->M[1][3] * B.M[3][2];
+	Temp.M[1][3] = this->M[1][0] * B.M[0][3] + this->M[1][1] * B.M[1][3] + this->M[1][2] * B.M[2][3] + this->M[1][3] * B.M[3][3];
+		
+	Temp.M[2][0] = this->M[2][0] * B.M[0][0] + this->M[2][1] * B.M[1][0] + this->M[2][2] * B.M[2][0] + this->M[2][3] * B.M[3][0];
+	Temp.M[2][1] = this->M[2][0] * B.M[0][1] + this->M[2][1] * B.M[1][1] + this->M[2][2] * B.M[2][1] + this->M[2][3] * B.M[3][1];
+	Temp.M[2][2] = this->M[2][0] * B.M[0][2] + this->M[2][1] * B.M[1][2] + this->M[2][2] * B.M[2][2] + this->M[2][3] * B.M[3][2];
+	Temp.M[2][3] = this->M[2][0] * B.M[0][3] + this->M[2][1] * B.M[1][3] + this->M[2][2] * B.M[2][3] + this->M[2][3] * B.M[3][3];
+		
+	Temp.M[3][0] = this->M[3][0] * B.M[0][0] + this->M[3][1] * B.M[1][0] + this->M[3][2] * B.M[2][0] + this->M[3][3] * B.M[3][0];
+	Temp.M[3][1] = this->M[3][0] * B.M[0][1] + this->M[3][1] * B.M[1][1] + this->M[3][2] * B.M[2][1] + this->M[3][3] * B.M[3][1];
+	Temp.M[3][2] = this->M[3][0] * B.M[0][2] + this->M[3][1] * B.M[1][2] + this->M[3][2] * B.M[2][2] + this->M[3][3] * B.M[3][2];
+	Temp.M[3][3] = this->M[3][0] * B.M[0][3] + this->M[3][1] * B.M[1][3] + this->M[3][2] * B.M[2][3] + this->M[3][3] * B.M[3][3];
+	return Temp;
 }
 
 oocd::Matrix oocd::Matrix::MatrixTranslation(float OffsetX, float OffsetY, float OffsetZ)
@@ -78,22 +103,23 @@ oocd::Matrix oocd::Matrix::MatrixScale(float OffsetX, float OffsetY, float Offse
 
 oocd::Matrix oocd::Matrix::MatrixLookAtP(Vector EyePosition, Vector FocusPosition, Vector UpDirection)
 {
-	Vector EyeDirection = FocusPosition- EyePosition;
+	Vector EyeDirection =  FocusPosition - EyePosition;
 	return MatrixLookAtD(EyePosition, EyeDirection, UpDirection);
 }
 
 oocd::Matrix oocd::Matrix::MatrixLookAtD(Vector EyePosition, Vector EyeDirection, Vector UpDirection)
 {
+
 	Matrix out;
 	auto mLook=EyeDirection.GetSafeNormal();
 	auto mRight = (UpDirection^mLook).GetSafeNormal();
-	auto mUp = EyeDirection ^ mRight;
+	auto mUp = (EyeDirection ^ mRight).GetSafeNormal();
 	auto mPosition = EyePosition;
 
-
-	float x = -((mPosition | mRight));
-	float y = -((mPosition | mUp));
-	float z = -((mPosition | mLook));
+	mPosition = -mPosition;
+	float x = ((mPosition | mRight));
+	float y = ((mPosition | mUp));
+	float z = ((mPosition | mLook));
 
 
 
@@ -113,6 +139,7 @@ oocd::Matrix oocd::Matrix::MatrixLookAtD(Vector EyePosition, Vector EyeDirection
 	out.M[1][3] = 0.0f;
 	out.M[2][3] = 0.0f;
 	out.M[3][3] = 1.0f;
+	
 	return out;
 }
 

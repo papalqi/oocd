@@ -110,8 +110,8 @@ void Engine::Draw(const GameTimer& gt)
 
 	//设置texture
 	mCommandList->SetGraphicsRootDescriptorTable(4, mSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
-
 	DrawSceneToShadowMap();
+
 
 	mCommandList->RSSetViewports(1, &mScreenViewport);
 	mCommandList->RSSetScissorRects(1, &mScissorRect);
@@ -1137,7 +1137,7 @@ void Engine::BuildRenderItems()
 	auto gridRitem = std::make_unique<RenderItem>();
 	gridRitem->World = Matrix::Identity;
 	gridRitem->TexTransform = Matrix::Identity;
-	gridRitem->TexTransform.ScaleTranslation({ 80.0f, 80.0f, 10.0f });
+	gridRitem->TexTransform.ScaleTranslation({ 8.0f, 8.0f, 1.0f });
 	gridRitem->ObjCBIndex = 3;
 	gridRitem->Mat = mMaterials["tile0"].get();
 	gridRitem->Geo = mGeometries["shapeGeo"].get();
@@ -1247,8 +1247,8 @@ void Engine::UpdateShadowTransform(const GameTimer& gt)
 	Vector4 lightPos = -2.0f*mSceneBounds.Radius*lightDir;
 	Vector4 targetPos = Vector(mSceneBounds.Center);
 	Vector4 lightUp = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
-	Matrix lightView = Matrix::MatrixLookAtD(lightPos, targetPos, lightUp);
-	
+	Matrix lightView = Matrix::MatrixLookAtP(lightPos, targetPos, lightUp);
+	//XMMATRIX lightView = XMMatrixLookAtLH(FXMVECTOR(lightPos.X), targetPos, lightUp);
 	mLightPosW=lightPos;
 
 	Vector4 sphereCenterLS;
@@ -1282,8 +1282,8 @@ void Engine::UpdateShadowTransform(const GameTimer& gt)
 
 void Engine::UpdateShadowPassCB(const GameTimer& gt)
 {
-	Matrix view = mCamera.GetView();
-	Matrix proj = mCamera.GetProj();
+	Matrix view = mLightView;
+	Matrix proj = mLightProj;
 
 	Matrix viewProj = view*proj;
 	Matrix invView = view.Inverse();
@@ -1294,12 +1294,12 @@ void Engine::UpdateShadowPassCB(const GameTimer& gt)
 	UINT h = mShadowMap->Height();
 
 
-	mShadowPassCB.View=(view);
-	mShadowPassCB.InvView= (invView);
-	mShadowPassCB.Proj=(proj);
-	mShadowPassCB.InvProj= (invProj);
-	mShadowPassCB.ViewProj= (viewProj);
-	mShadowPassCB.InvViewProj= (invViewProj);
+	mShadowPassCB.View=(view).GetTransposed();
+	mShadowPassCB.InvView= (invView).GetTransposed();
+	mShadowPassCB.Proj=(proj).GetTransposed();
+	mShadowPassCB.InvProj= (invProj).GetTransposed();
+	mShadowPassCB.ViewProj= (viewProj).GetTransposed();
+	mShadowPassCB.InvViewProj= (invViewProj).GetTransposed();
 
 
 

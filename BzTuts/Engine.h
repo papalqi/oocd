@@ -82,10 +82,8 @@ private:
 	void						BuildRenderItems();			//设置渲染对象
 	void						DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const vector<RenderItem*>& ritems);
 	void						UpdateShadowTransform(const GameTimer& gt);
-
-	
 	void						DrawSceneToShadowMap();
-	void						CreateRtvAndDsvDescriptorHeaps();
+	void						CreateRtvAndDsvDescriptorHeaps()override;
 
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 7>					GetStaticSamplers();//获取静态采样器
 
@@ -97,7 +95,7 @@ private:
 	FrameResource*												mCurrFrameResource = nullptr;	
 	int															mCurrFrameResourceIndex = 0;	//当前的渲染帧索引
 	PassConstants												mMainPassCB;		
-	PassConstants mShadowPassCB;
+	PassConstants												mShadowPassCB;
 	POINT														mLastMousePos;
 	UINT														mCbvSrvDescriptorSize = 0;		//cbv的增量大小
 	UINT														mSkyTexHeapIndex = 0;			//天空的索引
