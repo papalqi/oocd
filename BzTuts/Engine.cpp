@@ -55,7 +55,7 @@ void Engine::OnResize()
 {
 	EngineBase::OnResize();
 
-	mCamera.SetLens(0.25f*PI, AspectRatio(), 1.0f, 5000.0f);
+	mCamera.SetLens(0.25f*PI, AspectRatio(), 1.0f, 1000.0f);
 }
 
 void Engine::Update(const GameTimer& gt)
@@ -74,7 +74,7 @@ void Engine::Update(const GameTimer& gt)
 	}
 	mLightRotationAngle += 0.1f*gt.DeltaTime();
 
-	Matrix R = RotationMatrix(Rotator(0,mLightRotationAngle,0));
+	Matrix R = RotationMatrix(Rotator(mLightRotationAngle*180/PI,0,0 ));
 	for (int i = 0; i < 3; ++i)
 	{
 		Vector lightDir = mBaseLightDirections[i];
@@ -1244,8 +1244,10 @@ void Engine::DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vect
 void Engine::UpdateShadowTransform(const GameTimer& gt)
 {
 	Vector4 lightDir = mRotatedLightDirections[0];
+	lightDir[3] = 0;
 	Vector4 lightPos = -2.0f*mSceneBounds.Radius*lightDir;
 	Vector4 targetPos = Vector(mSceneBounds.Center);
+	targetPos[3] = 0;
 	Vector4 lightUp = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
 	Matrix lightView = Matrix::MatrixLookAtP(lightPos, targetPos, lightUp);
 	//XMMATRIX lightView = XMMatrixLookAtLH(FXMVECTOR(lightPos.X), targetPos, lightUp);
