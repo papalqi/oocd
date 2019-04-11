@@ -404,15 +404,15 @@ bool EngineBase::InitMainWindow()
 
 bool EngineBase::InitDirect3D()
 {
-#if defined(DEBUG) || defined(_DEBUG)
-
-	// 启动DX12的DebugLayer
-	{
-		ComPtr<ID3D12Debug> debugController;
-		ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
-		debugController->EnableDebugLayer();
-	}
-#endif
+//#if defined(DEBUG) || defined(_DEBUG)
+//
+//	// 启动DX12的DebugLayer
+//	{
+//		ComPtr<ID3D12Debug> debugController;
+//		ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
+//		debugController->EnableDebugLayer();
+//	}
+//#endif
 
 	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&mdxgiFactory)));
 

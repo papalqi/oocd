@@ -1,4 +1,6 @@
-﻿#include "stdafx.h"
+﻿#define DEBUG_VS   // Uncomment this line to debug vertex shaders 
+#define DEBUG_PS   // Uncomment this line to debug pixel shaders
+#include "stdafx.h"
 
 #include"Engine.h"
 #include "TestMeshcpp.h"

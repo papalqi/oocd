@@ -207,4 +207,12 @@
       <Filter>Header Files\Feature</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\Common.hlsl" />
+    <FxCompile Include="Shaders\Default.hlsl" />
+    <FxCompile Include="Shaders\LightingUtil.hlsl" />
+    <FxCompile Include="Shaders\ShadowDebug.hlsl" />
+    <FxCompile Include="Shaders\Shadows.hlsl" />
+    <FxCompile Include="Shaders\Sky.hlsl" />
+  </ItemGroup>
 </Project>
