@@ -102,6 +102,7 @@ float4 PS(VertexOut pin) : SV_Target
 
     // Only the first light casts a shadow.
     float3 shadowFactor = float3(1.0f, 1.0f, 1.0f);
+
     shadowFactor[0] = CalcShadowFactor(pin.ShadowPosH);
 
     const float shininess = (1.0f - roughness) * normalMapSample.a;

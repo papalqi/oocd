@@ -326,13 +326,13 @@ void Engine::LoadTextures()
 
 	std::vector<std::wstring> texFilenames =
 	{
-		  L"bricks2.dds",
-		  L"bricks2_nmap.dds",
-		  L"tile.dds",
-		  L"tile_nmap.dds",
-		  L"white1x1.dds",
-		  L"default_nmap.dds",
-		  L"desertcube1024.dds"
+		  L"../Textures/bricks2.dds",
+		  L"../Textures/bricks2_nmap.dds",
+		  L"../Textures/tile.dds",
+		  L"../Textures/tile_nmap.dds",
+		  L"../Textures/white1x1.dds",
+		  L"../Textures/default_nmap.dds",
+		  L"../Textures/desertcube1024.dds"
 	};
 
 	for (int i = 0; i < (int)texNames.size(); ++i)
@@ -482,18 +482,18 @@ void Engine::BuildShadersAndInputLayout()
 		NULL, NULL
 	};
 
-	mShaders["standardVS"] = d3dUtil::CompileShader(L"Default.hlsl", nullptr, "VS", "vs_5_1");
-	mShaders["opaquePS"] = d3dUtil::CompileShader(L"Default.hlsl", nullptr, "PS", "ps_5_1");
+	mShaders["standardVS"] = d3dUtil::CompileShader(L"Shaders\\Default.hlsl", nullptr, "VS", "vs_5_1");
+	mShaders["opaquePS"] = d3dUtil::CompileShader(L"Shaders\\Default.hlsl", nullptr, "PS", "ps_5_1");
 
-	mShaders["shadowVS"] = d3dUtil::CompileShader(L"Shadows.hlsl", nullptr, "VS", "vs_5_1");
-	mShaders["shadowOpaquePS"] = d3dUtil::CompileShader(L"Shadows.hlsl", nullptr, "PS", "ps_5_1");
-	mShaders["shadowAlphaTestedPS"] = d3dUtil::CompileShader(L"Shadows.hlsl", alphaTestDefines, "PS", "ps_5_1");
+	mShaders["shadowVS"] = d3dUtil::CompileShader(L"Shaders\\Shadows.hlsl", nullptr, "VS", "vs_5_1");
+	mShaders["shadowOpaquePS"] = d3dUtil::CompileShader(L"Shaders\\Shadows.hlsl", nullptr, "PS", "ps_5_1");
+	mShaders["shadowAlphaTestedPS"] = d3dUtil::CompileShader(L"Shaders\\Shadows.hlsl", alphaTestDefines, "PS", "ps_5_1");
 
-	mShaders["debugVS"] = d3dUtil::CompileShader(L"ShadowDebug.hlsl", nullptr, "VS", "vs_5_1");
-	mShaders["debugPS"] = d3dUtil::CompileShader(L"ShadowDebug.hlsl", nullptr, "PS", "ps_5_1");
+	mShaders["debugVS"] = d3dUtil::CompileShader(L"Shaders\\ShadowDebug.hlsl", nullptr, "VS", "vs_5_1");
+	mShaders["debugPS"] = d3dUtil::CompileShader(L"Shaders\\ShadowDebug.hlsl", nullptr, "PS", "ps_5_1");
 
-	mShaders["skyVS"] = d3dUtil::CompileShader(L"Sky.hlsl", nullptr, "VS", "vs_5_1");
-	mShaders["skyPS"] = d3dUtil::CompileShader(L"Sky.hlsl", nullptr, "PS", "ps_5_1");
+	mShaders["skyVS"] = d3dUtil::CompileShader(L"Shaders\\Sky.hlsl", nullptr, "VS", "vs_5_1");
+	mShaders["skyPS"] = d3dUtil::CompileShader(L"Shaders\\Sky.hlsl", nullptr, "PS", "ps_5_1");
 
 	mInputLayout =
 	{
@@ -1015,6 +1015,7 @@ void Engine::BuildMaterials()
 	bricks0->Name = "bricks0";
 	bricks0->MatCBIndex = 0;
 	bricks0->DiffuseSrvHeapIndex = 0;
+	bricks0->NormalSrvHeapIndex = 1;
 	bricks0->DiffuseAlbedo = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	bricks0->FresnelR0 = Vector(0.1f, 0.1f, 0.1f);
 	bricks0->Roughness = 0.3f;
@@ -1022,6 +1023,7 @@ void Engine::BuildMaterials()
 	auto tile0 = std::make_unique<Material>();
 	tile0->Name = "tile0";
 	tile0->MatCBIndex = 1;
+	tile0->NormalSrvHeapIndex = 2;
 	tile0->DiffuseSrvHeapIndex = 1;
 	tile0->DiffuseAlbedo = Vector4(0.9f, 0.9f, 0.9f, 1.0f);
 	tile0->FresnelR0 = Vector(0.2f, 0.2f, 0.2f);
@@ -1030,6 +1032,8 @@ void Engine::BuildMaterials()
 	auto mirror0 = std::make_unique<Material>();
 	mirror0->Name = "mirror0";
 	mirror0->MatCBIndex = 2;
+	mirror0->NormalSrvHeapIndex = 3;
+
 	mirror0->DiffuseSrvHeapIndex = 2;
 	mirror0->DiffuseAlbedo = Vector4(0.0f, 0.0f, 0.1f, 1.0f);
 	mirror0->FresnelR0 = Vector(0.98f, 0.97f, 0.95f);
@@ -1038,6 +1042,7 @@ void Engine::BuildMaterials()
 	auto skullMat = std::make_unique<Material>();
 	skullMat->Name = "skullMat";
 	skullMat->MatCBIndex = 3;
+	skullMat->NormalSrvHeapIndex = 4;
 	skullMat->DiffuseSrvHeapIndex = 2;
 	skullMat->DiffuseAlbedo = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
 	skullMat->FresnelR0 = Vector(0.2f, 0.2f, 0.2f);
@@ -1046,6 +1051,8 @@ void Engine::BuildMaterials()
 	auto sky = std::make_unique<Material>();
 	sky->Name = "sky";
 	sky->MatCBIndex = 4;
+	sky->NormalSrvHeapIndex = 5;
+
 	sky->DiffuseSrvHeapIndex = 3;
 	sky->DiffuseAlbedo = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	sky->FresnelR0 = Vector(0.1f, 0.1f, 0.1f);
