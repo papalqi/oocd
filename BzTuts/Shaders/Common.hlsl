@@ -87,9 +87,7 @@ cbuffer cbPass : register(b1)
     Light gLights[MaxLights];
 };
 
-//---------------------------------------------------------------------------------------
-// Transforms a normal map sample to world space.
-//---------------------------------------------------------------------------------------
+//变换法线贴图
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW)
 {
 	// Uncompress each component from [0,1] to [-1,1].
@@ -108,22 +106,17 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
 	return bumpedNormalW;
 }
 
-//---------------------------------------------------------------------------------------
-// PCF for shadow mapping.
-//---------------------------------------------------------------------------------------
 
+//计算阴影因子
 float CalcShadowFactor(float4 shadowPosH)
 {
-    // Complete projection by doing division by w.
+ 
     shadowPosH.xyz /= shadowPosH.w;
-
-    // Depth in NDC space.
+    //这个点的深度值
     float depth = shadowPosH.z;
-
+    //得到像素大小
     uint width, height, numMips;
     gShadowMap.GetDimensions(0, width, height, numMips);
-
-    // Texel size.
     float dx = 1.0f / (float)width;
 
     float percentLit = 0.0f;
@@ -137,10 +130,11 @@ float CalcShadowFactor(float4 shadowPosH)
     [unroll]
     for(int i = 0; i < 9; ++i)
     {
+        //和深度图比较
         percentLit += gShadowMap.SampleCmpLevelZero(gsamShadow,
             shadowPosH.xy + offsets[i], depth).r;
     }
-    
+  ;
     return percentLit / 9.0f;
 }
 

@@ -34,7 +34,7 @@ bool Engine::Initialize()
 	BuildDescriptorHeaps();
 	BuildShadersAndInputLayout();
 	BuildShapeGeometry();
-	//BuildSkullGeometry();
+	BuildSkullGeometry();
 	BuildMaterials();
 	BuildRenderItems();
 	BuildFrameResources();
@@ -653,115 +653,112 @@ void Engine::BuildShapeGeometry()
 
 void Engine::BuildSkullGeometry()
 {
-	//std::ifstream fin("Models/skull.txt");
+	std::ifstream fin("Models/skull.txt");
 
-	//if (!fin)
-	//{
-	//	MessageBox(0, L"Models/skull.txt not found.", 0, 0);
-	//	return;
-	//}
+	if (!fin)
+	{
+		MessageBox(0, L"Models/skull.txt not found.", 0, 0);
+		return;
+	}
 
-	//UINT vcount = 0;
-	//UINT tcount = 0;
-	//std::string ignore;
+	UINT vcount = 0;
+	UINT tcount = 0;
+	std::string ignore;
 
-	//fin >> ignore >> vcount;
-	//fin >> ignore >> tcount;
-	//fin >> ignore >> ignore >> ignore >> ignore;
+	fin >> ignore >> vcount;
+	fin >> ignore >> tcount;
+	fin >> ignore >> ignore >> ignore >> ignore;
 
-	//Vector vMinf3(+Math::Infinity, +Math::Infinity, +Math::Infinity);
-	//Vector vMaxf3(-Math::Infinity, -Math::Infinity, -Math::Infinity);
+	Vector vMinf3(+Math::Infinity, +Math::Infinity, +Math::Infinity);
+	Vector vMaxf3(-Math::Infinity, -Math::Infinity, -Math::Infinity);
 
-	//Vector vMin = vMinf3;
-	//Vector vMax = vMaxf3;
+	Vector vMin = vMinf3;
+	Vector vMax = vMaxf3;
 
-	//std::vector<Vertex> vertices(vcount);
-	//for (UINT i = 0; i < vcount; ++i)
-	//{
-	//	fin >> vertices[i].Pos.x >> vertices[i].Pos.y >> vertices[i].Pos.z;
-	//	fin >> vertices[i].Normal.x >> vertices[i].Normal.y >> vertices[i].Normal.z;
+	std::vector<Vertex> vertices(vcount);
+	for (UINT i = 0; i < vcount; ++i)
+	{
+		fin >> vertices[i].Pos.X >> vertices[i].Pos.Y >> vertices[i].Pos.Z;
+		fin >> vertices[i].Normal.X>> vertices[i].Normal.Y >> vertices[i].Normal.Z;
 
-	//	vertices[i].TexC = { 0.0f, 0.0f };
+		vertices[i].TexC = { 0.0f, 0.0f };
 
-	//	Vector P = XMLoadFloat3(&vertices[i].Pos);
+		Vector P = vertices[i].Pos;
 
-	//	Vector N = XMLoadFloat3(&vertices[i].Normal);
+		Vector N = vertices[i].Normal;
 
-	//	// Generate a tangent vector so normal mapping works.  We aren't applying
-	//	// a texture map to the skull, so we just need any tangent vector so that
-	//	// the math works out to give us the original interpolated vertex normal.
-	//	Vector up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	//	if (fabsf(XMVectorGetX(XMVector3Dot(N, up))) < 1.0f - 0.001f)
-	//	{
-	//		Vector T = XMVector3Normalize(XMVector3Cross(up, N));
-	//		XMStoreFloat3(&vertices[i].TangentU, T);
-	//	}
-	//	else
-	//	{
-	//		up = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	//		Vector T = XMVector3Normalize(XMVector3Cross(N, up));
-	//		XMStoreFloat3(&vertices[i].TangentU, T);
-	//	}
+		Vector up = Vector(0.0f, 1.0f, 0.0f);
+		if (fabsf(((N| up))) < 1.0f - 0.001f)
+		{
+			Vector T = ((up^ N)).GetSafeNormal();
+			vertices[i].TangentU= T;
+		}
+		else
+		{
+			up = Vector(0.0f, 0.0f, 1.0f);
+			Vector T = ((N^up)).GetSafeNormal();
+			vertices[i].TangentU= T;
+		}
 
 
-	//	vMin = XMVectorMin(vMin, P);
-	//	vMax = XMVectorMax(vMax, P);
-	//}
+		vMin = Vector::Vector3dMin(vMin, P);
+		vMax = Vector::Vector3dMax(vMax, P);
+	}
 
-	//BoundingBox bounds;
+	BoundingBox bounds;
 
-	//bounds.Center = (0.5f*(vMin + vMax)).GetXMFLOAT3();
-	//bounds.Extents = (0.5f*(vMax - vMin)).GetXMFLOAT3();
+	bounds.Center = (0.5f*(vMin + vMax)).GetXMFLOAT3();
+	bounds.Extents = (0.5f*(vMax - vMin)).GetXMFLOAT3();
 
-	//fin >> ignore;
-	//fin >> ignore;
-	//fin >> ignore;
+	fin >> ignore;
+	fin >> ignore;
+	fin >> ignore;
 
-	//std::vector<std::int32_t> indices(3 * tcount);
-	//for (UINT i = 0; i < tcount; ++i)
-	//{
-	//	fin >> indices[i * 3 + 0] >> indices[i * 3 + 1] >> indices[i * 3 + 2];
-	//}
+	std::vector<std::int32_t> indices(3 * tcount);
+	for (UINT i = 0; i < tcount; ++i)
+	{
+		fin >> indices[i * 3 + 0] >> indices[i * 3 + 1] >> indices[i * 3 + 2];
+	}
 
-	//fin.close();
+	fin.close();
 
-	////
-	//// Pack the indices of all the meshes into one index buffer.
-	////
+	//
+	// Pack the indices of all the meshes into one index buffer.
+	//
 
-	//const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
 
-	//const UINT ibByteSize = (UINT)indices.size() * sizeof(std::int32_t);
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::int32_t);
 
-	//auto geo = std::make_unique<MeshGeometry>();
-	//geo->Name = "skullGeo";
+	auto geo = std::make_unique<MeshGeometry>();
+	geo->Name = "skullGeo";
 
-	//ThrowIfFailed(D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU));
-	//CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
+	ThrowIfFailed(D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU));
+	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
 
-	//ThrowIfFailed(D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU));
-	//CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
+	ThrowIfFailed(D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU));
+	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
 
-	//geo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-	//	mCommandList.Get(), vertices.data(), vbByteSize, geo->VertexBufferUploader);
+	geo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+		mCommandList.Get(), vertices.data(), vbByteSize, geo->VertexBufferUploader);
 
-	//geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-	//	mCommandList.Get(), indices.data(), ibByteSize, geo->IndexBufferUploader);
+	geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+		mCommandList.Get(), indices.data(), ibByteSize, geo->IndexBufferUploader);
 
-	//geo->VertexByteStride = sizeof(Vertex);
-	//geo->VertexBufferByteSize = vbByteSize;
-	//geo->IndexFormat = DXGI_FORMAT_R32_UINT;
-	//geo->IndexBufferByteSize = ibByteSize;
+	geo->VertexByteStride = sizeof(Vertex);
+	geo->VertexBufferByteSize = vbByteSize;
+	geo->IndexFormat = DXGI_FORMAT_R32_UINT;
+	geo->IndexBufferByteSize = ibByteSize;
 
-	//SubmeshGeometry submesh;
-	//submesh.IndexCount = (UINT)indices.size();
-	//submesh.StartIndexLocation = 0;
-	//submesh.BaseVertexLocation = 0;
-	//submesh.Bounds = bounds;
+	SubmeshGeometry submesh;
+	submesh.IndexCount = (UINT)indices.size();
+	submesh.StartIndexLocation = 0;
+	submesh.BaseVertexLocation = 0;
+	submesh.Bounds = bounds;
 
-	//geo->DrawArgs["skull"] = submesh;
+	geo->DrawArgs["skull"] = submesh;
 
-	//mGeometries[geo->Name] = std::move(geo);
+	mGeometries[geo->Name] = std::move(geo);
 }
 
 
@@ -1044,8 +1041,8 @@ void Engine::BuildMaterials()
 	skullMat->MatCBIndex = 3;
 	skullMat->NormalSrvHeapIndex = 4;
 	skullMat->DiffuseSrvHeapIndex = 2;
-	skullMat->DiffuseAlbedo = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
-	skullMat->FresnelR0 = Vector(0.2f, 0.2f, 0.2f);
+	skullMat->DiffuseAlbedo = Vector4(0.3f, 0.3f, 0.8f, 1.0f);
+	skullMat->FresnelR0 = Vector(0.6f, 0.6f, 0.6f);
 	skullMat->Roughness = 0.2f;
 
 	auto sky = std::make_unique<Material>();
@@ -1126,26 +1123,26 @@ void Engine::BuildRenderItems()
 
 	mRitemLayer[(int)RenderLayer::Opaque].push_back(boxRitem.get());
 	mAllRitems.push_back(std::move(boxRitem));
-	////骷髅
-	//auto skullRitem = std::make_unique<RenderItem>();
-	//skullRitem->World = Matrix::MatrixScale(0.4f, 0.4f, 0.4f)*Matrix::MatrixTranslation(0.0f, 1.0f, 0.0f);
-	//skullRitem->TexTransform = Matrix::Identity;
-	//skullRitem->ObjCBIndex = 3;
-	//skullRitem->Mat = mMaterials["skullMat"].get();
-	//skullRitem->Geo = mGeometries["skullGeo"].get();
-	//skullRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	//skullRitem->IndexCount = skullRitem->Geo->DrawArgs["skull"].IndexCount;
-	//skullRitem->StartIndexLocation = skullRitem->Geo->DrawArgs["skull"].StartIndexLocation;
-	//skullRitem->BaseVertexLocation = skullRitem->Geo->DrawArgs["skull"].BaseVertexLocation;
+	//骷髅
+	auto skullRitem = std::make_unique<RenderItem>();
+	skullRitem->World = Matrix::MatrixScale(0.4f, 0.4f, 0.4f)*Matrix::MatrixTranslation(0.0f, 1.0f, 0.0f);
+	skullRitem->TexTransform = Matrix::Identity;
+	skullRitem->ObjCBIndex = 3;
+	skullRitem->Mat = mMaterials["skullMat"].get();
+	skullRitem->Geo = mGeometries["skullGeo"].get();
+	skullRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	skullRitem->IndexCount = skullRitem->Geo->DrawArgs["skull"].IndexCount;
+	skullRitem->StartIndexLocation = skullRitem->Geo->DrawArgs["skull"].StartIndexLocation;
+	skullRitem->BaseVertexLocation = skullRitem->Geo->DrawArgs["skull"].BaseVertexLocation;
 
-	//mRitemLayer[(int)RenderLayer::Opaque].push_back(skullRitem.get());
-	//mAllRitems.push_back(std::move(skullRitem));
+	mRitemLayer[(int)RenderLayer::Opaque].push_back(skullRitem.get());
+	mAllRitems.push_back(std::move(skullRitem));
 	//地板
 	auto gridRitem = std::make_unique<RenderItem>();
 	gridRitem->World = Matrix::Identity;
 	gridRitem->TexTransform = Matrix::Identity;
 	gridRitem->TexTransform.ScaleTranslation({ 8.0f, 8.0f, 1.0f });
-	gridRitem->ObjCBIndex = 3;
+	gridRitem->ObjCBIndex = 4;
 	gridRitem->Mat = mMaterials["tile0"].get();
 	gridRitem->Geo = mGeometries["shapeGeo"].get();
 	gridRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -1158,7 +1155,7 @@ void Engine::BuildRenderItems()
 
 	Matrix brickTexTransform = Matrix::Identity;
 	brickTexTransform.ScaleTranslation({ 1.5f, 2.0f, 1.0f });
-	UINT objCBIndex = 4;
+	UINT objCBIndex = 5;
 	for (int i = 0; i < 5; ++i)
 	{
 		auto leftCylRitem = std::make_unique<RenderItem>();
