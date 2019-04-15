@@ -13,3 +13,17 @@
 #include"MathHelper.h"
 // this will only call release if an object exists (prevents exceptions calling release on non existant objects)
 //#define SAFE_RELEASE(p) { if ( (p) ) { (p)->Release(); (p) = 0; } }
+
+
+#define  PYTHON_TEST 
+
+#ifdef PYTHON_TEST
+extern "C"  __declspec(dllexport) void  EnginMain(HINSTANCE hInstance);
+
+#else
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
+	PSTR cmdLine, int showCmd);
+
+#endif
+
+	

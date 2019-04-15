@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BzTuts", "BzTuts\BzTuts.vcxproj", "{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "BzTuts\BzTuts.vcxproj", "{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C1EF9B2B-330D-4270-BB85-C9A09AB80977} = {C1EF9B2B-330D-4270-BB85-C9A09AB80977}
 	EndProjectSection
@@ -12,30 +12,44 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Math", "Math", "{B1C4202E-B
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GCMath", "GCMath\GCMath.vcxproj", "{C1EF9B2B-330D-4270-BB85-C9A09AB80977}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "UI", "UI\UI.pyproj", "{DFE4E669-C254-4CAC-8041-E617CDDF8B27}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Debug|x64.ActiveCfg = Debug|x64
 		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Debug|x64.Build.0 = Debug|x64
 		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Debug|x86.ActiveCfg = Debug|Win32
 		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Debug|x86.Build.0 = Debug|Win32
+		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Release|Any CPU.ActiveCfg = Release|Win32
 		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Release|x64.ActiveCfg = Release|x64
 		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Release|x64.Build.0 = Release|x64
 		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Release|x86.ActiveCfg = Release|Win32
 		{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}.Release|x86.Build.0 = Release|Win32
+		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Debug|x64.ActiveCfg = Debug|x64
 		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Debug|x64.Build.0 = Debug|x64
 		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Debug|x86.ActiveCfg = Debug|Win32
 		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Debug|x86.Build.0 = Debug|Win32
+		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Release|Any CPU.ActiveCfg = Release|Win32
 		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Release|x64.ActiveCfg = Release|x64
 		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Release|x64.Build.0 = Release|x64
 		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Release|x86.ActiveCfg = Release|Win32
 		{C1EF9B2B-330D-4270-BB85-C9A09AB80977}.Release|x86.Build.0 = Release|Win32
+		{DFE4E669-C254-4CAC-8041-E617CDDF8B27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFE4E669-C254-4CAC-8041-E617CDDF8B27}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DFE4E669-C254-4CAC-8041-E617CDDF8B27}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DFE4E669-C254-4CAC-8041-E617CDDF8B27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFE4E669-C254-4CAC-8041-E617CDDF8B27}.Release|x64.ActiveCfg = Release|Any CPU
+		{DFE4E669-C254-4CAC-8041-E617CDDF8B27}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
