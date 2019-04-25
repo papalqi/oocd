@@ -98,7 +98,20 @@ int EngineBase::Run()
 
 bool EngineBase::Initialize()
 {
+
 	if (!InitMainWindow())
+		return false;
+	if (!InitDirect3D())
+		return false;
+
+	OnResize();
+
+	return true;
+}
+
+bool EngineBase::Initialize(HWND Bwindows)
+{
+	if (!InitMainWindow(Bwindows))
 		return false;
 
 	if (!InitDirect3D())
@@ -399,6 +412,15 @@ bool EngineBase::InitMainWindow()
 	ShowWindow(mhMainWnd, SW_SHOW);
 	UpdateWindow(mhMainWnd);
 
+	return true;
+}
+
+bool EngineBase::InitMainWindow(HWND BWINDOWS)
+{
+
+	mhMainWnd = BWINDOWS;
+	ShowWindow(mhMainWnd, SW_SHOW);
+	UpdateWindow(mhMainWnd);
 	return true;
 }
 

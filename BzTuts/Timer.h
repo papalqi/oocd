@@ -11,7 +11,6 @@ public:
 	void Stop();  
 	void Tick(); 
 
-private:
 	double mSecondsPerCount;
 	double mDeltaTime;
 	int64 mBaseTime;

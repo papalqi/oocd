@@ -1,6 +1,7 @@
 ﻿#include "Engine.h"
 #include"OString.h"
 #include"RotationMatrix.h"
+#include "EngineBase.h"
 const int gNumFrameResources = 3;
 
 Engine::Engine(HINSTANCE hInstance)
@@ -10,6 +11,8 @@ Engine::Engine(HINSTANCE hInstance)
 	mSceneBounds.Radius = sqrtf(10.0f*10.0f + 15.0f*15.0f);
 }
 
+
+
 Engine::~Engine()
 {
 	if (md3dDevice != nullptr)
@@ -18,10 +21,46 @@ Engine::~Engine()
 
 bool Engine::Initialize()
 {
+
+
 	if (!EngineBase::Initialize())
 		return false;
 
 	// Reset the command list to prep for initialization commands.
+	ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
+
+	mCamera.SetPosition(0.0f, 2.0f, -15.0f);
+
+	mShadowMap = std::make_unique<ShadowMap>(
+		md3dDevice.Get(), 2048, 2048);
+
+	LoadTextures();
+	BuildRootSignature();
+	BuildDescriptorHeaps();
+	BuildShadersAndInputLayout();
+	BuildShapeGeometry();
+	BuildSkullGeometry();
+	BuildMaterials();
+	BuildRenderItems();
+	BuildFrameResources();
+	BuildPSOs();
+
+	// Execute the initialization commands.
+	ThrowIfFailed(mCommandList->Close());
+	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
+	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+	// Wait until initialization is complete.
+	FlushCommandQueue();
+
+	return true;
+}
+
+bool Engine::Initialize(HWND Bwindows)
+{
+
+	if (!EngineBase::Initialize(Bwindows))
+		return false;
 	ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
 
 	mCamera.SetPosition(0.0f, 2.0f, -15.0f);

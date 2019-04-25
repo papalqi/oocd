@@ -42,18 +42,18 @@ struct RenderItem
 	UINT StartIndexLocation = 0;
 	int BaseVertexLocation = 0;
 };
-
 class Engine : public EngineBase
 {
 public:
 	Engine(HINSTANCE hInstance);
+	//Engine(HWND WHWND);
 	Engine(const Engine& rhs) = delete;			  //不允许使用复制构造函数
 	Engine& operator=(const Engine& rhs) = delete;//不允许使用赋值构造函数
 	~Engine();
 
 	//进行Engine初始化
 	virtual bool				Initialize()								override;
-
+	virtual bool				Initialize(HWND Bwindows)					override;
 private:
 	virtual void				OnResize()									override;
 	virtual void				Update(const GameTimer& gt)					override;

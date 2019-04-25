@@ -9,18 +9,27 @@
 #include"OdRegex.h"
 
 
-
+//#define QT_Engine_BIND
 
 #ifdef PYTHON_TEST
-extern "C" __declspec(dllexport) void  EnginMain(HINSTANCE hInstance)
+extern "C" __declspec(dllexport) void  EnginMain(HWND bhw)
 {
 	try
 	{
-		Engine theApp(hInstance);
+		Engine theApp((HINSTANCE)111);
+#ifdef QT_Engine_BIND
+		if (!theApp.Initialize(bhw))
+		{
+
+		}
+#else
 		if (!theApp.Initialize())
 		{
 
 		}
+#endif // QT_Engine_BIND
+
+	
 		theApp.Run();
 	}
 	catch (DxException& e)
@@ -34,6 +43,9 @@ extern "C" __declspec(dllexport) void  EnginMain(HINSTANCE hInstance)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	PSTR cmdLine, int showCmd)
 {
+#if defined(DEBUG) | defined(_DEBUG)
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 	try
 	{
 		Engine theApp(hInstance);

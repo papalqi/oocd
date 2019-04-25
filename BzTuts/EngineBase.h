@@ -27,6 +27,7 @@ public:
 	void							Set4xMsaaState(bool value);
 	int								Run();
 	virtual bool					Initialize();
+	virtual bool					Initialize(HWND Bwindows);
 	virtual LRESULT					MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 protected:
@@ -42,6 +43,7 @@ protected:
 protected:
 
 	bool							InitMainWindow();	//初始化窗口
+	bool							InitMainWindow(HWND BWINDOWS);
 	bool							InitDirect3D();		//初始化D3D
 	void							CreateCommandObjects();//建立Command相关
 	void							CreateSwapChain();	//建立交换链
