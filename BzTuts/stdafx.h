@@ -15,7 +15,7 @@
 //#define SAFE_RELEASE(p) { if ( (p) ) { (p)->Release(); (p) = 0; } }
 
 
-//#define  PYTHON_TEST 
+#define  PYTHON_TEST 
 
 #ifdef PYTHON_TEST
 extern "C"  __declspec(dllexport) void  EnginMain(HWND bhw);

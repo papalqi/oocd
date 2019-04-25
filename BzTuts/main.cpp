@@ -9,7 +9,7 @@
 #include"OdRegex.h"
 
 
-//#define QT_Engine_BIND
+#define QT_Engine_BIND
 
 #ifdef PYTHON_TEST
 extern "C" __declspec(dllexport) void  EnginMain(HWND bhw)
@@ -48,6 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #endif
 	try
 	{
+		_CrtSetBreakAlloc(550911);
 		Engine theApp(hInstance);
 		if (!theApp.Initialize())
 			return 0;

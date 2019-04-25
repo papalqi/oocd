@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>625</width>
+    <width>627</width>
     <height>388</height>
    </rect>
   </property>
@@ -14,17 +14,14 @@
    <string>UI</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QQuickWidget" name="quickWidget">
+   <widget class="RenderWindows" name="graphicsView">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>-1</y>
-      <width>291</width>
-      <height>351</height>
+      <x>10</x>
+      <y>10</y>
+      <width>301</width>
+      <height>331</height>
      </rect>
-    </property>
-    <property name="resizeMode">
-     <enum>QQuickWidget::SizeRootObjectToView</enum>
     </property>
    </widget>
   </widget>
@@ -33,7 +30,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>625</width>
+     <width>627</width>
      <height>23</height>
     </rect>
    </property>
@@ -50,9 +47,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QQuickWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">QtQuickWidgets/QQuickWidget</header>
+   <class>RenderWindows</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">renderwindows.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -9,8 +9,8 @@ int main(int argc, char *argv[])
 	QApplication a(argc, argv);
 	UI w;
 	;
-	//EnginMain((HWND)w.Getui().openGLWidget->winId());
-	EnginMain((HWND)w.winId());
+	//EnginMain((HWND)w.Getui().graphicsView->winId());
+	
 	//w.render();
 	w.show();
 

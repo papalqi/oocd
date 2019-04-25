@@ -64,6 +64,18 @@ void EngineBase::Set4xMsaaState(bool value)
 	}
 }
 
+void EngineBase::RunWithQTInOne()
+{
+	mTimer.Tick();
+	if (!mEnginePaused)
+	{
+		CalculateFrameStats();
+		Update(mTimer);
+		Draw(mTimer);
+		//_CrtDumpMemoryLeaks();//注意必须放在程序的结尾处
+	}
+}
+
 int EngineBase::Run()
 {
 	MSG msg = { 0 };
@@ -85,6 +97,7 @@ int EngineBase::Run()
 				CalculateFrameStats();
 				Update(mTimer);
 				Draw(mTimer);
+				_CrtDumpMemoryLeaks();//注意必须放在程序的结尾处
 			}
 			else
 			{

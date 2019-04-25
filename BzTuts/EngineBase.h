@@ -19,12 +19,13 @@ protected:
 public:
 
 	static EngineBase*				GetEngine();
-
+	GameTimer*						GetTimer() { return &mTimer; };
 	HINSTANCE						AppInst()const;
 	HWND							MainWnd()const;
 	float							AspectRatio()const;
 	bool							Get4xMsaaState()const;
 	void							Set4xMsaaState(bool value);
+	void							RunWithQTInOne();
 	int								Run();
 	virtual bool					Initialize();
 	virtual bool					Initialize(HWND Bwindows);

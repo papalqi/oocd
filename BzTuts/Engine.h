@@ -42,7 +42,7 @@ struct RenderItem
 	UINT StartIndexLocation = 0;
 	int BaseVertexLocation = 0;
 };
-class Engine : public EngineBase
+ class  Engine : public EngineBase
 {
 public:
 	Engine(HINSTANCE hInstance);
