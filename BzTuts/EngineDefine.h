@@ -6,3 +6,8 @@
 #define DEFAULT_ORTHOZOOM			10000.0					/* Default 2D viewport zoom */
 #define SPEED_ON_BOARD				200
 #define SPEED_MOVE					5
+
+
+//是否使用dll调试
+#define  PYTHON_TEST 1
+#define QT_Engine_BIND 1

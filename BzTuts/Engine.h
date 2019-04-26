@@ -50,12 +50,17 @@ public:
 	Engine(const Engine& rhs) = delete;			  //不允许使用复制构造函数
 	Engine& operator=(const Engine& rhs) = delete;//不允许使用赋值构造函数
 	~Engine();
-
+	GameTimer*						GetTimer() { return &mTimer; };
 	//进行Engine初始化
+
+	void						RunWithQTInOne();
 	virtual bool				Initialize()								override;
 	virtual bool				Initialize(HWND Bwindows)					override;
-private:
+	inline void					SetWidth(int inWidth) { mClientWidth = inWidth; };
+	inline void					SetHeight(int inHeight) { mClientHeight = inHeight; };
 	virtual void				OnResize()									override;
+private:
+
 	virtual void				Update(const GameTimer& gt)					override;
 	virtual void				Draw(const GameTimer& gt)					override;
 

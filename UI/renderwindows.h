@@ -7,16 +7,16 @@
 #include <QtWidgets/QWidget>
 #include "Engine.h"
 
-class D3d12RenderWidget :public  QWidget
+class RenderWindows :public  QWidget
 {
 	Q_OBJECT
 public:
 
 	Engine* theApp;
-	explicit D3d12RenderWidget(QWidget *parent = 0) :QWidget(parent) 
+	explicit RenderWindows(QWidget *parent = 0) :QWidget(parent)
 	{
 		setAttribute(Qt::WA_PaintOnScreen, true);
-		setAttribute(Qt::WA_NativeWindow, true);
+		//setAttribute(Qt::WA_NativeWindow, true);
 		 theApp=new Engine((HINSTANCE)111);
 		 theApp->GetTimer()->Reset();
 
@@ -26,11 +26,21 @@ public:
 		}
 		
 	};
-	~D3d12RenderWidget() {};
-
-
-	void D3d12RenderWidget::paintEvent(QPaintEvent *event)
+	~RenderWindows() {};
+	void resizeEvent(QResizeEvent *event)
 	{
+		
+		theApp->SetHeight(this->height());
+		theApp->SetWidth(this->width());
+		theApp->OnResize();
+	}
+
+	void paintEvent(QPaintEvent *event)
+	{
+		QString("asdasd");
+
+		parentWidget()->setWindowTitle(theApp->GetFpsAndMspf().c_str());
+		
 		theApp->RunWithQTInOne();
 		update();
 

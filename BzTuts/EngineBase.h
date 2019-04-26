@@ -19,17 +19,19 @@ protected:
 public:
 
 	static EngineBase*				GetEngine();
-	GameTimer*						GetTimer() { return &mTimer; };
+
 	HINSTANCE						AppInst()const;
 	HWND							MainWnd()const;
 	float							AspectRatio()const;
 	bool							Get4xMsaaState()const;
 	void							Set4xMsaaState(bool value);
-	void							RunWithQTInOne();
+	
 	int								Run();
 	virtual bool					Initialize();
 	virtual bool					Initialize(HWND Bwindows);
 	virtual LRESULT					MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+	string							GetFpsAndMspf();
 
 protected:
 	virtual void					CreateRtvAndDsvDescriptorHeaps();//建立存储区
@@ -53,6 +55,7 @@ protected:
 	D3D12_CPU_DESCRIPTOR_HANDLE		CurrentBackBufferView()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE		DepthStencilView()const;
 	void							CalculateFrameStats();//计算帧率
+
 	void							LogAdapters();
 	void							LogAdapterOutputs(IDXGIAdapter* adapter);
 	void							LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);

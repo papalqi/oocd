@@ -64,17 +64,7 @@ void EngineBase::Set4xMsaaState(bool value)
 	}
 }
 
-void EngineBase::RunWithQTInOne()
-{
-	mTimer.Tick();
-	if (!mEnginePaused)
-	{
-		CalculateFrameStats();
-		Update(mTimer);
-		Draw(mTimer);
-		//_CrtDumpMemoryLeaks();//注意必须放在程序的结尾处
-	}
-}
+
 
 int EngineBase::Run()
 {
@@ -454,7 +444,7 @@ bool EngineBase::InitDirect3D()
 	//建立设备，并使用默认设备
 	HRESULT hardwareResult = D3D12CreateDevice(
 		nullptr,           
-		D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_12_0,
 		IID_PPV_ARGS(&md3dDevice));
 
 	// 如果失败启动软光栅
@@ -602,6 +592,35 @@ void EngineBase::CalculateFrameStats()
 		timeElapsed += 1.0f;
 	}
 }
+
+std::string EngineBase::GetFpsAndMspf()
+{
+	static int frameCnt = 0;
+	static float timeElapsed = 0.0f;
+	frameCnt++;
+	if ((mTimer.TotalTime() - timeElapsed) >= 1.0f)
+	{
+		float fps = (float)frameCnt; // fps = frameCnt / 1
+		float mspf = 1000.0f / fps;
+
+		string fpsStr = to_string(fps);
+		string mspfStr = to_string(mspf);
+
+		string windowText = 
+			"    fps: " + fpsStr +
+			"   mspf: " + mspfStr;
+
+		//SetWindowText(mhMainWnd, windowText.c_str());
+
+		// Reset for next average.
+		frameCnt = 0;
+		timeElapsed += 1.0f;
+		return  windowText;
+	}
+	return string("fuck");
+
+}
+
 
 void EngineBase::LogAdapters()
 {

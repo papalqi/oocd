@@ -15,7 +15,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
-#include "renderwindows.h"
+#include <renderwindows.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -23,7 +23,7 @@ class Ui_UIClass
 {
 public:
     QWidget *centralWidget;
-	D3d12RenderWidget *graphicsView;
+    RenderWindows *graphicsView;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
 
@@ -31,16 +31,16 @@ public:
     {
         if (UIClass->objectName().isEmpty())
             UIClass->setObjectName(QString::fromUtf8("UIClass"));
-        UIClass->resize(627, 388);
+        UIClass->resize(1123, 879);
         centralWidget = new QWidget(UIClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
-        graphicsView = new D3d12RenderWidget(centralWidget);
+        graphicsView = new RenderWindows(centralWidget);
         graphicsView->setObjectName(QString::fromUtf8("graphicsView"));
-        graphicsView->setGeometry(QRect(10, 10, 301, 331));
+        graphicsView->setGeometry(QRect(10, 10, 800, 600));
         UIClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(UIClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 627, 23));
+        menuBar->setGeometry(QRect(0, 0, 1123, 23));
         UIClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(UIClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));

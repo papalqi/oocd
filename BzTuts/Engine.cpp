@@ -19,6 +19,19 @@ Engine::~Engine()
 		FlushCommandQueue();
 }
 
+void Engine::RunWithQTInOne()
+{
+	mTimer.Tick();
+	
+	if (!mEnginePaused)
+	{
+		CalculateFrameStats();
+		Update(mTimer);
+		Draw(mTimer);
+		//_CrtDumpMemoryLeaks();//注意必须放在程序的结尾处
+	}
+}
+
 bool Engine::Initialize()
 {
 
@@ -193,11 +206,12 @@ void Engine::Draw(const GameTimer& gt)
 	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
 	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 	//交换
-	ThrowIfFailed(mSwapChain->Present(0, 0));
+	ThrowIfFailed(mSwapChain->Present(4, 0));
 	mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
 	//设置同步
 	mCurrFrameResource->Fence = ++mCurrentFence;
 	mCommandQueue->Signal(mFence.Get(), mCurrentFence);
+	//mCommandQueue->Flush();
 }
 
 void Engine::OnMouseDown(WPARAM btnState, int x, int y)

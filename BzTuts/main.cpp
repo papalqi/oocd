@@ -9,7 +9,7 @@
 #include"OdRegex.h"
 
 
-#define QT_Engine_BIND
+
 
 #ifdef PYTHON_TEST
 extern "C" __declspec(dllexport) void  EnginMain(HWND bhw)

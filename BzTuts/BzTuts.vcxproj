@@ -79,6 +79,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;C:\Users\papalqi\source\repos\BzTuts\GCMath;C:\Users\Administrator\Desktop\BzTuts\BzTuts;C:\Users\Administrator\Desktop\BzTuts\GCMath;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;C:\Users\papalqi\source\repos\BzTuts\Lib;C:\Users\Administrator\Desktop\BzTuts\Lib;$(SolutionDir)Python\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)Lib</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -109,6 +110,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)\Engine\</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
