@@ -15,7 +15,7 @@
 
 
 
-#ifdef PYTHON_TEST
+#if PYTHON_TEST
 extern "C"  __declspec(dllexport) void  EnginMain(HWND bhw);
 
 #else

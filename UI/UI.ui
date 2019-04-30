@@ -14,13 +14,46 @@
    <string>UI</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="RenderWindows" name="graphicsView">
+   <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>1014</x>
       <y>10</y>
-      <width>800</width>
-      <height>600</height>
+      <width>101</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="listWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>11</y>
+      <width>181</width>
+      <height>831</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>810</y>
+      <width>551</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="textBrowser">
+    <property name="geometry">
+     <rect>
+      <x>215</x>
+      <y>620</y>
+      <width>541</width>
+      <height>191</height>
      </rect>
     </property>
    </widget>
@@ -45,13 +78,6 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>RenderWindows</class>
-   <extends>QGraphicsView</extends>
-   <header location="global">renderwindows.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="UI.qrc"/>
  </resources>

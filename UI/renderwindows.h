@@ -13,36 +13,15 @@ class RenderWindows :public  QWidget
 public:
 
 	Engine* theApp;
-	explicit RenderWindows(QWidget *parent = 0) :QWidget(parent)
-	{
-		setAttribute(Qt::WA_PaintOnScreen, true);
-		//setAttribute(Qt::WA_NativeWindow, true);
-		 theApp=new Engine((HINSTANCE)111);
-		 theApp->GetTimer()->Reset();
-
-		if (!theApp->Initialize((HWND)this->winId()))
-		{
-
-		}
-		
-	};
+	explicit RenderWindows(QWidget *parent = 0);
 	~RenderWindows() {};
-	void resizeEvent(QResizeEvent *event)
-	{
-		
-		theApp->SetHeight(this->height());
-		theApp->SetWidth(this->width());
-		theApp->OnResize();
-	}
-
-	void paintEvent(QPaintEvent *event)
-	{
-		QString("asdasd");
-
-		parentWidget()->setWindowTitle(theApp->GetFpsAndMspf().c_str());
-		
-		theApp->RunWithQTInOne();
-		update();
-
-	}
+public:
+	virtual void resizeEvent(QResizeEvent *event);
+	virtual void paintEvent(QPaintEvent *event);
+	virtual void MouseMoveEvent(QMouseEvent* event);
+	virtual void mousePressEvent(QMouseEvent* event);
+	virtual void mouseReleaseEvent(QMouseEvent *event);
+	virtual void keyPressEvent(QKeyEvent *event);
+private: 
+	bool isInMousemove;
 };

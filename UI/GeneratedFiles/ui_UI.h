@@ -11,11 +11,14 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
-#include <renderwindows.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -23,7 +26,10 @@ class Ui_UIClass
 {
 public:
     QWidget *centralWidget;
-    RenderWindows *graphicsView;
+    QPushButton *pushButton;
+    QListWidget *listWidget;
+    QLineEdit *lineEdit;
+    QTextBrowser *textBrowser;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
 
@@ -34,9 +40,18 @@ public:
         UIClass->resize(1123, 879);
         centralWidget = new QWidget(UIClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
-        graphicsView = new RenderWindows(centralWidget);
-        graphicsView->setObjectName(QString::fromUtf8("graphicsView"));
-        graphicsView->setGeometry(QRect(10, 10, 800, 600));
+        pushButton = new QPushButton(centralWidget);
+        pushButton->setObjectName(QString::fromUtf8("pushButton"));
+        pushButton->setGeometry(QRect(1014, 10, 101, 23));
+        listWidget = new QListWidget(centralWidget);
+        listWidget->setObjectName(QString::fromUtf8("listWidget"));
+        listWidget->setGeometry(QRect(0, 11, 181, 831));
+        lineEdit = new QLineEdit(centralWidget);
+        lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
+        lineEdit->setGeometry(QRect(210, 810, 551, 20));
+        textBrowser = new QTextBrowser(centralWidget);
+        textBrowser->setObjectName(QString::fromUtf8("textBrowser"));
+        textBrowser->setGeometry(QRect(215, 620, 541, 191));
         UIClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(UIClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -54,6 +69,7 @@ public:
     void retranslateUi(QMainWindow *UIClass)
     {
         UIClass->setWindowTitle(QApplication::translate("UIClass", "UI", nullptr));
+        pushButton->setText(QApplication::translate("UIClass", "PushButton", nullptr));
     } // retranslateUi
 
 };

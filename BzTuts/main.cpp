@@ -11,13 +11,13 @@
 
 
 
-#ifdef PYTHON_TEST
+#if PYTHON_TEST
 extern "C" __declspec(dllexport) void  EnginMain(HWND bhw)
 {
 	try
 	{
 		Engine theApp((HINSTANCE)111);
-#ifdef QT_Engine_BIND
+#if QT_Engine_BIND
 		if (!theApp.Initialize(bhw))
 		{
 

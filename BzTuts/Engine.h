@@ -59,7 +59,8 @@ public:
 	inline void					SetWidth(int inWidth) { mClientWidth = inWidth; };
 	inline void					SetHeight(int inHeight) { mClientHeight = inHeight; };
 	virtual void				OnResize()									override;
-private:
+
+public:
 
 	virtual void				Update(const GameTimer& gt)					override;
 	virtual void				Draw(const GameTimer& gt)					override;

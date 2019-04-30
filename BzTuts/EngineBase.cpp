@@ -87,7 +87,7 @@ int EngineBase::Run()
 				CalculateFrameStats();
 				Update(mTimer);
 				Draw(mTimer);
-				_CrtDumpMemoryLeaks();//注意必须放在程序的结尾处
+				//_CrtDumpMemoryLeaks();//注意必须放在程序的结尾处
 			}
 			else
 			{

@@ -51,6 +51,18 @@
     <ClCompile Include="GeneratedFiles\Release\moc_renderwindows.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Commend.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Commend.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Commend.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderwindows.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="UI.h">
@@ -65,13 +77,13 @@
     <CustomBuild Include="renderwindows.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="Commend.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_UI.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MainWidget.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
