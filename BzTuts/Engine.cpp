@@ -53,6 +53,7 @@ bool Engine::Initialize()
 	BuildShadersAndInputLayout();
 	BuildShapeGeometry();
 	BuildSkullGeometry();
+	BuildGrip();
 	BuildMaterials();
 	BuildRenderItems();
 	BuildFrameResources();
@@ -87,6 +88,7 @@ bool Engine::Initialize(HWND Bwindows)
 	BuildShadersAndInputLayout();
 	BuildShapeGeometry();
 	BuildSkullGeometry();
+	BuildGrip();
 	BuildMaterials();
 	BuildRenderItems();
 	BuildFrameResources();
@@ -108,6 +110,54 @@ void Engine::OnResize()
 	EngineBase::OnResize();
 
 	mCamera.SetLens(0.25f*PI, AspectRatio(), 1.0f, 1000.0f);
+}
+
+void Engine::BuildGrip()
+{
+	//建立基本的网格信息
+	auto geo = std::make_unique<MeshGeometry>();
+	geo->Name = "Grip";
+
+	vector<Vertex>Points;
+	//for (int i = 0; i != 100; i++)
+	Vertex ppp;
+	ppp.Pos= Vector(-100,0,0);
+	Points.push_back(ppp);
+	ppp.Pos = Vector(100, 0, 0);
+	Points.push_back(ppp);
+	std::vector<std::int32_t>Indexs{0,1};
+
+	const UINT vbByteSize = (UINT)Points.size() * sizeof(Vertex);
+
+	const UINT ibByteSize = (UINT)Indexs.size() * sizeof(std::int32_t);
+
+	ThrowIfFailed(D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU));
+	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), Points.data(), vbByteSize);
+
+	ThrowIfFailed(D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU));
+	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), Indexs.data(), ibByteSize);
+
+	geo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+		mCommandList.Get(), Points.data(), vbByteSize, geo->VertexBufferUploader);
+
+	geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+		mCommandList.Get(), Indexs.data(), ibByteSize, geo->IndexBufferUploader);
+
+	geo->VertexByteStride = sizeof(Vertex);
+	geo->VertexBufferByteSize = vbByteSize;
+	geo->IndexFormat = DXGI_FORMAT_R32_UINT;
+	geo->IndexBufferByteSize = ibByteSize;
+
+
+	SubmeshGeometry submesh;
+	submesh.IndexCount = (UINT)Indexs.size();
+	submesh.StartIndexLocation = 0;
+	submesh.BaseVertexLocation = 0;
+	//submesh.Bounds = bounds;
+
+	geo->DrawArgs["Grip"] = submesh;
+
+	mGeometries[geo->Name] = std::move(geo);
 }
 
 void Engine::Update(const GameTimer& gt)
@@ -206,7 +256,7 @@ void Engine::Draw(const GameTimer& gt)
 	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
 	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 	//交换
-	ThrowIfFailed(mSwapChain->Present(4, 0));
+	ThrowIfFailed(mSwapChain->Present(0, 0));
 	mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
 	//设置同步
 	mCurrFrameResource->Fence = ++mCurrentFence;
@@ -1208,6 +1258,25 @@ void Engine::BuildRenderItems()
 
 	Matrix brickTexTransform = Matrix::Identity;
 	brickTexTransform.ScaleTranslation({ 1.5f, 2.0f, 1.0f });
+
+	auto Grip = std::make_unique<RenderItem>();
+	Grip->World = Matrix::Identity;
+	Grip->TexTransform = Matrix::Identity;
+	Grip->TexTransform.ScaleTranslation({ 8.0f, 8.0f, 1.0f });
+	Grip->ObjCBIndex = 5;
+	Grip->Mat = mMaterials["tile0"].get();
+	Grip->Geo = mGeometries["Grip"].get();
+	Grip->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+	Grip->IndexCount = Grip->Geo->DrawArgs["Grip"].IndexCount;
+	Grip->StartIndexLocation = Grip->Geo->DrawArgs["Grip"].StartIndexLocation;
+	Grip->BaseVertexLocation = Grip->Geo->DrawArgs["Grip"].BaseVertexLocation;
+
+	mRitemLayer[(int)RenderLayer::Opaque].push_back(Grip.get());
+	mAllRitems.push_back(std::move(Grip));
+
+
+
+
 	UINT objCBIndex = 5;
 	for (int i = 0; i < 5; ++i)
 	{

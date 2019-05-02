@@ -9,5 +9,5 @@
 
 
 //是否使用dll调试
-#define  PYTHON_TEST 1
-#define QT_Engine_BIND 1
+#define  PYTHON_TEST 0
+#define QT_Engine_BIND 0

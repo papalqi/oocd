@@ -23,7 +23,7 @@
       <Extensions>qrc;*</Extensions>
       <ParseFiles>false</ParseFiles>
     </Filter>
-    <Filter Include="Generated Files">
+    <Filter Include="Header Files\Generated Files">
       <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
       <Extensions>moc;h;cpp</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
@@ -37,25 +37,25 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_UI.cpp">
-      <Filter>Generated Files</Filter>
+      <Filter>Header Files\Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_UI.cpp">
-      <Filter>Generated Files</Filter>
+      <Filter>Header Files\Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_UI.cpp">
-      <Filter>Generated Files</Filter>
+      <Filter>Header Files\Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_renderwindows.cpp">
-      <Filter>Generated Files</Filter>
+      <Filter>Header Files\Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_renderwindows.cpp">
-      <Filter>Generated Files</Filter>
+      <Filter>Header Files\Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_Commend.cpp">
-      <Filter>Generated Files</Filter>
+      <Filter>Header Files\Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_Commend.cpp">
-      <Filter>Generated Files</Filter>
+      <Filter>Header Files\Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="Commend.cpp">
       <Filter>Source Files</Filter>
@@ -83,7 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_UI.h">
-      <Filter>Generated Files</Filter>
+      <Filter>Header Files\Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

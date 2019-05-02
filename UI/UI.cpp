@@ -4,8 +4,6 @@
 UI::UI(QWidget *parent)
 	: QMainWindow(parent)
 {
-
-	
 	ui.setupUi(this);
 	//RenderWindows *graphicsView = new RenderWindows(this);
 	//setCentralWidget(graphicsView);

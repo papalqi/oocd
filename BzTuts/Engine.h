@@ -59,6 +59,7 @@ public:
 	inline void					SetWidth(int inWidth) { mClientWidth = inWidth; };
 	inline void					SetHeight(int inHeight) { mClientHeight = inHeight; };
 	virtual void				OnResize()									override;
+	void						BuildGrip();
 
 public:
 
