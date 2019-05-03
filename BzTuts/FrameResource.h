@@ -36,6 +36,9 @@ struct PassConstants
 	float DeltaTime = 0.0f;
 	Vector4 AmbientLight  { 0.0f, 0.0f, 0.0f, 1.0f };
 	Light Lights[MaxLights];
+	bool  Reflection;
+	bool feature_shadow;
+	bool SkyCube;
 };
 
 struct MaterialData
@@ -81,3 +84,5 @@ public:
 
 	UINT64 Fence = 0;
 };
+
+

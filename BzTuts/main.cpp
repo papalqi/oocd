@@ -9,37 +9,6 @@
 #include"OdRegex.h"
 
 
-
-
-#if PYTHON_TEST
-extern "C" __declspec(dllexport) void  EnginMain(HWND bhw)
-{
-	try
-	{
-		Engine theApp((HINSTANCE)111);
-#if QT_Engine_BIND
-		if (!theApp.Initialize(bhw))
-		{
-
-		}
-#else
-		if (!theApp.Initialize())
-		{
-
-		}
-#endif // QT_Engine_BIND
-
-	
-		theApp.Run();
-	}
-	catch (DxException& e)
-	{
-		MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
-	}
-
-}
-
-#else
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	PSTR cmdLine, int showCmd)
 {
@@ -62,4 +31,3 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	}
 	
 }
-#endif

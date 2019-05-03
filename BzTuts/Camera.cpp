@@ -7,6 +7,22 @@
 
 void Camera::SetPerspectiveMatrix(float FovAngleY, float AspectRatio, float NearZ, float FarZ)
 {
+	if (ProjectMode == CameraProjectionMode::Orthographic)
+	{
+		Vector4 sphereCenterLS;
+		sphereCenterLS = mView.TransformPosition(mLook);
+
+		// Ortho frustum in light space encloses scene.
+		float l = sphereCenterLS.X - 18;
+		float b = sphereCenterLS.Y - 18;
+		float n = sphereCenterLS.Z - 18;
+		float r = sphereCenterLS.X + 18;
+		float t = sphereCenterLS.Y + 18;
+		float f = sphereCenterLS.Z + 18;
+		mProj = Matrix::MatrixOrtho(l, r, b, t, n, f);
+		return;
+
+	}
 	float    SinFov;
 	float    CosFov;
 	XMScalarSinCos(&SinFov, &CosFov, 0.5f * FovAngleY);
@@ -103,7 +119,12 @@ void Camera::UpdateViewMatrix()
 {
 	if (mViewDirty)
 	{
-
+		if (ProjectMode==CameraProjectionMode::Orthographic)
+		{
+			mView=Matrix::MatrixLookAtD(mPosition, mLook, mUp);
+			mViewDirty = false;
+			return;
+		}
 		mLook.Normalize();
 		mUp = (mLook ^ mRight).GetSafeNormal();
 		mRight = mUp ^ mLook;

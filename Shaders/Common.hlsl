@@ -85,9 +85,12 @@ cbuffer cbPass : register(b1)
     // indices [NUM_DIR_LIGHTS+NUM_POINT_LIGHTS, NUM_DIR_LIGHTS+NUM_POINT_LIGHT+NUM_SPOT_LIGHTS)
     // are spot lights for a maximum of MaxLights per object.
     Light gLights[MaxLights];
+    bool  Reflection;
+    bool feature_shadow;
+    bool SkyCube;
 };
 
-//±ä»»·¨ÏßÌùÍ¼
+//ï¿½ä»»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW)
 {
 	// Uncompress each component from [0,1] to [-1,1].
@@ -107,14 +110,14 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
 }
 
 
-//¼ÆËãÒõÓ°Òò×Ó
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½
 float CalcShadowFactor(float4 shadowPosH)
 {
  
     shadowPosH.xyz /= shadowPosH.w;
-    //Õâ¸öµãµÄÉî¶ÈÖµ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
     float depth = shadowPosH.z;
-    //µÃµ½ÏñËØ´óÐ¡
+    //ï¿½Ãµï¿½ï¿½ï¿½ï¿½Ø´ï¿½Ð¡
     uint width, height, numMips;
     gShadowMap.GetDimensions(0, width, height, numMips);
     float dx = 1.0f / (float)width;
@@ -130,7 +133,7 @@ float CalcShadowFactor(float4 shadowPosH)
     [unroll]
     for(int i = 0; i < 9; ++i)
     {
-        //ºÍÉî¶ÈÍ¼±È½Ï
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½È½ï¿½
         percentLit += gShadowMap.SampleCmpLevelZero(gsamShadow,
             shadowPosH.xy + offsets[i], depth).r;
     }

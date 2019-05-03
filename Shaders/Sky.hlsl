@@ -39,6 +39,14 @@ VertexOut VS(VertexIn vin)
 
 float4 PS(VertexOut pin) : SV_Target
 {
-	return gCubeMap.Sample(gsamLinearWrap, pin.PosL);
+	if(SkyCube)
+	{
+		return gCubeMap.Sample(gsamLinearWrap, pin.PosL);
+	}
+	else
+	{
+		return float4(1,1,1,1);
+	}
+
 }
 

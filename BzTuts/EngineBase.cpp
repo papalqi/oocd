@@ -241,6 +241,11 @@ void EngineBase::OnResize()
 	mScissorRect = { 0, 0, mClientWidth, mClientHeight };
 }
 
+void EngineBase::OnMouseDown(WPARAM btnState, int x, int y)
+{
+
+}
+
 LRESULT EngineBase::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)

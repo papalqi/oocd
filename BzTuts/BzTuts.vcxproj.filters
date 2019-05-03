@@ -138,6 +138,9 @@
     <ClCompile Include="ShadowMap.cpp">
       <Filter>Source Files\Feature</Filter>
     </ClCompile>
+    <ClCompile Include="DrawLineControl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -206,13 +209,11 @@
     <ClInclude Include="ShadowMap.h">
       <Filter>Header Files\Feature</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Shaders\Common.hlsl" />
-    <FxCompile Include="Shaders\Default.hlsl" />
-    <FxCompile Include="Shaders\LightingUtil.hlsl" />
-    <FxCompile Include="Shaders\ShadowDebug.hlsl" />
-    <FxCompile Include="Shaders\Shadows.hlsl" />
-    <FxCompile Include="Shaders\Sky.hlsl" />
+    <ClInclude Include="DrawLineControl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
