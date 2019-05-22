@@ -22,7 +22,7 @@ namespace oocd
 		Vector2(T xx, T yy) : X(xx), Y(yy) { }
 
 		//explicit Vector2(const Vector3<T> &p) :X(p.X), Y(p.Y) {};
-		explicit Vector2(const Vector2<T> &p) :X(p.X), Y(p.Y) {};
+		 Vector2(const Vector2<T> &p) :X(p.X), Y(p.Y) {};
 	public:
 		Vector2<T> operator+(const Vector2<T>& other)const;
 		Vector2<T> operator-(const Vector2<T> &v) const;

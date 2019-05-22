@@ -6,7 +6,33 @@ const Matrix Matrix::Identity(Plane(1, 0, 0, 0), Plane(0, 1, 0, 0),
 
 oocd::Matrix::Matrix()
 {
+	SetIdentity();
 }
+
+oocd::Matrix::Matrix(
+	float m00, float m01, float m02, float m03,
+	float m10, float m11, float m12, float m13,
+	float m20, float m21, float m22, float m23,
+	float m30, float m31, float m32, float m33)
+
+{
+	M[0][0] = m00;
+	M[0][1] = m01;
+	M[0][2] = m02;
+	M[0][3] = m03;
+	M[1][0] = m10;
+	M[1][1] = m11;
+	M[1][2] = m12;
+	M[1][3] = m13;
+	M[2][0] = m20;
+	M[2][1] = m21;
+	M[2][2] = m22;
+	M[2][3] = m23;
+	M[3][0] = m30;
+	M[3][1] = m31;
+	M[3][2] = m32;
+	M[3][3] = m33;
+}								   
 
 void oocd::Matrix::SetIdentity()
 {
@@ -16,11 +42,140 @@ void oocd::Matrix::SetIdentity()
 	M[3][0] = 0; M[3][1] = 0;  M[3][2] = 0;  M[3][3] = 1;
 }
 
-oocd::Matrix oocd::Matrix::operator*(const Matrix& Other) const
+oocd::Matrix oocd::Matrix::operator*(const Matrix& B) const
 {
-	Matrix Result;
-	VectorMatrixMultiply(&Result, this, &Other);
-	return Result;
+	Matrix Temp;
+	Temp.M[0][0] = this->M[0][0] * B.M[0][0] + this->M[0][1] * B.M[1][0] + this->M[0][2] * B.M[2][0] + this->M[0][3] * B.M[3][0];
+	Temp.M[0][1] = this->M[0][0] * B.M[0][1] + this->M[0][1] * B.M[1][1] + this->M[0][2] * B.M[2][1] + this->M[0][3] * B.M[3][1];
+	Temp.M[0][2] = this->M[0][0] * B.M[0][2] + this->M[0][1] * B.M[1][2] + this->M[0][2] * B.M[2][2] + this->M[0][3] * B.M[3][2];
+	Temp.M[0][3] = this->M[0][0] * B.M[0][3] + this->M[0][1] * B.M[1][3] + this->M[0][2] * B.M[2][3] + this->M[0][3] * B.M[3][3];
+		
+	Temp.M[1][0] = this->M[1][0] * B.M[0][0] + this->M[1][1] * B.M[1][0] + this->M[1][2] * B.M[2][0] + this->M[1][3] * B.M[3][0];
+	Temp.M[1][1] = this->M[1][0] * B.M[0][1] + this->M[1][1] * B.M[1][1] + this->M[1][2] * B.M[2][1] + this->M[1][3] * B.M[3][1];
+	Temp.M[1][2] = this->M[1][0] * B.M[0][2] + this->M[1][1] * B.M[1][2] + this->M[1][2] * B.M[2][2] + this->M[1][3] * B.M[3][2];
+	Temp.M[1][3] = this->M[1][0] * B.M[0][3] + this->M[1][1] * B.M[1][3] + this->M[1][2] * B.M[2][3] + this->M[1][3] * B.M[3][3];
+		
+	Temp.M[2][0] = this->M[2][0] * B.M[0][0] + this->M[2][1] * B.M[1][0] + this->M[2][2] * B.M[2][0] + this->M[2][3] * B.M[3][0];
+	Temp.M[2][1] = this->M[2][0] * B.M[0][1] + this->M[2][1] * B.M[1][1] + this->M[2][2] * B.M[2][1] + this->M[2][3] * B.M[3][1];
+	Temp.M[2][2] = this->M[2][0] * B.M[0][2] + this->M[2][1] * B.M[1][2] + this->M[2][2] * B.M[2][2] + this->M[2][3] * B.M[3][2];
+	Temp.M[2][3] = this->M[2][0] * B.M[0][3] + this->M[2][1] * B.M[1][3] + this->M[2][2] * B.M[2][3] + this->M[2][3] * B.M[3][3];
+		
+	Temp.M[3][0] = this->M[3][0] * B.M[0][0] + this->M[3][1] * B.M[1][0] + this->M[3][2] * B.M[2][0] + this->M[3][3] * B.M[3][0];
+	Temp.M[3][1] = this->M[3][0] * B.M[0][1] + this->M[3][1] * B.M[1][1] + this->M[3][2] * B.M[2][1] + this->M[3][3] * B.M[3][1];
+	Temp.M[3][2] = this->M[3][0] * B.M[0][2] + this->M[3][1] * B.M[1][2] + this->M[3][2] * B.M[2][2] + this->M[3][3] * B.M[3][2];
+	Temp.M[3][3] = this->M[3][0] * B.M[0][3] + this->M[3][1] * B.M[1][3] + this->M[3][2] * B.M[2][3] + this->M[3][3] * B.M[3][3];
+	return Temp;
+}
+
+oocd::Matrix oocd::Matrix::MatrixTranslation(float OffsetX, float OffsetY, float OffsetZ)
+{
+	Matrix M;
+	M.M[0][0] = 1.0f;
+	M.M[0][1] = 0.0f;
+	M.M[0][2] = 0.0f;
+	M.M[0][3] = 0.0f;
+
+	M.M[1][0] = 0.0f;
+	M.M[1][1] = 1.0f;
+	M.M[1][2] = 0.0f;
+	M.M[1][3] = 0.0f;
+
+	M.M[2][0] = 0.0f;
+	M.M[2][1] = 0.0f;
+	M.M[2][2] = 1.0f;
+	M.M[2][3] = 0.0f;
+
+	M.M[3][0] = OffsetX;
+	M.M[3][1] = OffsetY;
+	M.M[3][2] = OffsetZ;
+	M.M[3][3] = 1.0f;
+	return M;
+}
+
+oocd::Matrix oocd::Matrix::MatrixScale(float OffsetX, float OffsetY, float OffsetZ)
+{
+	Matrix M= Matrix::Identity;
+	M.M[0][0] = OffsetX;
+	M.M[1][1] = OffsetY;
+	M.M[2][2] = OffsetZ;
+	return M;
+}
+
+oocd::Matrix oocd::Matrix::MatrixLookAtP(Vector EyePosition, Vector FocusPosition, Vector UpDirection)
+{
+	Vector EyeDirection =  FocusPosition - EyePosition;
+	return MatrixLookAtD(EyePosition, EyeDirection, UpDirection);
+}
+
+oocd::Matrix oocd::Matrix::MatrixLookAtD(Vector EyePosition, Vector EyeDirection, Vector UpDirection)
+{
+
+	Matrix out;
+	auto mLook=EyeDirection.GetSafeNormal();
+	auto mRight = (UpDirection^mLook).GetSafeNormal();
+	auto mUp = (EyeDirection ^ mRight).GetSafeNormal();
+	auto mPosition = EyePosition;
+
+	mPosition = -mPosition;
+	float x = ((mPosition | mRight));
+	float y = ((mPosition | mUp));
+	float z = ((mPosition | mLook));
+
+
+
+	out.M[0][0] = mRight.X;
+	out.M[1][0] = mRight.Y;
+	out.M[2][0] = mRight.Z;
+	out.M[3][0] = x;
+	out.M[0][1] = mUp.X;
+	out.M[1][1] = mUp.Y;
+	out.M[2][1] = mUp.Z;
+	out.M[3][1] = y;
+	out.M[0][2] = mLook.X;
+	out.M[1][2] = mLook.Y;
+	out.M[2][2] = mLook.Z;
+	out.M[3][2] = z;
+	out.M[0][3] = 0.0f;
+	out.M[1][3] = 0.0f;
+	out.M[2][3] = 0.0f;
+	out.M[3][3] = 1.0f;
+	
+	return out;
+}
+
+oocd::Matrix oocd::Matrix::MatrixOrtho(
+	float ViewLeft,
+	float ViewRight,
+	float ViewBottom,
+	float ViewTop,
+	float NearZ,
+	float FarZ)
+{
+	float ReciprocalWidth = 1.0f / (ViewRight - ViewLeft);
+	float ReciprocalHeight = 1.0f / (ViewTop - ViewBottom);
+	float fRange = 1.0f / (FarZ - NearZ);
+
+	Matrix M;
+	M.M[0][0] = ReciprocalWidth + ReciprocalWidth;
+	M.M[0][1] = 0.0f;
+	M.M[0][2] = 0.0f;
+	M.M[0][3] = 0.0f;
+
+	M.M[1][0] = 0.0f;
+	M.M[1][1] = ReciprocalHeight + ReciprocalHeight;
+	M.M[1][2] = 0.0f;
+	M.M[1][3] = 0.0f;
+
+	M.M[2][0] = 0.0f;
+	M.M[2][1] = 0.0f;
+	M.M[2][2] = fRange;
+	M.M[2][3] = 0.0f;
+
+	M.M[3][0] = -(ViewLeft + ViewRight) * ReciprocalWidth;
+	M.M[3][1] = -(ViewTop + ViewBottom) * ReciprocalHeight;
+	M.M[3][2] = -fRange * NearZ;
+	M.M[3][3] = 1.0f;
+	return M;
 }
 
 bool oocd::Matrix::Equals(const Matrix& Other, float Tolerance /*= KINDA_SMALL_NUMBER*/) const
@@ -147,6 +302,7 @@ oocd::Matrix oocd::Matrix::Inverse() const
 	{
 		VectorMatrixInverse(&Result, this);
 	}
+	return Result;
 }
 
 oocd::Matrix oocd::Matrix::TransposeAdjoint() const

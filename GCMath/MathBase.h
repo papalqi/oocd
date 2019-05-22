@@ -1,31 +1,34 @@
-#pragma once
+ï»¿#pragma once
 #include <stdlib.h>
-#include <math.h>
+#include<cmath>
+
 #include "Type.h"
+using namespace std;
 namespace oocd
 {
 	class MathBase
 	{
 	public:
-		//½«¸¡µãÊı×ª»»ÎªÕûÊı
+
+		//å°†æµ®ç‚¹æ•°è½¬æ¢ä¸ºæ•´æ•°
 		static   int TruncToInt(float F)
 		{
 			return (int)F;
 		}
 
-		//½«¸¡µãÊıÈ¡Õû
+		//å°†æµ®ç‚¹æ•°å–æ•´
 		static   float TruncToFloat(float F)
 		{
 			return (float)TruncToInt(F);
 		}
 
-		//ÏòÏÂÈ¡Õû
+		//å‘ä¸‹å–æ•´
 		static  int FloorToInt(float F)
 		{
 			return TruncToInt(floorf(F));
 		}
 
-		//½«¸¡µãÊıÈ¡Õû
+		//å°†æµ®ç‚¹æ•°å–æ•´
 		static  float FloorToFloat(float F)
 		{
 			return floorf(F);
@@ -36,7 +39,7 @@ namespace oocd
 			return floor(F);
 		}
 
-		//È¡×î½Ó½üµÄ
+		//å–æœ€æ¥è¿‘çš„
 		static  int RoundToInt(float F)
 		{
 			return FloorToInt(F + 0.5f);
@@ -51,7 +54,8 @@ namespace oocd
 		{
 			return FloorToDouble(F + 0.5);
 		}
-		//ÏòÉÏ
+
+		//å‘ä¸Š
 		static  int CeilToInt(float F)
 		{
 			return TruncToInt(ceilf(F));
@@ -67,41 +71,43 @@ namespace oocd
 			return ceil(F);
 		}
 
-		//·µ»Ø¸¡µãÊıµÄÓĞ·ûºÅĞ¡Êı²¿·Ö¡£
+		//è¿”å›æµ®ç‚¹æ•°çš„æœ‰ç¬¦å·å°æ•°éƒ¨åˆ†ã€‚
 		static  float Fractional(float Value)
 		{
 			return Value - TruncToFloat(Value);
 		}
 
-		//Ğ¡Êı²¿·Ö
+		//å°æ•°éƒ¨åˆ†
 		static  float Frac(float Value)
 		{
 			return Value - FloorToFloat(Value);
 		}
 
-		//½«¸ø¶¨Öµ·Ö½âÎªÕûÊıºÍĞ¡Êı²¿·Ö¡£
+		//å°†ç»™å®šå€¼åˆ†è§£ä¸ºæ•´æ•°å’Œå°æ•°éƒ¨åˆ†ã€‚
 		static  float Modf(const float InValue, float* OutIntPart)
 		{
 			return modff(InValue, OutIntPart);
 		}
 
-		//½«¸ø¶¨Öµ·Ö½âÎªÕûÊıºÍĞ¡Êı²¿·Ö¡£
+		//å°†ç»™å®šå€¼åˆ†è§£ä¸ºæ•´æ•°å’Œå°æ•°éƒ¨åˆ†ã€‚
 		static  double Modf(const double InValue, double* OutIntPart)
 		{
 			return modf(InValue, OutIntPart);
 		}
 
-		// Ö¸Êıº¯Êı
+		// æŒ‡æ•°å‡½æ•°
 		static  float Exp(float Value) { return expf(Value); }
+
 		// Returns 2^Value
 		static  float Exp2(float Value) { return powf(2.f, Value); /*exp2f(Value);*/ }
+
 		//log
 		static  float Loge(float Value) { return logf(Value); }
 		static  float LogX(float Base, float Value) { return Loge(Value) / Loge(Base); }
 
 		static  float Log2(float Value) { return Loge(Value) * 1.4426950f; }
 
-		//·µ»ØX / YµÄ¸¡µãÓàÊı
+		//è¿”å›X / Yçš„æµ®ç‚¹ä½™æ•°
 		static  float Fmod(float X, float Y)
 		{
 			if (fabsf(Y) <= 1.e-8f)
@@ -193,6 +199,7 @@ namespace oocd
 		static  uint32 FloorLog2(uint32 Value)
 		{
 			/*		// reference implementation
+
 					// 1500ms on test data
 					uint Bit = 32;
 					for (; Bit > 0;)
@@ -205,6 +212,7 @@ namespace oocd
 					}
 					return Bit;
 			*/
+
 			// same output as reference
 
 			// see http://codinggorilla.domemtech.com/?p=81 or http://en.wikipedia.org/wiki/Binary_logarithm but modified to return 0 for a input value of 0
@@ -394,7 +402,7 @@ namespace oocd
 			return x;
 		}
 
-		/**Ã¿ÈıÎ»´«²¥Ò»´Î¡£*/
+		/**æ¯ä¸‰ä½ä¼ æ’­ä¸€æ¬¡ã€‚*/
 		static  uint32 MortonCode3(uint32 x)
 		{
 			x &= 0x000003ff;
@@ -405,7 +413,7 @@ namespace oocd
 			return x;
 		}
 
-		/**·´×ªMortonCode3¡£ Ã¿¸ô3Î»Ñ¹ËõÒ»´Î¡£*/
+		/**åè½¬MortonCode3ã€‚ æ¯éš”3ä½å‹ç¼©ä¸€æ¬¡ã€‚*/
 		static  uint32 ReverseMortonCode3(uint32 x)
 		{
 			x &= 0x09249249;
@@ -432,28 +440,28 @@ namespace oocd
 			return (A >= (T)0) ? A : -A;
 		}
 
-		//´óÓÚ0ÊÇ1£¬Ğ¡ÓÚ0ÊÇ-1£¬·ñÔòÊÇ0
+		//å¤§äº0æ˜¯1ï¼Œå°äº0æ˜¯-1ï¼Œå¦åˆ™æ˜¯0
 		template< class T >
 		static   T Sign(const T A)
 		{
 			return (A > (T)0) ? (T)1 : ((A < (T)0) ? (T)-1 : (T)0);
 		}
 
-		//Ñ¡´óµÄ
+		//é€‰å¤§çš„
 		template< class T >
 		static   T Max(const T A, const T B)
 		{
 			return (A >= B) ? A : B;
 		}
 
-		//Ñ¡Ğ¡µÄ
+		//é€‰å°çš„
 		template< class T >
 		static   T Min(const T A, const T B)
 		{
 			return (A <= B) ? A : B;
 		}
 
-		//¼ÆËã±ÈÌØÊı
+		//è®¡ç®—æ¯”ç‰¹æ•°
 		static  int CountBits(uint64 Bits)
 		{
 			// https://en.wikipedia.org/wiki/Hamming_weight

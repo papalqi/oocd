@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include"MathHelper.h"
 #include<iostream>
+#include <DirectXMath.h>
 using namespace std;
 
 namespace oocd
@@ -16,11 +17,15 @@ namespace oocd
 	public:
 
 		static  const Vector3<T> ZeroVector;
-		static  const Vector3<T> UnitVector;
 		static const Vector3<T>OneVector;
 
 	public:
+		DirectX::XMFLOAT3 GetXMFLOAT3() {
+			DirectX::XMFLOAT3 out; out.x = X; out.y = Y;
+			out.z = Z; return out;
+		};
 		Vector3() { X = Y = Z = 0; }
+		Vector3(DirectX::XMFLOAT3 DXM) { X = DXM.x; Y = DXM.y; Z = DXM.z; }
 		Vector3(T zz) { X = Y = Z = zz; }
 		Vector3(T xx, T yy, T zz) : X(xx), Y(yy), Z(zz) { }
 		Vector3(const Vector3<T> &p) :X(p.X), Y(p.Y), Z(p.Z) {};
@@ -37,7 +42,7 @@ namespace oocd
 		Vector3<T>  operator*(const Vector3<T>& V) const;
 		template <typename U>Vector3<T> operator/(U f) const
 		{
-			return Vector3<T>(X / f, Y / f, Z*f);
+			return Vector3<T>(X / f, Y / f, Z/f);
 		}
 
 		Vector3<T> operator*=(const Vector3<T>& V)
@@ -109,7 +114,7 @@ namespace oocd
 		Vector3<T> GetAbs() const;
 		Vector3<T> GetSignVector() const;
 		bool IsZero() const;
-		void Normalize(float Tolerance = SMALL_NUMBER);
+		bool Normalize(float Tolerance = SMALL_NUMBER);
 		Vector3<T> GetSafeNormal(float Tolerance = SMALL_NUMBER) const;
 		T Size() const;
 		T SizeSquared()const;
@@ -117,14 +122,42 @@ namespace oocd
 		bool IsNearlyZero(float Tolerance = KINDA_SMALL_NUMBER) const;
 		bool Equals(const Vector3<T>& V, float Tolerance = KINDA_SMALL_NUMBER) const;
 	public:
-		static float CrossProduct(const Vector3<T>& A, const Vector3<T>& B);
+		static Vector3<T> CrossProduct(const Vector3<T>& A, const Vector3<T>& B);
 		static float Distance(const Vector3<T>& V1, const  Vector3<T>& V2);
 		static float DistSquared(const Vector3<T>& V1, const  Vector3<T>& V2);
 		static float DotProduct(const Vector3<T>& A, const Vector3<T>& B);
+		static  Vector3<T> Vector3dMin(Vector3<T> V1, Vector3<T> V2);
+		static  Vector3<T> Vector3dMax(Vector3<T> V1, Vector3<T> V2);
 	};
 
-	
+	template <typename T>
+	oocd::Vector3<T> oocd::Vector3<T>::Vector3dMax(Vector3<T> V1, Vector3<T> V2)
+	{
+		Vector3<T> Result;
+		Result.X = (V1.X > V2.X) ? V1.X : V2.X;
+		Result.Y = (V1.Y > V2.Y) ? V1.Y : V2.Y;
+		Result.Z = (V1.Z > V2.Z) ? V1.Z : V2.Z;
+
+		return Result;
+	}
+
+	template <typename T>
+	oocd::Vector3<T> oocd::Vector3<T>::Vector3dMin(Vector3<T> V1, Vector3<T> V2)
+	{
+		Vector3<T> Result;
+		Result.X = (V1.X < V2.X) ? V1.X : V2.X;
+		Result.Y = (V1.Y < V2.Y) ? V1.Y : V2.Y;
+		Result.Z = (V1.Z < V2.Z) ? V1.Z : V2.Z;
 		
+		return Result;
+	}
+
+	 template <typename T>
+		const Vector3<T> oocd::Vector3<T>::ZeroVector(0.0f, 0.0f, 0.0f);
+		
+		template <typename T>
+		const Vector3<T> oocd::Vector3<T>::OneVector(1.0f, 1.0f, 1.0f);
+	
 
 	template <typename T>
 	bool oocd::Vector3<T>::IsNearlyZero(float Tolerance /*= KINDA_SMALL_NUMBER*/) const
@@ -167,32 +200,34 @@ namespace oocd
 	}
 
 	template <typename T>
-	void oocd::Vector3<T>::Normalize(float Tolerance /*= SMALL_NUMBER*/)
+	bool oocd::Vector3<T>::Normalize(float Tolerance /*= SMALL_NUMBER*/)
 	{
 		const float SquareSum = X * X + Y * Y + Z * Z;
 		if (SquareSum > Tolerance)
 		{
-			const float Scale = sqrt(SquareSum);
-			X *= Scale;
-			Y *= Scale;
-			Z *= Scale;
-			return;
+			const float Scale = Math::InvSqrt(SquareSum);
+			X *= Scale; Y *= Scale; Z *= Scale;
+			return true;
 		}
-		X = 0.0f;
-		Y = 0.0f;
-		Z = 0.0f;
+		return false;
 	}
 
 	template <typename T>
 	oocd::Vector3<T> oocd::Vector3<T>::GetSafeNormal(float Tolerance /*= SMALL_NUMBER*/) const
 	{
-		const float SquareSum = X * X + Y * Y;
-		if (SquareSum > Tolerance)
+		const float SquareSum = X * X + Y * Y + Z * Z;
+
+		// Not sure if it's safe to add tolerance in there. Might introduce too many errors
+		if (SquareSum == 1.f)
 		{
-			const float Scale = sqrt(SquareSum);
-			return Vector3(X*Scale, Y*Scale, Z*Scale);
+			return *this;
 		}
-		return ZeroVector;
+		else if (SquareSum < Tolerance)
+		{
+			return Vector3<T>::ZeroVector;
+		}
+		const float Scale = Math::InvSqrt(SquareSum);
+		return Vector3<T>(X*Scale, Y*Scale, Z*Scale);
 	}
 
 	template <typename T>
@@ -282,7 +317,7 @@ namespace oocd
 	}
 
 	template <typename T>
-	float Vector3<T>::CrossProduct(const Vector3<T>& A, const Vector3<T>& B)
+	Vector3<T> Vector3<T>::CrossProduct(const Vector3<T>& A, const Vector3<T>& B)
 	{
 		return A ^ B;
 	}

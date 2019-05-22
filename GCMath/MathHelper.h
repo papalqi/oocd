@@ -15,13 +15,16 @@
 #define HALF_PI			(1.57079632679f)
 
 #define THRESH_VECTOR_NORMALIZED		(0.01f)		/** Allowed error for a normalized vector (against squared magnitude) */
-#define THRESH_QUAT_NORMALIZED			(0.01f)	
+#define THRESH_QUAT_NORMALIZED			(0.01f)
 #define DELTA			(0.00001f)
 using namespace std;
 using namespace DirectX;
 namespace oocd
 {
+
+
 	class Vector4;
+	
 	class Plane;
 	class Matrix;
 	//如果Comparand>0，我们选择ValueGEZero，否则ValueLTZero
@@ -42,12 +45,23 @@ namespace oocd
 	class Math :public MathBase
 	{
 	public:
+		static const float Infinity;
+		
 		template< class T >
 		static   T Max(const T A, const T B)
 		{
 			return (A >= B) ? A : B;
 		}
+		template<typename Type>
+		inline Type
+			Clamp(Type x, Type min, Type max)
+		{
+			return x > min ? x < max ? x : max : min;
+		}
 
+		static float Clamp(float v, float min, float max) {
+			return (v < min) ? min : (v > max) ? max : v;
+		}
 		/** Returns lower value in a generic way */
 		template< class T >
 		static   T Min(const T A, const T B)
@@ -151,10 +165,30 @@ namespace oocd
 		{
 			return (T)(A + Alpha * (B - A));
 		}
+
+#define FASTASIN_HALF_PI (1.5707963050f)
+		static  float FastAsin(float Value)
+		{
+			// Clamp input to [-1,1].
+			bool nonnegative = (Value >= 0.0f);
+			float x = Math::Abs(Value);
+			float omx = 1.0f - x;
+			if (omx < 0.0f)
+			{
+				omx = 0.0f;
+			}
+			float root = Math::Sqrt(omx);
+			// 7-degree minimax approximation
+			float result = ((((((-0.0012624911f * x + 0.0066700901f) * x - 0.0170881256f) * x + 0.0308918810f) * x - 0.0501743046f) * x + 0.0889789874f) * x - 0.2145988016f) * x + FASTASIN_HALF_PI;
+			result *= root;  // acos(|x|)
+			// acos(x) = pi - acos(-x) when x < 0, asin(x) = pi/2 - acos(x)
+			return (nonnegative ? FASTASIN_HALF_PI - result : result - FASTASIN_HALF_PI);
+		}
 	};
 
 	//使用的是DirectXMath的计算方法，并不要知道我自己，并没有进行检测
 	void VectorMatrixMultiply(Matrix* Result, const Matrix* Matrix1, const Matrix* Matrix2);
-	//
+	//计算逆矩阵
 	void VectorMatrixInverse(void* DstMatrix, const void* SrcMatrix);
+	void VectorQuaternionMultiply(void *Result, const void* Quat1, const void* Quat2);
 }
