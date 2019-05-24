@@ -1,8 +1,10 @@
 #pragma once
 #include "EWidget.h"
 #include <QStackedWidget>
+#include <QDockWidget>
 
 class RenderWindows;
+class EMenuWidget;
 
 class EEngineMainWidget : public EWidget
 {
@@ -18,13 +20,16 @@ protected:
 	void showEvent(QShowEvent *event);
 
 private:
+	void init();
+	void initconnect();
+
 	int addengineWidget();
 
 private:
 	QStackedWidget *mStackedWidget;
-
+	QDockWidget *mDockWidget;
 	RenderWindows *mengineWidget;
 
-
+	EMenuWidget   *mMenuWidget;
 	QPushButton *testBTN;
 };

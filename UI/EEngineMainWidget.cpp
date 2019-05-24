@@ -3,6 +3,7 @@
 
 //窗体类
 #include "RenderWindows.h"
+#include "EMenuWidget.h"
 
 #include <qDebug>
 #include <qpushbutton.h>
@@ -10,8 +11,8 @@
 EEngineMainWidget::EEngineMainWidget(EWidget *parent)
 	: EWidget(parent)
 {
-	testBTN = new QPushButton(this);
-	testBTN->setText("aaaaaaaaaaaaaaaaaaaaaaaaa此处放菜单栏  待写");
+	//testBTN = new QPushButton(this);
+	//testBTN->setText("aaaaaaaaaaaaaaaaaaaaaaaaa此处放菜单栏  待写");
 
 	setBaseSize(1920, 1020);
 	setUseDeskTopFactor(false);
@@ -19,13 +20,31 @@ EEngineMainWidget::EEngineMainWidget(EWidget *parent)
 
 	addengineWidget();
 
-	mStackedWidget = new QStackedWidget(this);
-	mStackedWidget->setStyleSheet("background:rgba(255,255,255,1);");
-	mBackgroundMap.load(":/images/student/background.png");
+	init();
+	initconnect();
 }
 
 EEngineMainWidget::~EEngineMainWidget()
 {
+}
+
+void EEngineMainWidget::init()
+{
+	mDockWidget = new QDockWidget(this);
+	mDockWidget->setStyleSheet("background:rgba(0,255,255,1);");
+
+	mStackedWidget = new QStackedWidget(mDockWidget);
+	mStackedWidget->setStyleSheet("background:rgba(255,255,255,0.1);");
+	mBackgroundMap.load(":/images/student/background.png");
+
+
+
+	mMenuWidget = new EMenuWidget(this);
+	mMenuWidget->setStyleSheet("background:rgba(255,0,255,1);");
+}
+void EEngineMainWidget::initconnect()
+{
+
 }
 
 void EEngineMainWidget::switchToPage(int index)
@@ -50,9 +69,10 @@ void EEngineMainWidget::paintEvent(QPaintEvent *event)
 void EEngineMainWidget::resizeEvent(QResizeEvent *event)
 {
 	EWidget::resizeEvent(event);
-	testBTN->setGeometry(0, 0, this->width(), 30);
-	mengineWidget->setGeometry(0, 30, this->width(), this->height()/2);
-	mStackedWidget->setGeometry(0, 30 + this->height() / 2, this->width(), this->height()/2-30);
+	//testBTN->setGeometry(0, 0, this->width(), 30);
+	mMenuWidget->setGeometry(0, 0, this->width(), 50);
+	mengineWidget->setGeometry(0, 50, this->width(), this->height()/2);
+	mDockWidget->setGeometry(0, 50 + this->height() / 2, this->width(), this->height()/2-50);
 }
 
 void EEngineMainWidget::showEvent(QShowEvent *event)

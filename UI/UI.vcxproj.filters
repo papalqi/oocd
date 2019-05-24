@@ -144,6 +144,9 @@
     <ClCompile Include="common\qtlockedfile.cpp">
       <Filter>Source Files\common</Filter>
     </ClCompile>
+    <ClCompile Include="EMenuWidget.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="UI.h">
@@ -207,6 +210,9 @@
     </QtMoc>
     <QtMoc Include="common\qtlocalpeer.h">
       <Filter>Header Files\common</Filter>
+    </QtMoc>
+    <QtMoc Include="EMenuWidget.h">
+      <Filter>Header Files\widget</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
