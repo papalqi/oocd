@@ -1,12 +1,14 @@
 ﻿#pragma once
-
 #include"stdafx.h"
 #include <wrl.h>
-#include"Timer.h"
+#include <Windows.h>
 #include"RenderDefine.h"
+#include "ETimer.h"
 using namespace DirectX;
 using namespace Microsoft;
 using namespace Microsoft::WRL;
+
+
 class EngineBase
 {
 protected:

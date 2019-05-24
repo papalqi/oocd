@@ -4,6 +4,7 @@
 #include "Matrix.h"
 #include "Light.h"
 #include <unordered_map>
+#include <memory>
 using namespace oocd;
 
 #define MaxLights 16

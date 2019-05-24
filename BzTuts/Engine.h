@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include"EngineBase.h"
+#include "EngineBase.h"
 #include <unordered_map>
 #include "GCMath.h"
 #include "Matrix.h"
@@ -20,6 +20,7 @@ using namespace std;
 using namespace oocd;
 using namespace DirectX;
 using namespace Microsoft::WRL;
+
 
  class  Engine : public EngineBase
 {
@@ -139,7 +140,7 @@ private:
 	bool		CameraDefault = true;
 	bool		feature_shadow = false;
 	bool		IsDebugShadow = false;
-	bool		GameMoudle = false;
+	bool		GameMoudle = true;
 	bool		DawLineGame = true;
 
 	CameraProjectionMode::Type	cameraType= CameraProjectionMode::Type::Perspective;

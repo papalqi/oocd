@@ -1,7 +1,6 @@
 ﻿#include "EngineBase.h"
 #include <WindowsX.h>
-#include<vector>
-using namespace DirectX;
+#include <vector>
 
 using Microsoft::WRL::ComPtr;
 using namespace std;

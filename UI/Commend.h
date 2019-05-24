@@ -1,7 +1,8 @@
 #pragma once
+#include <QtCore\qobject.h>
+#include <QtCore\qobject.h>
+#include <QtCore\qstring.h>
 
-#include<QObject>
-#include<QString>
 class fCommend :public QObject
 {
 	Q_OBJECT //±ØÐë°üº¬µÄºê

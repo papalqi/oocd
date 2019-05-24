@@ -28,6 +28,18 @@
       <Extensions>moc;h;cpp</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Source Files\widget">
+      <UniqueIdentifier>{973faeaa-7e05-413d-abdd-024567613de1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\widget">
+      <UniqueIdentifier>{db5b60cd-d185-4031-9592-025919f16266}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\common">
+      <UniqueIdentifier>{7cd454a7-5dca-4174-9602-3d991ec3125d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{c12cb670-8e8a-4512-908c-5e9c6cfd7962}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -35,12 +47,6 @@
     </ClCompile>
     <ClCompile Include="UI.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_UI.cpp">
-      <Filter>Header Files\Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_UI.cpp">
-      <Filter>Header Files\Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_UI.cpp">
       <Filter>Header Files\Generated Files</Filter>
@@ -63,13 +69,85 @@
     <ClCompile Include="renderwindows.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EApplication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EWidget.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="EEngineMainWidget.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="common\CommonFun.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\FilePathManage.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\GetSysInfo.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\GlobalSignal.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\HttpDownLoad.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\HttpDownloadInterface.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\HttpDownloadMgr.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\RegExpFun.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\SingletonManager.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\ThreadManager.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\Eini.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\ELog.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\EServerIni.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="ECentralWidget.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="EMainWindow.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="ETitleWidget.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="EMessageBox.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="EChartletButton.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="EEngineCentrolWidget.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="common\qtsingleapplication.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\qtlocalpeer.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\qtlockedfile.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="UI.h">
       <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="UI.ui">
-      <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="UI.qrc">
       <Filter>Resource Files</Filter>
@@ -82,8 +160,91 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GeneratedFiles\ui_UI.h">
-      <Filter>Header Files\Generated Files</Filter>
+    <QtMoc Include="EWidget.h">
+      <Filter>Header Files\widget</Filter>
+    </QtMoc>
+    <QtMoc Include="EEngineMainWidget.h">
+      <Filter>Header Files\widget</Filter>
+    </QtMoc>
+    <QtMoc Include="common\GlobalSignal.h">
+      <Filter>Header Files\common</Filter>
+    </QtMoc>
+    <QtMoc Include="common\HttpDownLoad.h">
+      <Filter>Header Files\common</Filter>
+    </QtMoc>
+    <QtMoc Include="common\HttpDownloadInterface.h">
+      <Filter>Header Files\common</Filter>
+    </QtMoc>
+    <QtMoc Include="common\HttpDownloadMgr.h">
+      <Filter>Header Files\common</Filter>
+    </QtMoc>
+    <QtMoc Include="common\ThreadManager.h">
+      <Filter>Header Files\common</Filter>
+    </QtMoc>
+    <QtMoc Include="common\ELog.h">
+      <Filter>Header Files\common</Filter>
+    </QtMoc>
+    <QtMoc Include="ECentralWidget.h">
+      <Filter>Header Files\widget</Filter>
+    </QtMoc>
+    <QtMoc Include="EMainWindow.h">
+      <Filter>Header Files\widget</Filter>
+    </QtMoc>
+    <QtMoc Include="ETitleWidget.h">
+      <Filter>Header Files\widget</Filter>
+    </QtMoc>
+    <QtMoc Include="EMessageBox.h">
+      <Filter>Header Files\widget</Filter>
+    </QtMoc>
+    <QtMoc Include="EChartletButton.h">
+      <Filter>Header Files\widget</Filter>
+    </QtMoc>
+    <QtMoc Include="EEngineCentrolWidget.h">
+      <Filter>Header Files\widget</Filter>
+    </QtMoc>
+    <QtMoc Include="common\qtsingleapplication.h">
+      <Filter>Header Files\common</Filter>
+    </QtMoc>
+    <QtMoc Include="common\qtlocalpeer.h">
+      <Filter>Header Files\common</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EApplication.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common\CommonFun.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\exception_handler.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\exceptiondump.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\FilePathManage.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\GetSysInfo.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\RegExpFun.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\SingletonManager.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\EIni.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\EServerIni.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="EEnumData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common\qtlockedfile.h">
+      <Filter>Source Files\common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

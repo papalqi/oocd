@@ -93,9 +93,6 @@
     <ClCompile Include="OString.h">
       <Filter>Header Files\String</Filter>
     </ClCompile>
-    <ClCompile Include="Timer.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Actor.cpp">
       <Filter>Source Files\Object</Filter>
     </ClCompile>
@@ -126,9 +123,6 @@
     <ClCompile Include="TestMeshcpp.cpp">
       <Filter>Source Files\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="GeometryGenerator.cpp">
       <Filter>Source Files\Geometry</Filter>
     </ClCompile>
@@ -140,6 +134,9 @@
     </ClCompile>
     <ClCompile Include="DrawLineControl.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ETimer.cpp">
+      <Filter>Source Files\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +211,9 @@
     </ClInclude>
     <ClInclude Include="RenderItem.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ETimer.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

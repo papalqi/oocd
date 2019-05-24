@@ -42,6 +42,7 @@ bool Engine::Initialize()
 	if (CameraDefault)
 	{
 		mCamera.SetPosition(0.0f, 2.0f, -15.0f);
+		mCamera.Pitch(30);
 	}
 
 		mShadowMap = std::make_unique<ShadowMap>(
@@ -997,7 +998,7 @@ void Engine::BuildOBJMesh(string Flie, string FliePath)
 	string ErrorMessage = Flie + string("Not find");
 	if (!fin)
 	{
-		MessageBox(0, OString::multi_Byte_To_Wide_Char(ErrorMessage), 0, 0);
+		//MessageBox(0, OString::multi_Byte_To_Wide_Char(ErrorMessage), 0, 0);
 		return;
 	}
 

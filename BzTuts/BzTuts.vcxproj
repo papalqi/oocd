@@ -22,18 +22,14 @@
     <ProjectGuid>{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BzTuts</RootNamespace>
-<<<<<<< HEAD
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
-=======
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
     <ProjectName>Engine</ProjectName>
->>>>>>> upstream/master
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -44,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -76,13 +72,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.10240.0\shared;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.10240.0\um;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.10240.0\um\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.10240.0\shared;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.10240.0\um;C:\work\VS\oocd\GCMath;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.10240.0\um\x64;C:\work\VS\oocd\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;C:\Users\papalqi\source\repos\BzTuts\GCMath;C:\Users\Administrator\Desktop\BzTuts\BzTuts;C:\Users\Administrator\Desktop\BzTuts\GCMath;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;C:\Users\papalqi\source\repos\BzTuts\Lib;C:\Users\Administrator\Desktop\BzTuts\Lib;$(SolutionDir)Python\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um;C:\work\VS\oocd\GCMath;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um\x64;C:\work\VS\oocd\Lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Lib</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -104,7 +100,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;GCMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -115,11 +111,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)\Engine\</ObjectFileName>
+      <CompileAs>Default</CompileAs>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <CallingConvention>Cdecl</CallingConvention>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;GCMath.lib;python37_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;GCMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>5.1</ShaderModel>
@@ -167,6 +166,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineBase.cpp" />
     <ClCompile Include="ErrorException.cpp" />
+    <ClCompile Include="ETimer.cpp" />
     <ClCompile Include="FrameResource.cpp" />
     <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -179,8 +179,6 @@
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="TestMeshcpp.cpp" />
     <ClCompile Include="TextureLoad.cpp" />
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="Timer.h" />
     <ClCompile Include="OdRegex.h" />
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +195,7 @@
     <ClInclude Include="EngineDefine.h" />
     <ClInclude Include="EngineMacro.h" />
     <ClInclude Include="ErrorException.h" />
+    <ClInclude Include="ETimer.h" />
     <ClInclude Include="FrameResource.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="Light.h" />

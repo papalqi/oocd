@@ -1,18 +1,8 @@
-#include "UI.h"
-
-#include <QtWidgets/QApplication>
-
-
+#include <qapplication.h>
+#include "EApplication.h"
 
 int main(int argc, char *argv[])
 {
-	QApplication a(argc, argv);
-	UI w;
-	;
-	//EnginMain((HWND)w.Getui().graphicsView->winId());
-	
-	//w.render();
-	w.show();
-
+	EApplication a(argc, argv);
 	return a.exec();
 }

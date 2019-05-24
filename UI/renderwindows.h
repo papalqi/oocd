@@ -6,14 +6,15 @@
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 #include "Engine.h"
+#include "EWidget.h"
 
-class RenderWindows :public  QWidget
+class RenderWindows :public  EWidget
 {
 	Q_OBJECT
 public:
 
 	Engine* theApp;
-	explicit RenderWindows(QWidget *parent = 0);
+	explicit RenderWindows(EWidget *parent = 0);
 	~RenderWindows() {};
 public:
 	virtual void resizeEvent(QResizeEvent *event);

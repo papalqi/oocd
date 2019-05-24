@@ -1,6 +1,6 @@
 #include "renderwindows.h"
 
- RenderWindows::RenderWindows(QWidget * parent) :QWidget(parent)
+ RenderWindows::RenderWindows(EWidget * parent) :EWidget(parent)
 {
 	setAttribute(Qt::WA_PaintOnScreen, true);
 	setAttribute(Qt::WA_NativeWindow, true);

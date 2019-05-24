@@ -33,6 +33,7 @@ public:
 	float GetNearWindowHeight()const { return mNearWindowHeight; };
 	float GetFarWindowWidth()const { return mAspect * mFarWindowHeight; }
 	float GetFarWindowHeight()const { return mFarWindowHeight; }
+	//透视矩阵
 	void SetPerspectiveMatrix(float FovAngleY,
 		float AspectRatio,
 		float NearZ,
@@ -58,7 +59,7 @@ private:
 	Vector mPosition = { 0.0f, 0.0f, 0.0f };
 	Vector mRight = { 1.0f, 0.0f, 0.0f };
 	Vector mUp = { 0.0f, 1.0f, 0.0f };
-	 Vector mLook = { 0.0f, 0.0f, 1.0f };
+	Vector mLook = { 0.0f, 0.0f, 1.0f };
 	const Vector OrimRight = { 1.0f, 0.0f, 0.0f };
 	const Vector OrimUp = { 0.0f, 1.0f, 0.0f };
 	const Vector OrimLook = { 0.0f, 0.0f, 1.0f };
