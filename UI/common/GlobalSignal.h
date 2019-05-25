@@ -3,6 +3,7 @@
 
 /// \brief 全局信号类
 
+#include <QtCore/QObject>
 #include <QObject>
 #include "EEnumData.h"
 

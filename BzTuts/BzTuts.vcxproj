@@ -22,14 +22,14 @@
     <ProjectGuid>{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BzTuts</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ProjectName>Engine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -72,13 +72,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.10240.0\shared;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.10240.0\um;C:\work\VS\oocd\GCMath;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.10240.0\um\x64;C:\work\VS\oocd\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(KIT_SHARED_IncludePath);$(UM_IncludePath);$(SolutionDir)GCMath;$(IncludePath)</IncludePath>
+    <LibraryPath>$(WindowsSDK_LibraryPath);$(WindowsSDK_LibraryPath)\x64;$(SolutionDir)Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um;C:\work\VS\oocd\GCMath;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um\x64;C:\work\VS\oocd\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(KIT_SHARED_IncludePath);$(UM_IncludePath);$(SolutionDir)GCMath;$(IncludePath)</IncludePath>
+    <LibraryPath>$(WindowsSDK_LibraryPath);$(WindowsSDK_LibraryPath)\x64;$(LibraryPath);$(SolutionDir)GCMath\Lib</LibraryPath>
     <OutDir>$(SolutionDir)Lib</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
