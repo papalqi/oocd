@@ -7,7 +7,7 @@
 #include <QFile>
 
 //附加功能 版本控制 配置文件
-//#include "FilePathManage.h"
+//
 //#include "PDNetworkAccessManager.h"
 //#include "SingletonManager.h"
 //#include "PDLiveContainWidget.h"
@@ -19,7 +19,7 @@
 #include "common\CommonFun.h"
 #include "EMainWindow.h"
 #include "EEngineCentrolWidget.h"
-
+#include "common\FilePathManage.h"
 
 ECloseShortCutEventFilter::ECloseShortCutEventFilter()
     :QAbstractNativeEventFilter()
@@ -144,17 +144,17 @@ int EApplication::exec()
 
     //EIni::init();
 
-    //QFile qssFile(FilePathManage::instance()->getQSSPath());
-    //if(qssFile.open(QFile::ReadOnly))
-    //{
-    //    QString qss = QLatin1String(qssFile.readAll());
-    //    setStyleSheet(qss);
-    //    qssFile.close();
-    //}
-    //else
-    //{
-    //    qWarning() << QStringLiteral("加载样式表失败！");
-    //}
+    QFile qssFile(FilePathManage::instance()->getQSSPath());
+    if(qssFile.open(QFile::ReadOnly))
+    {
+        QString qss = QLatin1String(qssFile.readAll());
+        setStyleSheet(qss);
+        qssFile.close();
+    }
+    else
+    {
+        qWarning() << QStringLiteral("加载样式表失败！");
+    }
 
     //SingletonManager manager;
 	

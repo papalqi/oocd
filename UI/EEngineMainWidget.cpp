@@ -15,6 +15,9 @@ EEngineMainWidget::EEngineMainWidget(QMainWindow *parent)
 	//testBTN = new QPushButton(this);
 	//testBTN->setText("aaaaaaaaaaaaaaaaaaaaaaaaa此处放菜单栏  待写");
 
+	setWindowFlags(Qt::WindowTitleHint);
+
+
 	setBaseSize(1920, 1020);
 	//setUseDeskTopFactor(false);
 	setObjectName("engine");
@@ -23,6 +26,9 @@ EEngineMainWidget::EEngineMainWidget(QMainWindow *parent)
 
 	init();
 	initconnect();
+
+	//setStyleSheet("	QMainWindow::separator{background:rgb(0, 222, 255);width:2px;height:1px;}");
+
 }
 
 EEngineMainWidget::~EEngineMainWidget()
@@ -36,12 +42,12 @@ void EEngineMainWidget::init()
 	//mDockWidget->setStyleSheet("background:rgba(0,255,255,1);");
 
 	mStackedWidget = new QStackedWidget();
-	mStackedWidget->setStyleSheet("background:rgba(255,255,255,0.1);");
+	//mStackedWidget->setStyleSheet("background:rgba(255,255,255,0.1);");
 	//mBackgroundMap.load(":/images/student/background.png");
 
 
 	mMenuWidget = new EMenuWidget();
-	mMenuWidget->setStyleSheet("background:rgba(255,0,255,1);");
+	//mMenuWidget->setStyleSheet("background:rgba(255,0,255,1);");
 
 	setDockNestingEnabled(true);
 	//中心停靠窗
@@ -56,7 +62,7 @@ void EEngineMainWidget::init()
 	delete center_titleWidget;
 
 	//顶停靠窗
-	QDockWidget *mTopDock = new QDockWidget("菜单", this);
+	QDockWidget *mTopDock = new QDockWidget(QStringLiteral("菜单"), this);
 	mTopDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
 	mTopDock->setWidget(mMenuWidget);
 	addDockWidget(Qt::TopDockWidgetArea, mTopDock);
@@ -67,8 +73,11 @@ void EEngineMainWidget::init()
 	delete top_titleWidget;
 
 	//左停靠窗
-	QDockWidget *mLeftDock = new QDockWidget("结构", this);
+	QDockWidget *mLeftDock = new QDockWidget(QStringLiteral("结构"), this);
 	mLeftDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
+
+	QWidget *left_titleWidget = mTopDock->titleBarWidget();
+	left_titleWidget->setBaseSize(left_titleWidget->width(), 10);
 
 	//树，用于显示文件和文件管理
 	QTreeWidget *mTreeWidge = new QTreeWidget(this);
@@ -100,11 +109,11 @@ void EEngineMainWidget::init()
 
 	//右停靠窗
 
-	QDockWidget *mRightDock = new QDockWidget("配置窗口", this);
+	QDockWidget *mRightDock = new QDockWidget(QStringLiteral("配置窗口"), this);
 
 	mRightDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
 
-	QTextEdit *dock2Text = new QTextEdit("右侧");
+	QTextEdit *dock2Text = new QTextEdit(QStringLiteral("右侧"));
 
 	mRightDock->setWidget(dock2Text);
 
@@ -112,9 +121,9 @@ void EEngineMainWidget::init()
 
 	//底部停靠窗
 
-	QDockWidget *mBottomDock = new QDockWidget("底部", this);
+	QDockWidget *mBottomDock = new QDockWidget(QStringLiteral("底部"), this);
 	mBottomDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
-	QTextEdit *dock3Text = new QTextEdit("底部");
+	QTextEdit *dock3Text = new QTextEdit(QStringLiteral("底部"));
 	mBottomDock->setWidget(dock3Text);
 	addDockWidget(Qt::BottomDockWidgetArea, mBottomDock);
 
@@ -125,6 +134,7 @@ void EEngineMainWidget::init()
 	//dw1->setWindowFlags(Qt::SplashScreen);
 	mdocks << centerWidget << mLeftDock << mRightDock << mBottomDock;
 
+	
 }
 void EEngineMainWidget::initconnect()
 {

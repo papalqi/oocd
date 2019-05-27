@@ -105,7 +105,7 @@ const QString &FilePathManage::getClassBriefImageFilePath()
 
 QString FilePathManage::getQSSPath()
 {
-    QString qssPath = QCoreApplication::applicationDirPath() + "/qss/pd.qss";
+    QString qssPath = QCoreApplication::applicationDirPath() + "/../../UI/resourse/qss/style.qss";
     return qssPath;
 }
 

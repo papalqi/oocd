@@ -23,10 +23,10 @@ void EChartletButton::setTextFont(const QFont textFont,QColor fontColor)
 
 void EChartletButton::setChartlet(const QString normalPixmapPath,const QString pressedPixmapPath,const QString disablePixmapPath)
 {
-    QString styleStr("QPushButton{background:transparent;border-image:url(%1)}"
-                  "QPushButton:pressed{background:transparent;border-image:url(%2)}"
-                  "QPushButton:!enabled{background:transparent;border-image:url(%3)}");
-    setStyleSheet(styleStr.arg(normalPixmapPath).arg(pressedPixmapPath).arg(disablePixmapPath));
+    //QString styleStr("QPushButton{background:transparent;border-image:url(%1)}"
+     //             "QPushButton:pressed{background:transparent;border-image:url(%2)}"
+     //             "QPushButton:!enabled{background:transparent;border-image:url(%3)}");
+    //setStyleSheet(styleStr.arg(normalPixmapPath).arg(pressedPixmapPath).arg(disablePixmapPath));
 }
 
 void EChartletButton::paintEvent(QPaintEvent *event)
