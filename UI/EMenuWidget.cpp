@@ -4,6 +4,7 @@
 EMenuWidget::EMenuWidget(QWidget *parent)
 	: QWidget(parent)
 {
+
 	init();
 }
 

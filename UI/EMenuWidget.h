@@ -9,9 +9,13 @@ class EMenuWidget : public QWidget
 	Q_OBJECT
 
 public:
-	EMenuWidget(QWidget *parent);
+	EMenuWidget(QWidget *parent = Q_NULLPTR);
 	~EMenuWidget();
 
+	QSize sizeHint() const
+	{
+		return QSize(1920, 30); /* 在这里定义dock的初始大小 */
+	}
 signals:
 
 protected:
