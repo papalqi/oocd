@@ -16,6 +16,11 @@ public:
 	Engine* theApp;
 	explicit RenderWindows(EWidget *parent = 0);
 	~RenderWindows() {};
+
+	//QSize sizeHint() const
+	//{
+	//	return QSize(270, 900); /* 在这里定义dock的初始大小 */
+	//}
 public:
 	virtual void resizeEvent(QResizeEvent *event);
 	virtual void paintEvent(QPaintEvent *event);

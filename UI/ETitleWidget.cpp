@@ -13,7 +13,7 @@ void ETitleWidget::init()
     setMinimumWidth(150);
     setBaseSize(1920,20);
     setFocusPolicy(Qt::NoFocus);
-    mBackgroundColor = QColor(217,244,255);
+    //mBackgroundColor = QColor(217,244,255);
     mMinButton = new QPushButton(this);
     mMinButton->setObjectName("minButton");
     mQuitButton = new QPushButton(this);

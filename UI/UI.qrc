@@ -1,4 +1,59 @@
 <RCC>
-    <qresource prefix="UI">
+    <qresource prefix="/">
+        <file>resourse/qss/rc/branch_closed.png</file>
+        <file>resourse/qss/rc/branch_closed-on.png</file>
+        <file>resourse/qss/rc/branch_open.png</file>
+        <file>resourse/qss/rc/branch_open-on.png</file>
+        <file>resourse/qss/rc/checkbox_checked.png</file>
+        <file>resourse/qss/rc/checkbox_checked@2x.png</file>
+        <file>resourse/qss/rc/checkbox_checked_disabled.png</file>
+        <file>resourse/qss/rc/checkbox_checked_disabled@2x.png</file>
+        <file>resourse/qss/rc/checkbox_checked_focus.png</file>
+        <file>resourse/qss/rc/checkbox_checked_focus@2x.png</file>
+        <file>resourse/qss/rc/checkbox_indeterminate.png</file>
+        <file>resourse/qss/rc/checkbox_indeterminate@2x.png</file>
+        <file>resourse/qss/rc/checkbox_indeterminate_disabled.png</file>
+        <file>resourse/qss/rc/checkbox_indeterminate_disabled@2x.png</file>
+        <file>resourse/qss/rc/checkbox_indeterminate_focus.png</file>
+        <file>resourse/qss/rc/checkbox_indeterminate_focus@2x.png</file>
+        <file>resourse/qss/rc/checkbox_unchecked.png</file>
+        <file>resourse/qss/rc/checkbox_unchecked@2x.png</file>
+        <file>resourse/qss/rc/checkbox_unchecked_disabled.png</file>
+        <file>resourse/qss/rc/checkbox_unchecked_disabled@2x.png</file>
+        <file>resourse/qss/rc/checkbox_unchecked_focus.png</file>
+        <file>resourse/qss/rc/checkbox_unchecked_focus@2x.png</file>
+        <file>resourse/qss/rc/close.png</file>
+        <file>resourse/qss/rc/close-hover.png</file>
+        <file>resourse/qss/rc/close-pressed.png</file>
+        <file>resourse/qss/rc/down_arrow.png</file>
+        <file>resourse/qss/rc/down_arrow_disabled.png</file>
+        <file>resourse/qss/rc/Hmovetoolbar.png</file>
+        <file>resourse/qss/rc/Hsepartoolbar.png</file>
+        <file>resourse/qss/rc/left_arrow.png</file>
+        <file>resourse/qss/rc/left_arrow_disabled.png</file>
+        <file>resourse/qss/rc/radio_checked.png</file>
+        <file>resourse/qss/rc/radio_checked@2x.png</file>
+        <file>resourse/qss/rc/radio_checked_disabled.png</file>
+        <file>resourse/qss/rc/radio_checked_disabled@2x.png</file>
+        <file>resourse/qss/rc/radio_checked_focus.png</file>
+        <file>resourse/qss/rc/radio_checked_focus@2x.png</file>
+        <file>resourse/qss/rc/radio_unchecked.png</file>
+        <file>resourse/qss/rc/radio_unchecked@2x.png</file>
+        <file>resourse/qss/rc/radio_unchecked_disabled.png</file>
+        <file>resourse/qss/rc/radio_unchecked_disabled@2x.png</file>
+        <file>resourse/qss/rc/radio_unchecked_focus.png</file>
+        <file>resourse/qss/rc/radio_unchecked_focus@2x.png</file>
+        <file>resourse/qss/rc/right_arrow.png</file>
+        <file>resourse/qss/rc/right_arrow_disabled.png</file>
+        <file>resourse/qss/rc/sizegrip.png</file>
+        <file>resourse/qss/rc/stylesheet-branch-end.png</file>
+        <file>resourse/qss/rc/stylesheet-branch-more.png</file>
+        <file>resourse/qss/rc/stylesheet-vline.png</file>
+        <file>resourse/qss/rc/transparent.png</file>
+        <file>resourse/qss/rc/undock.png</file>
+        <file>resourse/qss/rc/up_arrow.png</file>
+        <file>resourse/qss/rc/up_arrow_disabled.png</file>
+        <file>resourse/qss/rc/Vmovetoolbar.png</file>
+        <file>resourse/qss/rc/Vsepartoolbar.png</file>
     </qresource>
 </RCC>

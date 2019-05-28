@@ -20,9 +20,9 @@
  void RenderWindows::resizeEvent(QResizeEvent * event)
 {
 
-	theApp->SetHeight(this->height());
-	theApp->SetWidth(this->width());
-	theApp->OnResize();
+	//theApp->SetHeight(this->height());
+	//theApp->SetWidth(this->width());
+	//theApp->OnResize();
 }
 
  void RenderWindows::paintEvent(QPaintEvent * event)

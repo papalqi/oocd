@@ -26,7 +26,7 @@ EMainWindow::EMainWindow(QWidget *parent)
     //setWindowFlags();
 //    setMinimumSize(1920*0.5,1020*0.5);
 //    setBaseSize(1920,1020);
-    setStyleSheet("QMainWindow#EMainWindow{background:rgb(217,244,255)}");
+    //setStyleSheet("QMainWindow#EMainWindow{background:rgb(217,244,255)}");
     //connect(this,&EMainWindow::mainWindowShowSignal,&PDAnimationWidget::instance(),&PDAnimationWidget::show);
     //connect(this,&EMainWindow::mainWindowHideSignal,&PDAnimationWidget::instance(),&PDAnimationWidget::hide);
     //connect(this,&EMainWindow::mainWindowShowSignal,&PDPageWaitWidget::Instance(),&PDPageWaitWidget::show);

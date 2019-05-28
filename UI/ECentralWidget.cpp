@@ -20,7 +20,7 @@ ECentralWidget::ECentralWidget(EMainWindow *parent)
 
     mMaskWidget = new QWidget(this);
     mMaskWidget->setWindowFlags(Qt::FramelessWindowHint);
-    mMaskWidget->setStyleSheet("QWidget{background:rgba(0,0,0,0.5);}");
+    //mMaskWidget->setStyleSheet("QWidget{background:rgba(0,0,0,0.5);}");
     enableMaskWidget(false);
 
 

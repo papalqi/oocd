@@ -28,7 +28,7 @@ EMessageBox::EMessageBox(QWidget *parent)
     mCloseButton = new QPushButton(this);
     mCloseButton->setIcon(QIcon(":/images/common/TK_cancel_icon_normal.png"));
     mCloseButton->setIconSize(QSize(25,25));
-    mCloseButton->setStyleSheet("QPushButton{background:transparent;}");
+    //mCloseButton->setStyleSheet("QPushButton{background:transparent;}");
 
     mMessageLabel = new QLabel(this);
     mMessageLabel->setAlignment(Qt::AlignCenter);
@@ -374,13 +374,13 @@ void EMessageBox::setExtraColoredText(QString extraColoredText)
 
 void EMessageBox::setExtraColoredTextColor(QColor color)
 {
-    mExtraColoredTextLabel->setObjectName("mExtraColoredTextLabel");
-    mExtraColoredTextLabel->setStyleSheet(QString("QLabel#mExtraColoredTextLabel{color:rgba(%1,%2,%3,%4);}")
-                                          .arg(color.red())
-                                          .arg(color.green())
-                                          .arg(color.blue())
-                                          .arg(color.alpha())
-                                          );
+    //mExtraColoredTextLabel->setObjectName("mExtraColoredTextLabel");
+    //mExtraColoredTextLabel->setStyleSheet(QString("QLabel#mExtraColoredTextLabel{color:rgba(%1,%2,%3,%4);}")
+    //                                      .arg(color.red())
+    //                                      .arg(color.green())
+     //                                     .arg(color.blue())
+     //                                     .arg(color.alpha())
+     //                                     );
 }
 
 void EMessageBox::setConfirmButtonText(QString text)
