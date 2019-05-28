@@ -7,6 +7,8 @@
 EWidget::EWidget(QWidget *parent)
     :QWidget(parent)
 {
+
+	setFocusPolicy(Qt::ClickFocus);
     mUseDesktopFactor = true;
     //缩放比例相关
     mWFactor = CommonFun::getWidthFactor();

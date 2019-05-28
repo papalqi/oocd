@@ -30,6 +30,7 @@ public:
 	Engine& operator=(const Engine& rhs) = delete;//不允许使用赋值构造函数
 	~Engine();
 	GameTimer*					GetTimer() { return &mTimer; };
+	bool						isBoardInput = false;
 
 	void						RunWithQTInOne();
 	virtual bool				Initialize()								override;
@@ -43,7 +44,6 @@ public:
 	void						GetGeometry(vector<Vertex> Plist, string Name);
 	virtual void				Update(const GameTimer& gt)					override;
 	virtual void				Draw(const GameTimer& gt)					override;
-
 	virtual void				OnMouseDown(WPARAM btnState, int x, int y)	override;
 	virtual void				OnMouseUp(WPARAM btnState, int x, int y)	override;
 	virtual void				OnMouseMove(WPARAM btnState, int x, int y)	override;

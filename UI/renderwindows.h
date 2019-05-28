@@ -22,6 +22,8 @@ public:
 	//	return QSize(270, 900); /* 在这里定义dock的初始大小 */
 	//}
 public:
+	virtual void focusOutEvent(QFocusEvent *event);
+	virtual void focusInEvent(QFocusEvent *event);
 	virtual void resizeEvent(QResizeEvent *event);
 	virtual void paintEvent(QPaintEvent *event);
 	virtual void MouseMoveEvent(QMouseEvent* event);
@@ -29,5 +31,6 @@ public:
 	virtual void mouseReleaseEvent(QMouseEvent *event);
 	virtual void keyPressEvent(QKeyEvent *event);
 private: 
+	bool isBoardInput;
 	bool isInMousemove;
 };

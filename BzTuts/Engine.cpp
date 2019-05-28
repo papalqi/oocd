@@ -238,7 +238,8 @@ void Engine::GetGeometry(vector<Vertex> Plist,string Name)
 
 void Engine::Update(const GameTimer& gt)
 {
-	OnKeyboardInput(gt);
+	if(isBoardInput)
+		OnKeyboardInput(gt);
 
 	mCurrFrameResourceIndex = (mCurrFrameResourceIndex + 1) % gNumFrameResources;
 	mCurrFrameResource = mFrameResources[mCurrFrameResourceIndex].get();//得到当前帧的渲染资源

@@ -146,23 +146,6 @@
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="renderwindows.cpp" />
-    <ClCompile Include="UI.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="UI.h">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </Command>
-    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Commend.h">
