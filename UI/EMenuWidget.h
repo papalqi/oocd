@@ -18,6 +18,9 @@ public:
 	}
 signals:
 
+public slots:
+	void slotMenuTriggered(QAction *act);
+
 protected:
 	void resizeEvent(QResizeEvent *rEvent);
 	void paintEvent(QPaintEvent *pEvent);
@@ -28,6 +31,8 @@ private:
 
 private:
 	QMenuBar	*mMenuBar;
+	QMenu		*mMenu[10];
+	QMenu		*mmMenu[20];
+	QAction		*mAct[100];
 
-	QMenu   *mMenu1;
 };
