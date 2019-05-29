@@ -22,6 +22,8 @@ public:
 	//	return QSize(270, 900); /* 在这里定义dock的初始大小 */
 	//}
 public:
+	void enterEvent(QEvent *event);
+	void leaveEvent(QEvent *event);
 	virtual void focusOutEvent(QFocusEvent *event);
 	virtual void focusInEvent(QFocusEvent *event);
 	virtual void resizeEvent(QResizeEvent *event);

@@ -54,12 +54,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_renderwindows.cpp">
       <Filter>Header Files\Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_Commend.cpp">
-      <Filter>Header Files\Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_Commend.cpp">
-      <Filter>Header Files\Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="renderwindows.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -141,18 +135,12 @@
     <ClCompile Include="EMenuWidget.cpp">
       <Filter>Source Files\widget</Filter>
     </ClCompile>
-    <ClCompile Include="Commend.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="UI.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="renderwindows.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Commend.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

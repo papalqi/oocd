@@ -1,5 +1,5 @@
 #include "renderwindows.h"
-
+#include <QDebug>
  RenderWindows::RenderWindows(EWidget * parent) :EWidget(parent)
 {
 	
@@ -20,6 +20,20 @@
 	//this->setFocus();
 
 }
+
+ 
+ void RenderWindows::enterEvent(QEvent * event)
+ {
+	 qDebug() << "i";
+	 if (this->isActiveWindow())  //是否为活动窗体
+		 theApp->isBoardInput = true;
+ }
+
+ void RenderWindows::leaveEvent(QEvent * event)
+ {
+	 qDebug() << "o";
+	 theApp->isBoardInput = false;
+ }
 
  void RenderWindows::focusOutEvent(QFocusEvent *event)
  {
@@ -45,7 +59,6 @@
  void RenderWindows::paintEvent(QPaintEvent * event)
 {
 //	QString("asdasd");
-	
 	 auto debugString = theApp->GetFpsAndMspf().c_str();
 	 if (debugString != "fuck")
 	 {
@@ -54,8 +67,11 @@
 	 }
 	 if (isInMousemove)
 	 {
+		 setCursor(QCursor(Qt::BlankCursor));
 		 theApp->OnMouseMove(WPARAM(1), 0, 0);
 	 }
+	 else
+		 this->setCursor(Qt::ArrowCursor);
 
 
 	 theApp->RunWithQTInOne();
@@ -87,8 +103,8 @@ void RenderWindows::mouseReleaseEvent(QMouseEvent *event)
 
 void RenderWindows::keyPressEvent(QKeyEvent *event)
 {
-	isBoardInput= this->geometry().contains(this->mapFromGlobal(QCursor::pos()))? true : false;
-	theApp->isBoardInput= isBoardInput ? true : false;
+	//isBoardInput= this->geometry().contains(this->mapFromGlobal(QCursor::pos()))? true : false;
+	//theApp->isBoardInput= isBoardInput ? true : false;
 
 }
 
