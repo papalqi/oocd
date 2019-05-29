@@ -4,6 +4,7 @@
 //窗体类
 #include "RenderWindows.h"
 #include "EMenuWidget.h"
+#include "ETreeWidget.h"
 
 #include <qDebug>
 #include <qpushbutton.h>
@@ -75,36 +76,12 @@ void EEngineMainWidget::init()
 	//左停靠窗
 	QDockWidget *mLeftDock = new QDockWidget(QStringLiteral("结构"), this);
 	mLeftDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
-
-	QWidget *left_titleWidget = mTopDock->titleBarWidget();
-	left_titleWidget->setBaseSize(left_titleWidget->width(), 10);
-
-	//树，用于显示文件和文件管理
-	QTreeWidget *mTreeWidge = new QTreeWidget(this);
-
-	for (int j = 0; j < 3; j++)
-	{
-		QString mRootName = "root" + QString::number(j + 1);
-		QTreeWidgetItem *mRoot = new QTreeWidgetItem(mTreeWidge);
-		mRoot->setText(0, mRootName);
-
-		mRoot->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-
-		QString mItemName;
-
-		for (int i = 0; i < 3; i++)
-		{
-			mItemName = "child" + QString::number(i + 1);
-			QTreeWidgetItem *mChild1 = new QTreeWidgetItem(mRoot);
-			mChild1->setText(0, mItemName);
-
-			mChild1->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-
-		}
-	}
-
-	mLeftDock->setWidget(mTreeWidge);    //将树控件添加到左停靠窗中
+	mleftTreeWidget = new ETreeWidget(this);
+	mLeftDock->setWidget(mleftTreeWidget);    //将树控件添加到左停靠窗中
 	addDockWidget(Qt::LeftDockWidgetArea, mLeftDock);
+
+	//QWidget *left_titleWidget = mLeftDock->titleBarWidget();
+	//left_titleWidget->setBaseSize(left_titleWidget->width(), 10);
 
 
 	//右停靠窗

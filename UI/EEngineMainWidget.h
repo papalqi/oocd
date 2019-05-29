@@ -7,6 +7,7 @@
 #include <qmainwindow.h>
 class RenderWindows;
 class EMenuWidget;
+class ETreeWidget;
 
 class EEngineMainWidget : public QMainWindow
 {
@@ -36,6 +37,8 @@ private:
 	RenderWindows *mengineWidget;
 
 	EMenuWidget   *mMenuWidget;
+	ETreeWidget   *mleftTreeWidget;
+
 	QPushButton *testBTN;
 
 

@@ -135,6 +135,9 @@
     <ClCompile Include="EMenuWidget.cpp">
       <Filter>Source Files\widget</Filter>
     </ClCompile>
+    <ClCompile Include="ETreeWidget.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="UI.qrc">
@@ -194,6 +197,9 @@
       <Filter>Header Files\common</Filter>
     </QtMoc>
     <QtMoc Include="EMenuWidget.h">
+      <Filter>Header Files\widget</Filter>
+    </QtMoc>
+    <QtMoc Include="ETreeWidget.h">
       <Filter>Header Files\widget</Filter>
     </QtMoc>
   </ItemGroup>
