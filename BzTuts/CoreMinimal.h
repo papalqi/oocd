@@ -8,5 +8,6 @@
 #include "Mesh.h"
 #include <string>
 #include "Rotator.h"
+#include"Guid.h"
 using namespace std;
 using namespace oocd;

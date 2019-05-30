@@ -22,14 +22,14 @@
     <ProjectGuid>{EBA5190B-BF7C-4A38-A8F3-F867BA79CA9F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BzTuts</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ProjectName>Engine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -176,6 +176,7 @@
     <ClCompile Include="OString.cpp" />
     <ClCompile Include="OString.h" />
     <ClCompile Include="RenderDefine.h" />
+    <ClCompile Include="RowMesh.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="TestMeshcpp.cpp" />
     <ClCompile Include="TextureLoad.cpp" />
@@ -198,11 +199,19 @@
     <ClInclude Include="ETimer.h" />
     <ClInclude Include="FrameResource.h" />
     <ClInclude Include="GeometryGenerator.h" />
+    <ClInclude Include="Guid.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshBuild.h" />
+    <ClInclude Include="MeshLoad.h" />
+    <ClInclude Include="objLoad.h" />
     <ClInclude Include="OCMath.h" />
+    <ClInclude Include="OMaterial.h" />
     <ClInclude Include="RenderItem.h" />
+    <ClInclude Include="RowMesh.h" />
     <ClInclude Include="ShadowMap.h" />
+    <ClInclude Include="StaticMesh.h" />
+    <ClInclude Include="StaticMeshBuilder.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestMeshcpp.h" />
     <ClInclude Include="TextureLoad.h" />

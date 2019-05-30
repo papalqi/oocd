@@ -121,110 +121,45 @@ public:
 		return Value.ToString();
 	}
 
-	friend void LexFromString(Guid& Result, const TCHAR* String)
-	{
-		Guid::Parse(String, Result);
-	}
 
 public:
 
-	/**
-	 * Exports the GUIDs value to a string.
-	 *
-	 * @param ValueStr Will hold the string value.
-	 * @param DefaultValue The default value.
-	 * @param Parent Not used.
-	 * @param PortFlags Not used.
-	 * @param ExportRootScope Not used.
-	 * @return true on success, false otherwise.
-	 * @see ImportTextItem
-	 */
-	 bool ExportTextItem(string& ValueStr, Guid const& DefaultValue, UObject* Parent, int32 PortFlags, class UObject* ExportRootScope) const;
+
+	
 
 
 
-	/**
-	 * Invalidates the GUID.
-	 *
-	 * @see IsValid
-	 */
 	void Invalidate()
 	{
 		A = B = C = D = 0;
 	}
 
-	/**
-	 * Checks whether this GUID is valid or not.
-	 *
-	 * A GUID that has all its components set to zero is considered invalid.
-	 *
-	 * @return true if valid, false otherwise.
-	 * @see Invalidate
-	 */
+
 	bool IsValid() const
 	{
 		return ((A | B | C | D) != 0);
 	}
 
-	/**
-	 * Converts this GUID to its string representation.
-	 *
-	 * @return The string representation.
-	 */
+
 	string ToString() const
 	{
-		return ToString(GuidFormats::Digits);
 	}
 
-	/**
-	 * Converts this GUID to its string representation using the specified format.
-	 *
-	 * @param Format The string format to use.
-	 * @return The string representation.
-	 */
-	 string ToString(GuidFormats Format) const;
+
 
 public:
 
-	/**
-	 * Calculates the hash for a GUID.
-	 *
-	 * @param Guid The GUID to calculate the hash for.
-	 * @return The hash.
-	 */
-	friend uint32 GetTypeHash(const Guid& Guid)
-	{
-		return FCrc::MemCrc_DEPRECATED(&Guid, sizeof(Guid));
-	}
+
 
 public:
 
-	/**
-	 * Returns a new GUID.
-	 *
-	 * @return A new GUID.
-	 */
+
 	static  Guid NewGuid();
 
-	/**
-	 * Converts a string to a GUID.
-	 *
-	 * @param GuidString The string to convert.
-	 * @param OutGuid Will contain the parsed GUID.
-	 * @return true if the string was converted successfully, false otherwise.
-	 * @see ParseExact, ToString
-	 */
+	
 	static  bool Parse(const string& GuidString, Guid& OutGuid);
 
-	/**
-	 * Converts a string with the specified format to a GUID.
-	 *
-	 * @param GuidString The string to convert.
-	 * @param Format The string format to parse.
-	 * @param OutGuid Will contain the parsed GUID.
-	 * @return true if the string was converted successfully, false otherwise.
-	 * @see Parse, ToString
-	 */
+	
 	static  bool ParseExact(const string& GuidString, GuidFormats Format, Guid& OutGuid);
 
 public:
