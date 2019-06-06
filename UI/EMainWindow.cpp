@@ -10,6 +10,7 @@
 #include <Windows.h>
 #include "common/ThreadManager.h"
 #include "common/EIni.h"
+#include "EAnimationWidget.h"
 
 
 EMainWindow* EMainWindow::sMainWindow = nullptr;

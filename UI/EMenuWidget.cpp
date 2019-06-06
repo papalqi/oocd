@@ -1,4 +1,5 @@
 #include "EMenuWidget.h"
+#include "EAnimationWidget.h"
 #include "qdebug.h"
 
 EMenuWidget::EMenuWidget(QWidget *parent)
@@ -146,4 +147,26 @@ void EMenuWidget::paintEvent(QPaintEvent *pEvent)
 void EMenuWidget::slotMenuTriggered(QAction *act)
 {
 	qDebug() << act->text();
+
+
+	QPixmap pix(QLatin1String(":/resourse/qss/rc/undock.png"));
+	SAnimationRule therule;
+	therule.pix = pix;
+	therule.animationType = QEasingCurve::OutInExpo;
+	therule.Duration = 1100;
+	therule.startValue = qreal(360);
+	therule.endValue = qreal(1);
+	therule.prop = "rotation";
+	QList<SAnimationRule> RULE;
+	RULE.append(therule);
+
+	EAnimationWidget::instance().appendAnimation(RULE);
+
+	therule.startValue = qreal(1);
+	therule.endValue = qreal(360);
+	therule.prop = "rotation";
+	RULE.clear();
+	RULE.append(therule);
+	EAnimationWidget::instance().appendAnimation(RULE);
+	EAnimationWidget::instance().startAnimation();
 }
