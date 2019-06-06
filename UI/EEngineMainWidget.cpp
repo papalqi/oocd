@@ -74,7 +74,7 @@ void EEngineMainWidget::init()
 	delete top_titleWidget;
 
 	//×óÍ£¿¿´°
-	QDockWidget *mLeftDock = new QDockWidget(QStringLiteral("½á¹¹"), this);
+	QDockWidget *mLeftDock = new QDockWidget(QStringLiteral("Structure"), this);
 	mLeftDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
 	mleftTreeWidget = new ETreeWidget(this);
 	mLeftDock->setWidget(mleftTreeWidget);    //½«Ê÷¿Ø¼þÌí¼Óµ½×óÍ£¿¿´°ÖÐ
@@ -86,7 +86,7 @@ void EEngineMainWidget::init()
 
 	//ÓÒÍ£¿¿´°
 
-	QDockWidget *mRightDock = new QDockWidget(QStringLiteral("ÅäÖÃ´°¿Ú"), this);
+	QDockWidget *mRightDock = new QDockWidget(QStringLiteral("Attribute"), this);
 
 	mRightDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
 
@@ -98,18 +98,22 @@ void EEngineMainWidget::init()
 
 	//µ×²¿Í£¿¿´°
 
-	QDockWidget *mBottomDock = new QDockWidget(QStringLiteral("µ×²¿"), this);
-	mBottomDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
-	QTextEdit *dock3Text = new QTextEdit(QStringLiteral("µ×²¿"));
-	mBottomDock->setWidget(dock3Text);
-	addDockWidget(Qt::BottomDockWidgetArea, mBottomDock);
-
+	QDockWidget *terminalDock = new QDockWidget(QStringLiteral("Terminal Explorer"), this);
+	QDockWidget *resourceDock = new QDockWidget(QStringLiteral("Resource"), this);
+	terminalDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
+	resourceDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
+	QTextEdit *dock3Text = new QTextEdit(QStringLiteral("Terminal"));
+	QTextEdit *dock4Text = new QTextEdit(QStringLiteral("Resource"));
+	terminalDock->setWidget(dock3Text);
+	resourceDock->setWidget(dock4Text);
+	addDockWidget(Qt::BottomDockWidgetArea, resourceDock);
+	tabifyDockWidget(resourceDock, terminalDock);//tab dockwidget
 
 	//splitDockWidget(dw1, dw3, Qt::Vertical);
 	//tabifyDockWidget();
 
 	//dw1->setWindowFlags(Qt::SplashScreen);
-	mdocks << centerWidget << mLeftDock << mRightDock << mBottomDock;
+	mdocks << centerWidget << mLeftDock << mRightDock << terminalDock << resourceDock;
 
 	
 }
