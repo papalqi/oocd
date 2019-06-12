@@ -33,7 +33,6 @@ EMainWindow::EMainWindow(QWidget *parent)
     //connect(this,&EMainWindow::mainWindowShowSignal,&PDPageWaitWidget::Instance(),&PDPageWaitWidget::show);
     //connect(this,&EMainWindow::mainWindowHideSignal,&PDPageWaitWidget::Instance(),&PDPageWaitWidget::hide);
 
-
     ::SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
 
      //PDAnimationWidget::instance().setParent(this);

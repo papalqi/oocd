@@ -2,7 +2,8 @@
 #include <QDebug>
  RenderWindows::RenderWindows(EWidget * parent) :EWidget(parent)
 {
-	
+	setAcceptDrops(true);
+
 	setAttribute(Qt::WA_PaintOnScreen, true);
 	setAttribute(Qt::WA_NativeWindow, true);
 	setFocusPolicy(Qt::ClickFocus);
@@ -106,5 +107,73 @@ void RenderWindows::keyPressEvent(QKeyEvent *event)
 	//isBoardInput= this->geometry().contains(this->mapFromGlobal(QCursor::pos()))? true : false;
 	//theApp->isBoardInput= isBoardInput ? true : false;
 
+}
+
+void RenderWindows::dragEnterEvent(QDragEnterEvent *event)
+{
+
+	//qDebug("dragEnterEvent: enter drag mode ............");
+	if (event->mimeData()->hasFormat("custom/name"))
+	{
+		m_dragMode = 1;
+		event->acceptProposedAction();
+	}
+	else
+	{
+		event->ignore();
+		//dragEnterEvent(event);
+	}
+}
+
+void RenderWindows::dragLeaveEvent(QDragLeaveEvent *event)
+{
+	//qDebug("exit topotree, exit drag mode ............");
+	m_dragMode = 0;
+
+	//dragLeaveEvent(event);
+}
+
+void RenderWindows::dragMoveEvent(QDragMoveEvent *event)
+{
+	if (event->mimeData()->hasFormat("custom/name"))
+	{
+		//QTreeWidgetItem* itemOver = itemAt(event->pos());
+		//if (itemOver == NULL)
+		//{
+		//}
+		//else
+		//{
+			// accept
+			event->acceptProposedAction();
+			//dragMoveEvent(event);
+			return;
+		//}
+	}
+
+	event->ignore();
+	//dragMoveEvent(event);
+}
+
+void RenderWindows::dropEvent(QDropEvent *event)
+{
+	if (event->mimeData()->hasFormat("custom/name"))
+	{
+		//QTreeWidgetItem* itemOver = itemAt(event->pos());
+		//if (itemOver != NULL)
+		{
+			// 接收此MoveAction，插入节点
+
+			// 提取drag中携带的信息
+			QByteArray filename = event->mimeData()->data("custom/name");
+			QByteArray filepath = event->mimeData()->data("custom/path");
+			m_dragMode = 0; // 结束drag mode
+			event->acceptProposedAction();
+			//QTreeWidget::dropEvent(event);
+			return;
+		}
+	}
+
+	event->ignore();
+	dropEvent(event);
 }
 

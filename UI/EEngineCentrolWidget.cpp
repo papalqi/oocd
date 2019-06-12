@@ -9,6 +9,7 @@
 EEngineCentrolWidget::EEngineCentrolWidget(EMainWindow *parent)
 	: ECentralWidget(parent)
 {
+	mP = parent;
 	//setTitlebarBackgroundColor(QColor(255, 255, 255));
 	
 	addEngineMainWidget();
@@ -50,6 +51,6 @@ int EEngineCentrolWidget::currentPage()
 
 int EEngineCentrolWidget::addEngineMainWidget()
 {
-	mEnginMainWidget = new EEngineMainWidget();
+	mEnginMainWidget = new EEngineMainWidget(this);
 	return addNewPage((QWidget *)mEnginMainWidget);
 }

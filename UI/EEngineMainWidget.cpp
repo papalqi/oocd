@@ -3,19 +3,19 @@
 
 //¥∞ÃÂ¿‡
 #include "RenderWindows.h"
+
 #include "EMenuWidget.h"
+#include "EResourceExplorerWidget.h"
+
 #include "ETreeWidget.h"
 
 #include <qDebug>
 #include <qpushbutton.h>
 #include <QTextEdit>
 
-EEngineMainWidget::EEngineMainWidget(QMainWindow *parent)
+EEngineMainWidget::EEngineMainWidget(EWidget *parent)
 	: QMainWindow(parent)
 {
-	//testBTN = new QPushButton(this);
-	//testBTN->setText("aaaaaaaaaaaaaaaaaaaaaaaaa¥À¥¶∑≈≤Àµ•¿∏  ¥˝–¥");
-
 	setWindowFlags(Qt::WindowTitleHint);
 
 
@@ -84,32 +84,32 @@ void EEngineMainWidget::init()
 	//left_titleWidget->setBaseSize(left_titleWidget->width(), 10);
 
 
-	//”“Õ£øø¥∞
+	//”“Õ£øø¥∞	
 
 	QDockWidget *mRightDock = new QDockWidget(QStringLiteral("Attribute"), this);
-
 	mRightDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
-
 	QTextEdit *dock2Text = new QTextEdit(QStringLiteral("”“≤‡"));
-
 	mRightDock->setWidget(dock2Text);
-
 	addDockWidget(Qt::RightDockWidgetArea, mRightDock);
 
 	//µ◊≤øÕ£øø¥∞
 
-	QDockWidget *terminalDock = new QDockWidget(QStringLiteral("Terminal Explorer"), this);
-	QDockWidget *resourceDock = new QDockWidget(QStringLiteral("Resource"), this);
+	QDockWidget *terminalDock = new QDockWidget(QStringLiteral("Terminal"), this);
+	QDockWidget *resourceDock = new QDockWidget(QStringLiteral("Resource Explorer"), this);
 	terminalDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
 	resourceDock->setFeatures(QDockWidget::AllDockWidgetFeatures);
 	QTextEdit *dock3Text = new QTextEdit(QStringLiteral("Terminal"));
-	QTextEdit *dock4Text = new QTextEdit(QStringLiteral("Resource"));
-	terminalDock->setWidget(dock3Text);
-	resourceDock->setWidget(dock4Text);
-	addDockWidget(Qt::BottomDockWidgetArea, resourceDock);
-	tabifyDockWidget(resourceDock, terminalDock);//tab dockwidget
 
-	//splitDockWidget(dw1, dw3, Qt::Vertical);
+	//
+	//QTextEdit *dock4Text = new QTextEdit(QStringLiteral("Resource"));
+	mResourceWidget = new EResourceExplorerWidget(this);
+	//
+
+	terminalDock->setWidget(dock3Text);
+	resourceDock->setWidget(mResourceWidget);
+	addDockWidget(Qt::BottomDockWidgetArea, resourceDock, Qt::Vertical);
+	tabifyDockWidget(resourceDock, terminalDock);//tab dockwidget
+	//splitDockWidget(resourceDock, mRightDock, Qt::Horizontal);
 	//tabifyDockWidget();
 
 	//dw1->setWindowFlags(Qt::SplashScreen);

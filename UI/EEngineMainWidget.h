@@ -4,16 +4,17 @@
 #include <QDockWidget>
 #include <QTreeWidget>
 #include <QMainWindow>
-#include <qmainwindow.h>
+
 class RenderWindows;
 class EMenuWidget;
 class ETreeWidget;
+class EResourceExplorerWidget;
 
 class EEngineMainWidget : public QMainWindow
 {
 	Q_OBJECT
 public:
-	explicit EEngineMainWidget(QMainWindow *parent = nullptr);
+	explicit EEngineMainWidget(EWidget *parent = nullptr);
 	~EEngineMainWidget();
 	void switchToPage(int index);
 
@@ -34,9 +35,12 @@ private:
 
 private:
 	QStackedWidget *mStackedWidget;
-	RenderWindows *mengineWidget;
 
-	EMenuWidget   *mMenuWidget;
+	RenderWindows *mengineWidget;			//引擎窗口
+
+	EMenuWidget   *mMenuWidget;				//菜单窗口
+	EResourceExplorerWidget *mResourceWidget;	//资源视图窗口
+
 	ETreeWidget   *mleftTreeWidget;
 
 	QPushButton *testBTN;

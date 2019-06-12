@@ -1,12 +1,16 @@
 #pragma once
+#include "Engine.h"
+#include "EWidget.h"
+
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
-#include "Engine.h"
-#include "EWidget.h"
+
+#include <QDragEnterEvent>
+#include <QMimeData>
 
 class RenderWindows :public  EWidget
 {
@@ -32,7 +36,17 @@ public:
 	virtual void mousePressEvent(QMouseEvent* event);
 	virtual void mouseReleaseEvent(QMouseEvent *event);
 	virtual void keyPressEvent(QKeyEvent *event);
+
+
+protected:
+	//dropÍÏ×§
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dragLeaveEvent(QDragLeaveEvent *event);
+	void dragMoveEvent(QDragMoveEvent *event);
+	void dropEvent(QDropEvent *event);
 private: 
 	bool isBoardInput;
 	bool isInMousemove;
+
+	int			m_dragMode;
 };

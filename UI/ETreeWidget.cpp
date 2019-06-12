@@ -19,6 +19,7 @@ void ETreeWidget::init()
 	mModel = new QDirModel;
 	mModel->setReadOnly(false);
 	mModel->setSorting(QDir::DirsFirst | QDir::IgnoreCase | QDir::Name);
+	mModel->setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
 	//mModel->setFilterRegExp("[^C:c:].*");//过滤
 	//从缺省目录创建数据  
 	mTreeView = new QTreeView(this);
@@ -27,6 +28,10 @@ void ETreeWidget::init()
 	QModelIndex index = mModel->index(QDir::currentPath());
 	mTreeView->scrollTo(index);
 	mTreeView->resizeColumnToContents(0);
+	mTreeView->setHeaderHidden(true);
+	mTreeView->setColumnHidden(1, true);
+	mTreeView->setColumnHidden(2, true);
+	mTreeView->setColumnHidden(3, true);
 	//配置一个view去显示model中的数据，只需要简单地调用setModel(),并把目录model作为参数传递  
 		//setRootIndex()告诉views显示哪个目录的信息，这需要提供一个model index,然后用这个  
 		//model index去model中去获取数据  
@@ -67,7 +72,7 @@ void ETreeWidget::init()
 }
 void ETreeWidget::initconnect()
 {
-
+	connect(mTreeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(slotMenuTriggered(const QModelIndex &)));
 }
 
 
@@ -87,7 +92,7 @@ void ETreeWidget::resizeEvent(QResizeEvent *event)
 	mTreeView->setGeometry(0, 0, this->width(), this->height());
 }
 
-void ETreeWidget::slotMenuTriggered(QAction *act)
+void ETreeWidget::slotMenuTriggered(const QModelIndex &index)
 {
-
+	emit sig_treeTriggered(mModel->filePath(index));
 }

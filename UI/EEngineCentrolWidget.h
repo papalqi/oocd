@@ -27,4 +27,6 @@ private:
 	EEngineMainWidget *mEnginMainWidget;
 
 	EMainPageEnum mCurrentPageEnum;
+
+	EMainWindow *mP;
 };

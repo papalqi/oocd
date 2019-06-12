@@ -15,9 +15,9 @@ public:
 		return QSize(300, this->height()); /* 在这里定义dock的初始大小 */
 	}
 signals:
-
+	void sig_treeTriggered(QString fpath);
 public slots :
-	void slotMenuTriggered(QAction *act);
+	void slotMenuTriggered(const QModelIndex &index);
 
 protected:
 	void resizeEvent(QResizeEvent *rEvent);
