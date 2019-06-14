@@ -4,7 +4,7 @@
 #define HALF_WORLD_MAX1				(HALF_WORLD_MAX - 1.0)	/* Half the maximum size of the world minus one */
 
 #define DEFAULT_ORTHOZOOM			10000.0					/* Default 2D viewport zoom */
-#define SPEED_ON_BOARD				200
+#define SPEED_ON_BOARD				5
 #define SPEED_MOVE					5
 
 

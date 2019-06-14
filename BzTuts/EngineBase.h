@@ -63,7 +63,7 @@ protected:
 	void							LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
 
 protected:
-	static const int				SwapChainBufferCount = 2;
+	static const int				SwapChainBufferCount = 2;  //双缓冲
 	static EngineBase*				mEngine;
 	bool							m4xMsaaState = false;
 	bool							mEnginePaused = false;
@@ -71,20 +71,20 @@ protected:
 	bool							mMaximized = false;
 	bool							mMinimized = false;
 	bool							mResizing = false;
-	ComPtr<ID3D12CommandAllocator>	mDirectCmdListAlloc;
-	ComPtr<ID3D12CommandQueue>		mCommandQueue;
+	ComPtr<ID3D12CommandAllocator>	mDirectCmdListAlloc;		//指令分配器
+	ComPtr<ID3D12CommandQueue>		mCommandQueue;				//指令队列
 	ComPtr<ID3D12DescriptorHeap>	mDsvHeap;//dsv存储区ShaderResourceView存放处
 	ComPtr<ID3D12DescriptorHeap>	mRtvHeap;//rtv存储区renderTargetView存放处
-	ComPtr<ID3D12Device>			md3dDevice;
-	ComPtr<ID3D12Fence>				mFence;
-	ComPtr<ID3D12GraphicsCommandList> mCommandList;
-	ComPtr<ID3D12Resource>			mDepthStencilBuffer;
-	ComPtr<ID3D12Resource>			mSwapChainBuffer[SwapChainBufferCount];
-	ComPtr<IDXGIFactory4>			mdxgiFactory;
-	ComPtr<IDXGISwapChain>			mSwapChain;
+	ComPtr<ID3D12Device>			md3dDevice;										//表示虚拟适配器; 它用于创建命令分配器，命令列表，命令队列，围栏，资源，管道状态对象，堆，根签名，采样器和许多资源视图
+	ComPtr<ID3D12Fence>				mFence;											//表示fence，用于同步CPU和一个或多个GPU的对象。
+	ComPtr<ID3D12GraphicsCommandList> mCommandList;				//指令列表
+	ComPtr<ID3D12Resource>			mDepthStencilBuffer;							//深度 / 模板缓冲区描述符
+	ComPtr<ID3D12Resource>			mSwapChainBuffer[SwapChainBufferCount];			//交换链资源描述符
+	ComPtr<IDXGIFactory4>			mdxgiFactory;									//图形基础结构（DXGI）对象
+	ComPtr<IDXGISwapChain>			mSwapChain;					//交换链 存储渲染数据。
 	D3D_DRIVER_TYPE					md3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
-	D3D12_RECT						mScissorRect;
-	D3D12_VIEWPORT					mScreenViewport;
+	D3D12_RECT						mScissorRect;									//
+	D3D12_VIEWPORT					mScreenViewport;								//后台缓冲区的视口
 	DXGI_FORMAT						mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;//后台存储区格式
 	DXGI_FORMAT						mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;//depth格式
 	GameTimer						mTimer;
@@ -92,12 +92,12 @@ protected:
 	HWND							mhMainWnd = nullptr;
 	int								mClientHeight = 600;
 	int								mClientWidth = 800;
-	int								mCurrBackBuffer = 0;
+	int								mCurrBackBuffer = 0; //跟踪当前的后台缓冲区索引
 
 	std::wstring					mMainWndCaption = L"Papalqu";
 	UINT							m4xMsaaQuality = 0;
 	UINT							mCbvSrvUavDescriptorSize = 0;//cbv的句柄大小
-	UINT							mDsvDescriptorSize = 0;//Dsv的句柄大小
-	UINT							mRtvDescriptorSize = 0;//rtv的句柄大小
+	UINT							mDsvDescriptorSize = 0;//Dsv深度/模板视图的句柄大小
+	UINT							mRtvDescriptorSize = 0;//rtv渲染目标视图的句柄大小
 	UINT64							mCurrentFence = 0;
 };

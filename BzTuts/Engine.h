@@ -98,7 +98,7 @@ private:
 	unordered_map<string, ComPtr<ID3DBlob>>						mShaders;
 	unordered_map<string, unique_ptr<Material>>					mMaterials;
 	unordered_map<string, unique_ptr<MeshGeometry>>				mGeometries;
-	unordered_map<string, unique_ptr<Texture>>					mTextures;
+	unordered_map<string, unique_ptr<Texture>>					mTextures;						//贴图map
 	vector<D3D12_INPUT_ELEMENT_DESC>							mInputLayout;					//输入的格式
 	vector<RenderItem*>											mRitemLayer[(int)RenderLayer::Count];
 	vector<unique_ptr<FrameResource>>						    mFrameResources;

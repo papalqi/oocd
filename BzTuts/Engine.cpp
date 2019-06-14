@@ -45,8 +45,11 @@ bool Engine::Initialize()
 		mCamera.Pitch(30);
 	}
 
-		mShadowMap = std::make_unique<ShadowMap>(
+	//阴影初始化
+	mShadowMap = std::make_unique<ShadowMap>(
 			md3dDevice.Get(), 2048, 2048);
+
+	//加载贴图
 	LoadTextures();
 	BuildRootSignature();
 	BuildDescriptorHeaps();
@@ -1296,7 +1299,7 @@ void Engine::BuildMaterials()
 void Engine::BuildRenderItems()
 {
 
-	if (DefaultObj)
+	if (!DefaultObj)
 	{
 		BUildOneRenderItem(Matrix::MatrixScale(5000.0f, 5000.0f, 5000.0f)
 			, "sky", "shapeGeo", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
@@ -1329,7 +1332,7 @@ void Engine::BuildRenderItems()
 				, "bricks0", "shapeGeo", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 				, RenderLayer::Opaque, "cylinder", brickTexTransform);
 			BUildOneRenderItem(leftCylWorld
-				, "bricks0", "shapeGeo", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
+				, "tile0", "shapeGeo", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 				, RenderLayer::Opaque, "cylinder", brickTexTransform);
 			BUildOneRenderItem(leftSphereWorld
 				, "mirror0", "shapeGeo", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
@@ -1341,9 +1344,9 @@ void Engine::BuildRenderItems()
 		}
 	}
 	
-	BUildOneRenderItem(Matrix::Identity
-		, "tile0", "Grip", D3D_PRIMITIVE_TOPOLOGY_LINELIST
-		, RenderLayer::Opaque, "Grip");
+	//BUildOneRenderItem(Matrix::Identity
+	//	, "tile0", "ssf", D3D_PRIMITIVE_TOPOLOGY_LINELIST
+	//	, RenderLayer::Opaque, "ssfOBJ");
 	//mDrawLineControl.Plist.push_back(Vertex());
 	//GetGeometry(mDrawLineControl.Plist, mDrawLineControl.LineName);
 

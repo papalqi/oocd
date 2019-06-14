@@ -177,13 +177,15 @@ void EngineBase::OnResize()
 	}
 
 	// Create the depth/stencil buffer and view.
+	// D3D12_RESOURCE_DESC 描述纹理资源
+	// 创建深度 / 模板缓冲区，深度缓冲区只是一个2D纹理，它存储最近的可见对象的深度信息（如果使用模板，则存储模板信息）。
 	D3D12_RESOURCE_DESC depthStencilDesc;
-	depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	depthStencilDesc.Alignment = 0;
+	depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;			//Dimension 资源的维度
+	depthStencilDesc.Alignment = 0;												//
 	depthStencilDesc.Width = mClientWidth;
 	depthStencilDesc.Height = mClientHeight;
-	depthStencilDesc.DepthOrArraySize = 1;
-	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.DepthOrArraySize = 1;										//纹理的纹理深度，或纹理数组大小
+	depthStencilDesc.MipLevels = 1;												//mipmap等级的数量
 
 	// Correction 11/12/2016: SSAO chapter requires an SRV to the depth buffer to read from
 	// the depth buffer.  Therefore, because we need to create two views to the same resource:
@@ -192,17 +194,22 @@ void EngineBase::OnResize()
 	// we need to create the depth buffer resource with a typeless format.
 	depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 
-	depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
+	depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;					//多重采样数和质量等级
 	depthStencilDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
-	depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+	depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;						//指定纹理布局
+	depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;			//其它资源标志， 对于深度/模板缓冲区资源，请指定D3D12_RESOURCE_MISC_DEPTH_STENCIL
 
+	//D3D12_CLEAR_VALUE 清除资源的优化值
 	D3D12_CLEAR_VALUE optClear;
 	optClear.Format = mDepthStencilFormat;
 	optClear.DepthStencil.Depth = 1.0f;
 	optClear.DepthStencil.Stencil = 0;
+	//指定的属性创建并向特定堆提交资源
+	//创建深度/模板纹理
 	ThrowIfFailed(md3dDevice->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),	//D3D12_HEAP_TYPE_DEFAULT，默认堆， 这是我们提交将由GPU单独访问的资源地方， 
+															//以深度 / 模板缓冲区为例：GPU读取和写入深度 / 模板缓冲区， CPU永远不需要访问它，因此深度 / 模板缓冲区将被放置在默认堆中。
+															//D3D12_HEAP_TYPE_DEFAULT ()辅助构造函数来创建堆属性结构
 		D3D12_HEAP_FLAG_NONE,
 		&depthStencilDesc,
 		D3D12_RESOURCE_STATE_COMMON,
@@ -215,6 +222,7 @@ void EngineBase::OnResize()
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Format = mDepthStencilFormat;
 	dsvDesc.Texture2D.MipSlice = 0;
+	//其相应的深度/模板视图
 	md3dDevice->CreateDepthStencilView(mDepthStencilBuffer.Get(), &dsvDesc, DepthStencilView());
 
 	// Transition the resource from its initial state to be used as a depth buffer.
@@ -386,7 +394,9 @@ LRESULT EngineBase::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 bool EngineBase::InitMainWindow()
 {
 	WNDCLASS wc;
-	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.style = CS_HREDRAW | CS_VREDRAW; 
+	// CS_HREDRAW 当水平长度改变或移动窗口时，重画整个窗口
+	// CS_VREDRAW 当垂直长度改变或移动窗口时，重画整个窗口
 	wc.lpfnWndProc = MainWndProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
@@ -442,7 +452,13 @@ bool EngineBase::InitDirect3D()
 //		debugController->EnableDebugLayer();
 //	}
 //#endif
+	//https://blog.csdn.net/jxw167/article/details/81943828
+	//DXGI DirectX Graphics Infrastructure
+	//DXGI 可以操控一些普通的图形功能，这其中包括全屏转换、枚举图形系统信息（比如显示适配器、显示器、被支持的显示模式（分辨率，刷新率等等）），它还定义了各种纹理格式（DXGI_FORMAT）。CreateDXGIFactory1就是DXGI下面的一个接口函数，可以枚举显示适配器。
 
+	//IID_PPV_ARGS 用于检索接口指针，根据所使用的接口指针的类型自动提供所请求接口的IID值。这通过检查在编译时传递的值的类型来避免常见的编码错误。
+	//CreateDXGIFactory1 创建可用于生成其他DXGI对象的DXGI 1.1工厂。
+	//ThrowIfFailed 创建表示显示适配器的设备。
 	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&mdxgiFactory)));
 
 	//建立设备，并使用默认设备
@@ -454,7 +470,7 @@ bool EngineBase::InitDirect3D()
 	// 如果失败启动软光栅
 	if (FAILED(hardwareResult))
 	{
-		ComPtr<IDXGIAdapter> pWarpAdapter;
+		ComPtr<IDXGIAdapter> pWarpAdapter; //IDXGIAdapter接口表示显示子系统（包括一个或多个GPU，DAC和视频存储器）
 		ThrowIfFailed(mdxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&pWarpAdapter)));
 
 		ThrowIfFailed(D3D12CreateDevice(
@@ -462,7 +478,7 @@ bool EngineBase::InitDirect3D()
 			D3D_FEATURE_LEVEL_11_0,
 			IID_PPV_ARGS(&md3dDevice)));
 	}
-	//建立Fence
+	//建立Fence	创建 ID3D12Fence用于查询descriptor 大小 
 	ThrowIfFailed(md3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE,
 		IID_PPV_ARGS(&mFence)));
 	//获得句柄大小
@@ -487,9 +503,9 @@ bool EngineBase::InitDirect3D()
 	LogAdapters();
 #endif
 
-	CreateCommandObjects();
-	CreateSwapChain();
-	CreateRtvAndDsvDescriptorHeaps();
+	CreateCommandObjects(); //创建指令队列，指令列表和主指令列表
+	CreateSwapChain();//创建交换链 
+	CreateRtvAndDsvDescriptorHeaps();//创建描述符堆 
 
 	return true;
 }
@@ -499,40 +515,48 @@ void EngineBase::CreateCommandObjects()
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+	//创建指令队列
 	ThrowIfFailed(md3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&mCommandQueue)));
 
+	//创建指令分配器
 	ThrowIfFailed(md3dDevice->CreateCommandAllocator(
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
 		IID_PPV_ARGS(mDirectCmdListAlloc.GetAddressOf())));
 
+	//创建指令列表
 	ThrowIfFailed(md3dDevice->CreateCommandList(
 		0,
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		mDirectCmdListAlloc.Get(), // Associated command allocator
+		mDirectCmdListAlloc.Get(), // Associated command allocator  关联指令分配器
 		nullptr,                   // Initial PipelineStateObject
 		IID_PPV_ARGS(mCommandList.GetAddressOf())));
+
+	//以关闭状态启动。这是因为我们第一次引用
+	//对命令列表进行重置，需要先关闭
+	//调用重置。
 	mCommandList->Close();
 }
 
 void EngineBase::CreateSwapChain()
 {
 	mSwapChain.Reset();
+	// DXGI_SWAP_CHAIN_DESC 描述交换链的特征
 	DXGI_SWAP_CHAIN_DESC sd;
-	sd.BufferDesc.Width = mClientWidth;
+	sd.BufferDesc.Width = mClientWidth;	  //BufferDesc  后台缓冲区的属性  宽 高 像素格式...
 	sd.BufferDesc.Height = mClientHeight;
 	sd.BufferDesc.RefreshRate.Numerator = 60;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
 	sd.BufferDesc.Format = mBackBufferFormat;
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	sd.SampleDesc.Count = m4xMsaaState ? 4 : 1;
+	sd.SampleDesc.Count = m4xMsaaState ? 4 : 1;	//SampleDesc 多重采样的数量和质量等级; 对于单次采样，请指定样本计数为1，质量等级为0。
 	sd.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
-	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.BufferCount = SwapChainBufferCount;
-	sd.OutputWindow = mhMainWnd;
-	sd.Windowed = true;
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; //BufferUsage 指定DXGI_USAGE_RENDER_TARGET_OUTPUT，将渲染到后台缓冲区（即，将其用作渲染目标）。
+	sd.BufferCount = SwapChainBufferCount; //BufferCount //交换链中使用的缓冲区数量; 为双缓冲指定两个。
+	sd.OutputWindow = mhMainWnd; //OutputWindow 我们正在渲染的窗口的句柄。
+	sd.Windowed = true; //指定true以在窗口模式下运行，或指定为全屏模式时为false
 	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; //可选标志， 如果指定DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH，则当应用程序切换到全屏模式时，它将选择与当前应用程序窗口尺寸最匹配的显示模式。 如果未指定此标志，则当应用程序切换到全屏模式时，它将使用当前桌面显示模式。
 
 	ThrowIfFailed(mdxgiFactory->CreateSwapChain(
 		mCommandQueue.Get(),
@@ -631,7 +655,7 @@ void EngineBase::LogAdapters()
 	UINT i = 0;
 	IDXGIAdapter* adapter = nullptr;
 	std::vector<IDXGIAdapter*> adapterList;
-	//如果adapterList没找到的化
+	//如果adapterList没找到的话
 	while (mdxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
 	{
 		DXGI_ADAPTER_DESC desc;
