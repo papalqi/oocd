@@ -132,6 +132,15 @@
     <ClCompile Include="EAnimationWidget.cpp">
       <Filter>Source Files\widget</Filter>
     </ClCompile>
+    <ClCompile Include="EResourceExplorerWidget.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="EResourceViewWidget.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="EActionButton.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="EWidget.h">
@@ -192,6 +201,15 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="EAnimationWidget.h">
+      <Filter>Header Files\widget</Filter>
+    </QtMoc>
+    <QtMoc Include="EResourceExplorerWidget.h">
+      <Filter>Header Files\widget</Filter>
+    </QtMoc>
+    <QtMoc Include="EResourceViewWidget.h">
+      <Filter>Header Files\widget</Filter>
+    </QtMoc>
+    <QtMoc Include="EActionButton.h">
       <Filter>Header Files\widget</Filter>
     </QtMoc>
   </ItemGroup>

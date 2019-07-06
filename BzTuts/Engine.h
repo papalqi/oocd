@@ -63,6 +63,8 @@ public:
 	void						DrawSceneToShadowMap();
 	void						CreateRtvAndDsvDescriptorHeaps()override;
 
+	void						BuildOBJMesh(string File, string FliePath);				//建立OBJ物体
+
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 7>					GetStaticSamplers();//获取静态采样器
 protected:
 	void						BuildRootSignature();		//建立RootSignature
@@ -76,7 +78,7 @@ protected:
 	void						BuildOneLineRenderItem(vector<Vertex>);
 	void						UpdateRenderItems(RenderItem* skyRitem, MeshGeometry* Geo, D3D12_PRIMITIVE_TOPOLOGY PriType, string SubName);
 	
-	void						BuildOBJMesh(string File, string FliePath);				//建立OBJ物体
+	
 	void						BuildPSOs();				//建立PSO
 
 	void						BUildOneRenderItem(Matrix WordMatrix, string MaterialsName,
@@ -131,7 +133,7 @@ private:
 private:
 	int RenderConstNum = 0;
 	DrawLineControl  mDrawLineControl;
-	bool		isInAddMesh = false;
+	bool		isInAddMesh = true;
 private:
 	bool		SkyCube = false;
 	bool		Reflection = false;

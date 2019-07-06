@@ -167,6 +167,9 @@ void RenderWindows::dropEvent(QDropEvent *event)
 			QByteArray filename = event->mimeData()->data("custom/name");
 			QByteArray filepath = event->mimeData()->data("custom/path");
 			m_dragMode = 0; // ½áÊødrag mode
+
+			theApp->BuildOBJMesh(filename.toStdString(), filepath.toStdString());
+
 			event->acceptProposedAction();
 			//QTreeWidget::dropEvent(event);
 			return;

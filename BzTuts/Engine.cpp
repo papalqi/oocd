@@ -450,7 +450,7 @@ void Engine::AnimateMaterials(const GameTimer& gt)
 void Engine::UpdateObjectCBs(const GameTimer& gt)
 {
 	auto currObjectCB = mCurrFrameResource->ObjectCB.get();
-	if (isInAddMesh == true)
+	if (isInAddMesh == false)
 	{
 		for (auto& e : mAllRitems)
 		{
@@ -1087,10 +1087,11 @@ void Engine::BuildOBJMesh(string Flie, string FliePath)
 	for (int i = 0; i != ALLIndexs.size()/3; i++)
 	{
 		Vertex tempx;
-		tempx.Pos = Vetexs[ALLIndexs[i*3]];
-		tempx.TexC = { Textures[ALLIndexs[i * 3 + 1]].X, Textures[ALLIndexs[i * 3 + 1]].Y };
-		//tempx.TexC = {0,0 };
-		tempx.Normal = Normals[ALLIndexs[i * 3 + 2]];
+		tempx.Pos = Vetexs[abs(ALLIndexs[i*3])];
+		//tempx.TexC = { Textures[ALLIndexs[i * 3 + 1]].X, Textures[ALLIndexs[i * 3 + 1]].Y };
+		tempx.TexC = {0,0 };
+		//tempx.Normal = Normals[ALLIndexs[i * 3 + 2]];
+		tempx.Normal = Vector(1);;
 		Points.push_back(tempx);
 		Indexs.push_back(i);
 	}
@@ -1126,10 +1127,15 @@ void Engine::BuildOBJMesh(string Flie, string FliePath)
 	submesh.BaseVertexLocation = 0;
 	submesh.Bounds = bounds;
 
-	geo->DrawArgs["ssf"] = submesh;
+	geo->DrawArgs[Flie] = submesh;
 
 	mGeometries[geo->Name] = std::move(geo);
 
+
+	BUildOneRenderItem(Matrix::Identity
+		, "bricks0", "ssfOBJ", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
+		, RenderLayer::Opaque, Flie);
+	isInAddMesh = false;
 }
 
 void Engine::BuildPSOs()
@@ -1299,7 +1305,7 @@ void Engine::BuildMaterials()
 void Engine::BuildRenderItems()
 {
 
-	if (!DefaultObj)
+	if (DefaultObj)
 	{
 		BUildOneRenderItem(Matrix::MatrixScale(5000.0f, 5000.0f, 5000.0f)
 			, "sky", "shapeGeo", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
@@ -1311,9 +1317,9 @@ void Engine::BuildRenderItems()
 		BUildOneRenderItem(Matrix::MatrixScale(2.0f, 1.0f, 2.0f)*Matrix::MatrixTranslation(0.0f, 0.5f, 0.0f)
 			, "bricks0", "shapeGeo", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 			, RenderLayer::Opaque, "quad");
-		BUildOneRenderItem(Matrix::MatrixScale(0.4f, 0.4f, 0.4f)*Matrix::MatrixTranslation(0.0f, 1.0f, 0.0f)
-			, "skullMat", "skullGeo", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
-			, RenderLayer::Opaque, "skull");
+		//BUildOneRenderItem(Matrix::MatrixScale(0.4f, 0.4f, 0.4f)*Matrix::MatrixTranslation(0.0f, 1.0f, 0.0f)
+		//	, "skullMat", "skullGeo", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
+		//	, RenderLayer::Opaque, "skull");
 
 		BUildOneRenderItem(Matrix::Identity
 			, "tile0", "skullGeo", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
@@ -1343,10 +1349,13 @@ void Engine::BuildRenderItems()
 
 		}
 	}
-	
+	BUildOneRenderItem(Matrix::Identity
+		, "mirror0", "shapeGeo", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
+		, RenderLayer::Opaque, "sphere", Matrix::Identity);
+	//BuildOBJMesh("StreetLamp.obj", "C:/WORK/oocd/Models/");
 	//BUildOneRenderItem(Matrix::Identity
-	//	, "tile0", "ssf", D3D_PRIMITIVE_TOPOLOGY_LINELIST
-	//	, RenderLayer::Opaque, "ssfOBJ");
+	//	, "tile0", "ssfOBJ", D3D_PRIMITIVE_TOPOLOGY_LINELIST
+	//	, RenderLayer::Opaque, "StreetLamp.obj");
 	//mDrawLineControl.Plist.push_back(Vertex());
 	//GetGeometry(mDrawLineControl.Plist, mDrawLineControl.LineName);
 
@@ -1354,12 +1363,12 @@ void Engine::BuildRenderItems()
 	//	, "tile0", mDrawLineControl.LineName, D3D_PRIMITIVE_TOPOLOGY_LINELIST
 	//	, RenderLayer::Opaque, mDrawLineControl.LineName);
 	////mAllRitems[mAllRitems.size() - 1]->NumFramesDirty = 0;
-	//mDrawLineControl.isHaveRenderItem = true;
-	//for (int i = 0; i != mFrameResources.size(); i++)
-	//{
-	//	mFrameResources[i]->ObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), (UINT)mAllRitems.size(), true);
-	//}
-	//isInAddMesh = true;
+	mDrawLineControl.isHaveRenderItem = true;
+	for (int i = 0; i != mFrameResources.size(); i++)
+	{
+		mFrameResources[i]->ObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(md3dDevice.Get(), (UINT)mAllRitems.size(), true);
+	}
+	isInAddMesh = true;
 
 }
 
